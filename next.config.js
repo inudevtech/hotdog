@@ -1,7 +1,18 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-}
+// eslint-disable-next-line import/no-extraneous-dependencies
+require('dotenv').config();
 
-module.exports = nextConfig
+const nextConfig = {
+  reactStrictMode: false,
+  swcMinify: true,
+  webpack: (config) => {
+    // this will override the experiments
+    // eslint-disable-next-line no-param-reassign
+    config.experiments = { ...config.experiments, ...{ topLevelAwait: true } };
+    // this will just update topLevelAwait property of config.experiments
+    // config.experiments.topLevelAwait = true
+    return config;
+  },
+};
+
+module.exports = nextConfig;
