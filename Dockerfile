@@ -14,6 +14,7 @@ WORKDIR /app
 
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/.next /app/.next
+COPY --from=builder /app/public /app/public
 
 EXPOSE 3000
 
