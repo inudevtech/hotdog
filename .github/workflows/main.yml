@@ -49,6 +49,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
+    - name: download
+      if: github.ref == 'refs/heads/main'
+      run: gsutil cp gs://bot-env/key.json .
+
     - name: Build and Push image
       if: github.ref == 'refs/heads/main'
       uses: docker/build-push-action@v3
@@ -60,7 +64,7 @@ jobs:
         push: true
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+        cache-to: type=local,dest=/tmp/.buildx-cache
 
     - name: Build image
       if: github.ref != 'refs/heads/main'
@@ -72,12 +76,7 @@ jobs:
         push: false
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-    - name: Move cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new
 
     # kustomize を設定する
     - name: Set up Kustomize

@@ -16,6 +16,7 @@ WORKDIR /app
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/.next /app/.next
 COPY --from=builder /app/public /app/public
+COPY --from=builder /app/key.json /app/key.json
 
 EXPOSE 3000
 
