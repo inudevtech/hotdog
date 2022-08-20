@@ -74,7 +74,7 @@ class index extends Component<showFileProps, showFileStateProps> {
 
   async copyLink() {
     const { id } = this.state;
-    await navigator.clipboard.writeText(`https://hotdog.inu-dev.tech/${id}`);
+    await navigator.clipboard.writeText(`https://hotdog.inu-dev.tech/d/${id}`);
   }
 
   render() {

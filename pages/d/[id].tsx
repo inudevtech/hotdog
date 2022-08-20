@@ -87,7 +87,7 @@ const download = () => {
           </>
         )}
         {/* eslint-disable-next-line react/no-danger */}
-        <p dangerouslySetInnerHTML={{ __html: output.innerHTML }} className="border-t-2 mt-2 p-1" />
+        { output.innerHTML ? <p dangerouslySetInnerHTML={{ __html: output.innerHTML }} className="border-t-2 mt-2 p-1" /> : null }
         <button
           type="submit"
           className="transition mt-2 p-1 border border-blue-400 rounded-md hover:shadow-md hover:border-blue-500 block text-center"
