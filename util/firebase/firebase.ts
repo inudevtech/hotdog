@@ -6,10 +6,6 @@ const config = {
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
 };
 
-let firebaseApp;
-if (config.apiKey && config.authDomain) {
-  firebaseApp = initializeApp(config);
-}
-
+const firebaseApp = initializeApp(config);
 const auth = getAuth(firebaseApp);
 export default auth;

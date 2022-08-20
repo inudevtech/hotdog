@@ -54,6 +54,8 @@ jobs:
       uses: docker/build-push-action@v3
       id: build-image
       with:
+        build-args: |
+          NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
         push: true
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
