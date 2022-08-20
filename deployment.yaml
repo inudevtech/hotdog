@@ -35,3 +35,11 @@ spec:
             requests:
               cpu: 500m
               memory: 500Mi
+          volumeMounts:
+            - name: secret
+              mountPath: "/app/key.json"
+              readOnly: true
+      volumes:
+        - name: secret
+          secret:
+            secretName: hotdog-key
