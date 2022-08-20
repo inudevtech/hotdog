@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotdog
+  labels:
+    app: hotdog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hotdog
+  template:
+    metadata:
+      labels:
+        app: hotdog
+    spec:
+      containers:
+        - image: hotdog:v1
+          name: hotdog
+          envFrom:
+            - secretRef:
+                name: hotdog
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 750Mi
+            requests:
+              cpu: 500m
+              memory: 500Mi

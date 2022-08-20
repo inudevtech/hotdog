@@ -22,6 +22,7 @@ const connection = await mysql.createConnection({
   password: process.env.MYSQL_PASSWORD,
 });
 
+// TODO: add upload limit
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.status(405).end();

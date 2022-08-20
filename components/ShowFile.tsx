@@ -60,6 +60,7 @@ class index extends Component<showFileProps, showFileStateProps> {
       params,
     };
 
+    // TODO: エラー時の処理
     axios.post('/api/upload', file, config)
       .then((res) => {
         this.setState({ id: res.data.id });

@@ -5,7 +5,7 @@ import { faSpinner, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Prism from 'prismjs';
-import 'prismjs/themes/prism-tomorrow.css';
+import Image from 'next/image';
 import Header from '../../components/Header';
 
 interface GetUserProps {
@@ -72,7 +72,7 @@ const download = () => {
     showItem = (
       <>
         <p className="mb-3 flex items-center gap-1">
-          {user?.iconURL ? <img src={user?.iconURL} alt="アイコン" className="rounded-full" /> : <FontAwesomeIcon icon={faUser} className="bg-black rounded-full px-[4px] py-[3px]" color="#fff" />}
+          {user?.iconURL ? <Image src={user?.iconURL} alt="アイコン" className="rounded-full" /> : <FontAwesomeIcon icon={faUser} className="bg-black rounded-full px-[4px] py-[3px]" color="#fff" />}
           {user?.isAnonymous ? '匿名ユーザー' : user?.displayName}
         </p>
         {title ? (

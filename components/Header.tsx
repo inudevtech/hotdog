@@ -34,7 +34,7 @@ const Header = () => {
             ) : (
               <button
                 type="button"
-                onClick={logout}
+                onClick={() => logout(true)}
                 className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
               >
                 ログアウト
