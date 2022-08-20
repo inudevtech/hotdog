@@ -50,7 +50,7 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Build and Push image
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/main'
       uses: docker/build-push-action@v3
       id: build-image
       with:
@@ -62,9 +62,11 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
     - name: Build image
-      if: github.ref != 'refs/heads/master'
+      if: github.ref != 'refs/heads/main'
       uses: docker/build-push-action@v3
       with:
+        build-args: |
+          NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
         push: false
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
@@ -72,23 +74,23 @@ jobs:
 
     # kustomize を設定する
     - name: Set up Kustomize
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/main'
       run: |-
         curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
         chmod u+x ./kustomize
     # secretファイルのダウンロード
     - name: download
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/main'
       run: gsutil cp gs://bot-env/$DEPLOYMENT_NAME.env .
 
     - name: delete secret
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/main'
       run: kubectl delete secret $DEPLOYMENT_NAME
       continue-on-error: true
 
     # Docker イメージを GKE クラスタにデプロイする
     - name: Deploy
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/main'
       run: |-
         kubectl create secret generic $DEPLOYMENT_NAME --from-env-file=./$DEPLOYMENT_NAME.env
         ./kustomize edit set image hotdog:v1=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
