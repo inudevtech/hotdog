@@ -2,6 +2,7 @@ FROM node:16 as builder
 WORKDIR /app
 
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
+ARG NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY
 
 COPY --chown=node:node package.json package-lock.json ./
 RUN npm ci

@@ -56,6 +56,7 @@ jobs:
       with:
         build-args: |
           NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
         push: true
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
@@ -67,6 +68,7 @@ jobs:
       with:
         build-args: |
           NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
         push: false
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
