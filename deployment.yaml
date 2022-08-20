@@ -37,9 +37,12 @@ spec:
               memory: 500Mi
           volumeMounts:
             - name: secret
-              mountPath: "/app/key.json"
+              mountPath: "/tmp/"
               readOnly: true
       volumes:
         - name: secret
           secret:
             secretName: hotdog-key
+            items:
+              - key: key.json
+                path: key.json
