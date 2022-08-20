@@ -86,8 +86,9 @@ const download = () => {
             <pre className="italic text-sm">タイトルはありません。</pre>
           </>
         )}
-        {/* eslint-disable-next-line react/no-danger */}
-        { output.innerHTML ? <p dangerouslySetInnerHTML={{ __html: output.innerHTML }} className="border-t-2 mt-2 p-1" /> : null }
+        {output.innerHTML === '<div>null</div>' ? null
+          // eslint-disable-next-line react/no-danger
+          : <p dangerouslySetInnerHTML={{ __html: output.innerHTML }} className="border-t-2 mt-2 p-1" />}
         <button
           type="submit"
           className="transition mt-2 p-1 border border-blue-400 rounded-md hover:shadow-md hover:border-blue-500 block text-center"
