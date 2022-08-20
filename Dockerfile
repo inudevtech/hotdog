@@ -18,4 +18,4 @@ COPY --from=builder --chown=nonroot:nonroot /app/.next /app/.next
 USER nonroot
 EXPOSE 3000
 
-CMD ["/app/node_modules/.bin/next","start"]
+CMD ["/app/node_modules/.bin/next","start","-p","80"]
