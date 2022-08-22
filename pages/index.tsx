@@ -51,8 +51,6 @@ class index extends Component<{}, indexProps> {
   fileSelected(e: FormEvent<HTMLLabelElement>) {
     const target = (e.target as HTMLInputElement);
     if (!target.files || target.files.length === 0) return;
-
-    target.files = null;
     this.addFiles(target.files!);
   }
 
