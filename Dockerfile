@@ -12,7 +12,7 @@ COPY --chown=node:node . .
 
 RUN /app/node_modules/.bin/next build
 
-FROM node:16
+FROM gcr.io/distroless/nodejs:16
 WORKDIR /app
 
 COPY --from=builder /app/node_modules /app/node_modules
