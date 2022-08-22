@@ -63,6 +63,7 @@ jobs:
           NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
           NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
           NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
+          NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
         push: true
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
@@ -76,6 +77,7 @@ jobs:
           NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
           NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
           NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
+          NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
         push: false
         tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
