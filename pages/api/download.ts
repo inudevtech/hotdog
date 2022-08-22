@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { dir, fileName } = (rows as unknown as {dir:string, fileName:string}[])[0];
 
   const downloadFile = bucket.file(`${dir}/${fileName}`);
-  const downloadStream = downloadFile.createReadStream();
+  const downloadStream = downloadFile.createReadStream({ decompress: false });
   const fileSize = (await downloadFile.getMetadata())[0].size;
 
   res.setHeader('content-length', fileSize);
