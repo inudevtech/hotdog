@@ -53,3 +53,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   downloadStream.pipe(res);
 }
+
+export const config = {
+  api: {
+    responseLimit: false,
+  },
+};
