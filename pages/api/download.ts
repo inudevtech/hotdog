@@ -48,11 +48,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { dir, fileName } = (rows as unknown as {dir:string, fileName:string}[])[0];
 
   const downloadFile = bucket.file(`${dir}/${fileName}`);
-  const downloadStream = downloadFile.createReadStream({ decompress: false });
+  const downloadStream = downloadFile.createReadStream();
   const fileSize = (await downloadFile.getMetadata())[0].size;
 
   res.setHeader('content-length', fileSize);
-  downloadStream.pipe(res, { end: true });
+  downloadStream.pipe(res, { end: true }).on('error', (err) => {
+    console.error(err);
+    res.status(500).end();
+  });
 }
 
 export const config = {
