@@ -12,7 +12,7 @@ const Header = () => {
     <AccountContext.Consumer>
       {(value) => (
         <>
-          <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-xl border-slate-200 border rounded-b-md flex-wrap">
+          <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow border-slate-200 border flex-wrap">
             <p className="text-2xl">🌭ホットドッグ</p>
             {value.AccountState == null ? (
               <div className="flex gap-2">
