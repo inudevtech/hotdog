@@ -89,6 +89,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                   <button
                     type="button"
                     className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
+                    onClick={() => setFlag()}
                   >
                     画面を閉じる
                   </button>
