@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { User } from '@firebase/auth';
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+import Script from 'next/script';
 import { onAuthStateChanged } from '../util/firebase/auth';
 import { AccountType } from '../util/global';
 
@@ -29,6 +30,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       language="ja"
     >
       <AccountContext.Provider value={value}>
+        <Script
+          id="ga"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_TRACKING_ID}`}
+        />
+        <Script id="ga" strategy="afterInteractive">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.NEXT_PUBLIC_GA_TRACKING_ID}');
+        `}
+        </Script>
         <Component {...pageProps} />
       </AccountContext.Provider>
     </GoogleReCaptchaProvider>
