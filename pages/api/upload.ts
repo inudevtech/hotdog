@@ -33,6 +33,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     type, filename, token, recaptcha,
   } = req.query;
 
+  const contentLengthHeader = req.headers['content-length'];
+  try {
+    if (!contentLengthHeader || Number(contentLengthHeader) > 1000 * 1000 * 1000 * 5) {
+      res.status(413).end();
+      return;
+    }
+  } catch (e) {
+    res.status(400).end();
+    return;
+  }
+  let contentLength = Number(contentLengthHeader);
+
   // Recaptcha verification
   const params = {
     secret: process.env.GOOGLE_RECAPTCHA_KEY!,
@@ -72,7 +84,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const upload = new Promise<void>((resolve, reject) => {
-    req.pipe(uploadStream)
+    req.on('data', (d) => {
+      contentLength -= d.size;
+      if (contentLength < 0) {
+        reject(new Error('File too large'));
+      }
+    })
+      .pipe(uploadStream)
       .on('error', (e) => {
         reject(e);
       })
