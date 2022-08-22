@@ -35,7 +35,6 @@ export async function signUp(email:string, password:string, displayName:string) 
     displayName,
   });
   await sendEmailVerification(user);
-  await login(email, password);
 }
 
 export const onAuthStateChanged = (callback: Dispatch<SetStateAction<User | null>>) => {

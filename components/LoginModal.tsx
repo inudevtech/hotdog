@@ -29,6 +29,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
         if (r.user.emailVerified) {
           const { setFlag } = this.props;
           setFlag(false);
+          window.location.reload();
         } else {
           this.setState({ errMsg: 'メール認証ができていません。\n届いているメールをご確認ください。' });
         }
