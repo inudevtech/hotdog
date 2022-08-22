@@ -35,3 +35,4 @@ yarn-error.log*
 *.tsbuildinfo
 .env
 key.json
+key-prod.json
