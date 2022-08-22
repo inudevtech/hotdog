@@ -6,9 +6,9 @@ on: [push]
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT_DEV }}
-  GKE_CLUSTER: gorakuba    # TODO: update to cluster name
-  GKE_ZONE: asia-northeast1-b   # TODO: update to cluster zone
-  DEPLOYMENT_NAME: hotdog # TODO: update to deployment name
+  GKE_CLUSTER: gorakuba
+  GKE_ZONE: asia-northeast1-b
+  DEPLOYMENT_NAME: hotdog
   IMAGE: hotdog
 
 
