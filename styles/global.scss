@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+blockquote{
+  position:relative;
+  border-top:1px solid #1d3026;
+  border-bottom:1px solid #1d3026;
+  padding:10px;
+}
+blockquote:before{
+  position:absolute;
+  background-color:#FFFFFF;
+  content:'🌭';
+  line-height:1;
+  text-align:center;
+  top:-10px;
+  left:-10px;
+  font-size:20px;
+}
+blockquote:after{
+  position:absolute;
+  right:-10px;
+  bottom:-10px;
+  background-color:#FFFFFF;
+  content:'🌭';
+  line-height:1;
+  text-align:center;
+  font-size:20px;
+}
+blockquote cite {
+  display: block;
+  padding-right:30px;
+  font-size: 0.8rem;
+  text-align: right;
+  color: #aaa;
+}

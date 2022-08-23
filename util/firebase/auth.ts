@@ -43,6 +43,7 @@ export const onAuthStateChanged = (callback: Dispatch<SetStateAction<User | null
       callback(user);
     } else {
       await logout();
+      callback(null);
     }
   });
 };
