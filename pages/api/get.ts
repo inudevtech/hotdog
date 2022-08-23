@@ -16,9 +16,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { id } = req.query;
 
-  await connection.execute('DELETE FROM fileData WHERE expiration < NOW()');
+  await connection.query('DELETE FROM fileData WHERE expiration < NOW()');
 
-  const [rows] = await connection.execute('SELECT uid, displayName, description, fileName FROM fileData WHERE id = ?', [id]);
+  const [rows] = await connection.query('SELECT uid, displayName, description, fileName FROM fileData WHERE id = ?', [id]);
   if ((rows as unknown[]).length === 0) {
     res.status(400).json({
       exists: false,
