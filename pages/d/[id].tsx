@@ -92,7 +92,7 @@ const download = () => {
           : <p dangerouslySetInnerHTML={{ __html: output.innerHTML }} className="border-t-2 mt-2 p-1" />}
         <button
           type="submit"
-          className="transition mt-2 p-1 border border-blue-400 rounded-md hover:shadow-md hover:border-blue-500 block text-center"
+          className="transition p-1 my-2 min-w-[300px] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
           onClick={downloadFile}
         >
           ダウンロード
@@ -122,7 +122,7 @@ const download = () => {
     <>
       <Header />
       <div className="flex justify-center items-center h-screen flex-col">
-        <div className="shadow-xl p-5 flex flex-col">
+        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl">
           {showItem}
         </div>
       </div>

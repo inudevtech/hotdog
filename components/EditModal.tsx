@@ -73,7 +73,7 @@ const Modal = (props:ModalProps) => {
 
         return (showFlag ? (
           <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center">
-            <div className="bg-white rounded lg:w-5/6 w-full max-h-screen overflow-auto">
+            <div className={`bg-white rounded w-full max-h-screen overflow-auto ${value.AccountState == null ? 'md:w-1/3 sm:w-1/2' : 'lg:w-5/6'}`}>
               <FontAwesomeIcon icon={faXmark} onClick={() => setFlag()} className="block mr-0 ml-auto p-1 cursor-pointer" />
               <div className={`m-2 mt-0 flex gap-2 flex-col-reverse ${value.AccountState == null ? '' : 'md:flex-row'}`}>
                 <div className="grow">

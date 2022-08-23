@@ -66,7 +66,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                 />
                 <input
                   type="submit"
-                  className="transition mt-2 p-1 border border-blue-400 rounded-md hover:shadow-xl hover:border-blue-500 block text-center bg-blue-300"
+                  className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
                   value="ログイン"
                 />
                 <p className="text-red-500 whitespace-pre-wrap">

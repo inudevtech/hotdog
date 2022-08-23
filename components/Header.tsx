@@ -26,7 +26,7 @@ const Header = () => {
                 <button
                   type="button"
                   onClick={() => setSignUpOpen(true)}
-                  className="transition p-1 border border-blue-400 rounded-md hover:shadow-lg hover:border-blue-500 block text-center bg-blue-300"
+                  className="transition p-1 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
                 >
                   アカウントを作成
                 </button>
