@@ -53,13 +53,14 @@ const download = () => {
     if (executeRecaptcha) {
       executeRecaptcha!('download').then((token) => {
         const { id } = router.query;
-        const url = `/api/download?id=${id}&recaptcha=${token}`;
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', fileName!);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        axios.get('/api/download', { params: { id, recaptcha: token } }).then((res) => {
+          const link = document.createElement('a');
+          link.href = res.data.url;
+          link.setAttribute('download', fileName!);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
       });
     }
   };

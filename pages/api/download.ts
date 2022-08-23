@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Storage } from '@google-cloud/storage';
+import { Storage, GetSignedUrlConfig } from '@google-cloud/storage';
+import axios from 'axios';
 
 const connection = await mysql.createConnection({
   host: process.env.MYSQL_HOST,
@@ -17,25 +18,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(405).end();
   }
 
-  const { id } = req.query;
+  const { id, recaptcha } = req.query;
 
   // Recaptcha verification
-  // const params = {
-  //   secret: process.env.GOOGLE_RECAPTCHA_KEY!,
-  //   response: recaptcha,
-  // };
-  // try {
-  //   const recaptchaRes = await axios.post('https://www.google.com/recaptcha/api/siteverify', undefined, {
-  //     params,
-  //   });
-  //   if (!recaptchaRes.data.success || recaptchaRes.data.score <= 0.5) {
-  //     res.status(400).end();
-  //     return;
-  //   }
-  // } catch (e) {
-  //   res.status(400).end();
-  //   return;
-  // }
+  const params = {
+    secret: process.env.GOOGLE_RECAPTCHA_KEY!,
+    response: recaptcha,
+  };
+  try {
+    const recaptchaRes = await axios.post('https://www.google.com/recaptcha/api/siteverify', undefined, {
+      params,
+    });
+    if (!recaptchaRes.data.success || recaptchaRes.data.score <= 0.5) {
+      res.status(400).end();
+      return;
+    }
+  } catch (e) {
+    res.status(400).end();
+    return;
+  }
   // End of recaptcha verification
 
   const [rows] = await connection.execute('SELECT dir,fileName FROM fileData WHERE id = ?', [id]);
@@ -47,14 +48,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   const { dir, fileName } = (rows as unknown as {dir:string, fileName:string}[])[0];
 
-  const downloadFile = bucket.file(`${dir}/${fileName}`);
-  const downloadStream = downloadFile.createReadStream();
-  const fileSize = (await downloadFile.getMetadata())[0].size;
-
-  res.setHeader('content-length', fileSize);
-  downloadStream.pipe(res, { end: true }).on('error', (err) => {
-    console.error(err);
-    res.status(500).end();
+  const options: GetSignedUrlConfig = {
+    version: 'v4',
+    action: 'read',
+    expires: Date.now() + 60 * 1000, // 1 minutes
+  };
+  const [url] = await bucket.file(`${dir}/${fileName}`).getSignedUrl(options);
+  res.status(200).json({
+    url,
   });
 }
 
