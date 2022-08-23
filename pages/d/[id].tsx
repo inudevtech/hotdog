@@ -40,7 +40,7 @@ const download = () => {
             setFileName(res.data.fileName);
             setUser(res.data.user);
           }
-        });
+        }).catch(() => setIsExists(false));
       } else {
         setIsExists(false);
       }
@@ -104,13 +104,18 @@ const download = () => {
     );
   } else if (isExists === false) {
     showItem = (
-      <p>
-        お探しのファイルが見つかりませんでした。
-        <br />
-        URLが不正か既に削除されたファイルの可能性があります。
-        <br />
-        共有者にご確認ください。
-      </p>
+      <>
+        <p>
+          お探しのファイルが見つかりませんでした。
+          <br />
+          URLが不正か既に削除されたファイルの可能性があります。
+          <br />
+          共有者にご確認ください。
+        </p>
+        <p className="text-red-500">
+          ※ログインしていない状態でアップロードされたファイルは7日後に自動的に削除されます！
+        </p>
+      </>
     );
   } else {
     showItem = (

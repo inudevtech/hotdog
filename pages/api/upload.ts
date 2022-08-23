@@ -76,9 +76,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const directoryName = generateRandomString(32);
 
   const uploadFile = bucket.file(`${directoryName}/${filename as string}`);
+  let customTime;
+  if (uid) {
+    customTime = null;
+  } else {
+    customTime = new Date().toISOString();
+  }
   const uploadStream = uploadFile.createWriteStream({
     metadata: {
       contentType: type,
+      customTime,
     },
   });
 
@@ -98,9 +105,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
   });
 
+  let expiration: string | null;
+  if (uid) {
+    expiration = null;
+  } else {
+    const nowDate = new Date();
+    nowDate.setDate(nowDate.getDate() + 7);
+    expiration = nowDate.toISOString().slice(0, 19).replace('T', ' ');
+  }
+
   const id = generateRandomString(32);
-  connection.execute('CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535))').then(() => {
-    Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid) VALUES (?,?,?,?)', [id, directoryName, filename, uid]), upload]).then(() => {
+  connection.execute('CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME)').then(() => {
+    Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid,expiration) VALUES (?,?,?,?,?)', [id, directoryName, filename, uid, expiration]), upload]).then(() => {
       res.json({ id });
     }).catch(() => {
       res.status(500).end();

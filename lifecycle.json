@@ -1,0 +1,9 @@
+{
+  "rule":
+  [
+    {
+      "action": { "type": "Delete"},
+      "condition": {"daysSinceCustomTime": 7}
+    }
+  ]
+}

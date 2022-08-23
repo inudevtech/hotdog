@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faUpload, faXmark } from '@fortawesome/free-solid-svg-icons';
 import {
   FormEvent, Component, ReactElement,
 } from 'react';
@@ -12,6 +12,7 @@ import { AccountContext } from './_app';
 
 interface indexProps {
   file: ReactElement[],
+  isWarningOpen: boolean,
 }
 
 class index extends Component<{}, indexProps> {
@@ -26,6 +27,7 @@ class index extends Component<{}, indexProps> {
     };
     this.state = {
       file: [],
+      isWarningOpen: true,
     };
   }
 
@@ -56,7 +58,7 @@ class index extends Component<{}, indexProps> {
   }
 
   render() {
-    const { file } = this.state;
+    const { file, isWarningOpen } = this.state;
     return (
       <Dropzone onDrop={this.onDrop}>
         {({ getRootProps, getInputProps, isDragActive }) => (
@@ -103,12 +105,15 @@ class index extends Component<{}, indexProps> {
                         )}
                     </div>
                   </div>
-                  {value.AccountState == null ? (
+                  {value.AccountState == null && isWarningOpen ? (
                     <div
-                      className="bg-yellow-200/[.6] m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2"
+                      className="bg-yellow-200/[.6] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-50"
                     >
+                      <FontAwesomeIcon icon={faXmark} onClick={() => this.setState({ isWarningOpen: false })} className="p-1 cursor-pointer absolute top-0 right-0 md:hidden" />
                       <p className="text-xl">ログインせずにホットドッグを使用しています</p>
-                      <p>ログインをすると様々な特典を受け取れます</p>
+                      <p className="text-red-500">
+                        ログインしていない状態でアップロードされたファイルは7日後に自動的に削除されます！
+                      </p>
                     </div>
                   ) : null}
                 </div>
