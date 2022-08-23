@@ -122,7 +122,7 @@ const Modal = (props:ModalProps) => {
                           className="transition p-1 m-2 border bg-blue-200 border-blue-300 rounded-md hover:shadow-lg hover:border-blue-500 block text-center disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
                           disabled={!dirty}
                         >
-                          {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin" />) : null}
+                          {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
                           { dirty ? '保存' : '保存済み'}
                         </button>
                         <p className="text-red-500">{errorMsg}</p>

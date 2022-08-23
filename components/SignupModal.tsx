@@ -78,7 +78,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                     disabled={loading}
                     className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
                   >
-                    {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin" />) : null}
+                    {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
                     アカウントを作成
                   </button>
                 ) : null}

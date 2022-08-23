@@ -22,6 +22,7 @@ const download = () => {
   const [isExists, setIsExists] = useState<boolean|null>(null);
   const [description, setDescription] = useState<string|null>(null);
   const [user, setUser] = useState<GetUserProps|null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // コンポーネントの再レンダリング時にシンタックスハイライトを実行
 
@@ -49,17 +50,18 @@ const download = () => {
   let showItem;
 
   const downloadFile = () => {
+    setLoading(true);
     // Recaptcha認証を行う
     if (executeRecaptcha) {
       executeRecaptcha!('download').then((token) => {
         const { id } = router.query;
         axios.get('/api/download', { params: { id, recaptcha: token } }).then((res) => {
           const link = document.createElement('a');
+          link.download = fileName!;
           link.href = res.data.url;
-          link.setAttribute('download', fileName!);
-          document.body.appendChild(link);
           link.click();
-          document.body.removeChild(link);
+          link.remove();
+          setLoading(false);
         });
       });
     }
@@ -95,6 +97,7 @@ const download = () => {
           className="transition p-1 my-2 min-w-[300px] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
           onClick={downloadFile}
         >
+          {loading ? <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" /> : null}
           ダウンロード
         </button>
       </>
@@ -112,7 +115,7 @@ const download = () => {
   } else {
     showItem = (
       <p>
-        <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+        <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
         読み込み中
       </p>
     );
