@@ -207,7 +207,7 @@ const download = () => {
         </div>
       </div>
       {user?.isAnonymous ? null : (
-        <div className="container xl:max-w-5xl mx-auto relative top-[-150px]">
+        <div className="container xl:max-w-5xl mx-auto relative top-[-10vh]">
           <h2 className="text-2xl text-center m-2">
             {user?.displayName}
             さんの他のファイル
