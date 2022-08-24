@@ -10,6 +10,7 @@ import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { onAuthStateChanged } from '../util/firebase/auth';
 import { AccountType } from '../util/global';
 import { GA_ID, pageview } from '../util/gtag';
@@ -49,6 +50,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       language="ja"
     >
       <AccountContext.Provider value={value}>
+        <Head>
+          <title>ホットドッグ🌭</title>
+        </Head>
         {Loading ? (
           <div className="flex justify-center items-center h-screen flex-col">
             <h3 className="m-2 text-2xl">
