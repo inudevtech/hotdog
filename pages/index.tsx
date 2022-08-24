@@ -38,16 +38,16 @@ class index extends Component<{}, indexProps> {
 
     // Recaptcha認証を行う
     if (executeRecaptcha) {
-      executeRecaptcha!('upload').then((token) => {
-        for (let i = 0; i < files.length!; i += 1) {
+      for (let i = 0; i < files.length!; i += 1) {
+        executeRecaptcha!('upload').then((token) => {
           file.push(<ShowFile
             file={files[i]}
             key={file.length}
             recaptchaToken={token}
           />);
-        }
-        this.setState({ file });
-      });
+          this.setState({ file });
+        });
+      }
     }
   }
 
