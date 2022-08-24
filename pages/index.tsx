@@ -13,6 +13,7 @@ import { AccountContext } from './_app';
 interface indexProps {
   file: ReactElement[],
   isWarningOpen: boolean,
+  excess: boolean
 }
 
 class index extends Component<{}, indexProps> {
@@ -28,6 +29,7 @@ class index extends Component<{}, indexProps> {
     this.state = {
       file: [],
       isWarningOpen: true,
+      excess: false,
     };
   }
 
@@ -39,6 +41,10 @@ class index extends Component<{}, indexProps> {
     // Recaptcha認証を行う
     if (executeRecaptcha) {
       for (let i = 0; i < files.length!; i += 1) {
+        if (file.length + i >= 10) {
+          this.setState({ excess: true });
+          break;
+        }
         executeRecaptcha!('upload').then((token) => {
           file.push(<ShowFile
             file={files[i]}
@@ -58,7 +64,7 @@ class index extends Component<{}, indexProps> {
   }
 
   render() {
-    const { file, isWarningOpen } = this.state;
+    const { file, isWarningOpen, excess } = this.state;
     return (
       <Dropzone onDrop={this.onDrop}>
         {({ getRootProps, getInputProps, isDragActive }) => (
@@ -70,7 +76,7 @@ class index extends Component<{}, indexProps> {
                   <div
                     className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] border border-slate-300 rounded-xl"
                   >
-                    <div className="basis-1/3 flex flex-col">
+                    <div className="basis-1/3 flex flex-col gap-2">
                       <div
                         {...getRootProps()}
                         className={`border-dashed border-2 rounded-md flex justify-center items-center p-5 flex-auto ${isDragActive ? 'border-blue-600 bg-blue-100' : 'border-slate-600'}`}
@@ -90,10 +96,11 @@ class index extends Component<{}, indexProps> {
                         ファイルをアップロード
                         <input type="file" id="upload" className="hidden" multiple />
                       </label>
+                      <p className="text-lg text-red-500" hidden={!excess}>一度に送信できるファイルは10件までです！</p>
                     </div>
                     <div className="border-r border-t border-slate-200 border-2" />
                     <div
-                      className={`flex gap-2 basis-2/3 flex-col ${file.length === 0 ? ' items-center justify-center' : ''}`}
+                      className={`flex gap-2 basis-2/3 flex-col overflow-auto ${file.length === 0 ? ' items-center justify-center' : ''}`}
                     >
                       {file.length !== 0 ? file
                         : (
