@@ -206,21 +206,23 @@ const download = () => {
           {showItem}
         </div>
       </div>
-      <div className="container xl:max-w-5xl mx-auto relative top-[-150px]">
-        <h2 className="text-2xl text-center m-2">
-          {user?.displayName}
-          さんの他のファイル
-        </h2>
-        <InfiniteScroll
-          loadMore={(page) => addRelations(page)} // 項目を読み込む際に処理するコールバック関数
-          hasMore={hasMore} // 読み込みを行うかどうかの判定
-          loader={<div className="text-2xl" key={0}>読み込み中...</div>}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {fileList}
-          </div>
-        </InfiniteScroll>
-      </div>
+      {user?.isAnonymous ? null : (
+        <div className="container xl:max-w-5xl mx-auto relative top-[-150px]">
+          <h2 className="text-2xl text-center m-2">
+            {user?.displayName}
+            さんの他のファイル
+          </h2>
+          <InfiniteScroll
+            loadMore={(page) => addRelations(page)} // 項目を読み込む際に処理するコールバック関数
+            hasMore={hasMore} // 読み込みを行うかどうかの判定
+            loader={<div className="text-2xl" key={0}>読み込み中...</div>}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {fileList}
+            </div>
+          </InfiniteScroll>
+        </div>
+      )}
     </>
   );
 };
