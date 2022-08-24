@@ -14,45 +14,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(405).end();
   }
 
-  const { id } = req.query;
+  const { id, index } = req.query;
 
-  await connection.query('DELETE FROM fileData WHERE expiration < NOW()');
+  if (index === undefined) {
+    await connection.query('DELETE FROM fileData WHERE expiration < NOW()');
 
-  const [rows] = await connection.query('SELECT uid, displayName, description, fileName FROM fileData WHERE id = ?', [id]);
-  if ((rows as unknown[]).length === 0) {
-    res.status(400).json({
-      exists: false,
-    });
-    return;
-  }
-  const fileData = (rows as unknown as {uid?: string|null}[])[0];
-
-  // User情報の取得
-  const returnUserData: {
-    isDeletedUser: boolean;
-    isAnonymous: boolean,
-    iconURL?: string,
-    displayName?: string,
-  } = {
-    isDeletedUser: false,
-    isAnonymous: false,
-  };
-  if (fileData.uid === null) {
-    returnUserData.isAnonymous = true;
-  } else {
-    try {
-      const user = await adminAuth.getUser(fileData?.uid!);
-      returnUserData.iconURL = user.photoURL;
-      returnUserData.displayName = user.displayName;
-    } catch {
-      returnUserData.isDeletedUser = true;
+    const [rows] = await connection.query('SELECT uid, displayName, description, fileName FROM fileData WHERE id = ?', [id]);
+    if ((rows as unknown[]).length === 0) {
+      res.status(200).json({
+        exists: false,
+      });
+      return;
     }
-  }
-  delete fileData.uid;
+    const fileData = (rows as unknown as { uid?: string | null }[])[0];
 
-  res.status(200).json({
-    exists: true,
-    ...fileData,
-    user: returnUserData,
-  });
+    // User情報の取得
+    const returnUserData: {
+      isDeletedUser: boolean;
+      isAnonymous: boolean,
+      iconURL?: string,
+      displayName?: string,
+    } = {
+      isDeletedUser: false,
+      isAnonymous: false,
+    };
+    if (fileData.uid === null) {
+      returnUserData.isAnonymous = true;
+    } else {
+      try {
+        const user = await adminAuth.getUser(fileData?.uid!);
+        returnUserData.iconURL = user.photoURL;
+        returnUserData.displayName = user.displayName;
+      } catch {
+        returnUserData.isDeletedUser = true;
+      }
+    }
+    delete fileData.uid;
+
+    res.status(200).json({
+      exists: true,
+      ...fileData,
+      user: returnUserData,
+    });
+  } else {
+    const [rows] = await connection.query('SELECT uid FROM fileData WHERE id = ?', [id]);
+    if ((rows as unknown[]).length === 0) {
+      res.status(400).json({
+        exists: false,
+      });
+      return;
+    }
+    const { uid } = (rows as unknown as { uid?: string | null }[])[0];
+    if (uid === null) {
+      res.status(400).end();
+      return;
+    }
+
+    const [fileRows] = await connection.query('SELECT id, displayName, fileName, description,uploadDate FROM fileData WHERE uid = ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?', [uid, Number(index)]);
+    res.status(200).json(fileRows);
+  }
 }
