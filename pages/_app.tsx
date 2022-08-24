@@ -7,11 +7,12 @@ import {
 } from 'react';
 import { User } from '@firebase/auth';
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
-import Script from 'next/script';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/router';
 import { onAuthStateChanged } from '../util/firebase/auth';
 import { AccountType } from '../util/global';
+import { GA_ID, pageview } from '../util/gtag';
 
 config.autoAddCss = false;
 
@@ -29,6 +30,18 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   }, []);
   const value = useMemo(() => ({ AccountState, setAccountState }), [AccountState, setAccountState]);
 
+  const router = useRouter();
+  useEffect(() => {
+    // GA_TRACKING_ID が設定されていない場合は、処理終了
+    if (!GA_ID) return;
+
+    const handleRouteChange = (url: string) => {
+      pageview(url);
+    };
+    router.events.on('routeChangeComplete', handleRouteChange);
+    router.events.off('routeChangeComplete', handleRouteChange);
+  }, [router.events]);
+
   return (
     <GoogleReCaptchaProvider
       reCaptchaKey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY!}
@@ -36,19 +49,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       language="ja"
     >
       <AccountContext.Provider value={value}>
-        <Script
-          id="ga"
-          strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_TRACKING_ID}`}
-        />
-        <Script id="ga" strategy="afterInteractive">
-          {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${process.env.NEXT_PUBLIC_GA_TRACKING_ID}');
-        `}
-        </Script>
         {Loading ? (
           <div className="flex justify-center items-center h-screen flex-col">
             <h3 className="m-2 text-2xl">
