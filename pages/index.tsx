@@ -107,7 +107,7 @@ class index extends Component<{}, indexProps> {
                   </div>
                   {value.AccountState == null && isWarningOpen ? (
                     <div
-                      className="bg-yellow-200/[.6] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-50"
+                      className="bg-yellow-200/[.6] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10"
                     >
                       <FontAwesomeIcon icon={faXmark} onClick={() => this.setState({ isWarningOpen: false })} className="p-1 cursor-pointer absolute top-0 right-0 md:hidden" />
                       <p className="text-xl">ログインせずにホットドッグを使用しています</p>

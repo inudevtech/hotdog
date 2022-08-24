@@ -43,7 +43,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
     return (
       <div>
         {showFlag ? (
-          <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center">
+          <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-50">
             <div className="bg-white rounded">
               <FontAwesomeIcon
                 icon={faXmark}
