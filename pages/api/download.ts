@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Storage, GetSignedUrlConfig } from '@google-cloud/storage';
-import axios from 'axios';
+import recaptchaVerification from '../../util/recaptchaVerification';
 
 const connection = await mysql.createConnection({
   host: process.env.MYSQL_HOST,
@@ -21,20 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { id, recaptcha } = req.query;
 
   // Recaptcha verification
-  const params = {
-    secret: process.env.GOOGLE_RECAPTCHA_KEY!,
-    response: recaptcha,
-  };
-  try {
-    const recaptchaRes = await axios.post('https://www.google.com/recaptcha/api/siteverify', undefined, {
-      params,
-    });
-    if (!recaptchaRes.data.success || recaptchaRes.data.score <= 0.5) {
-      res.status(400).end();
-      return;
-    }
-  } catch (e) {
-    res.status(400).end();
+  const isVerificationClear = await recaptchaVerification(<string>recaptcha!, res);
+  if (!isVerificationClear) {
     return;
   }
   // End of recaptcha verification

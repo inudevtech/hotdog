@@ -5,8 +5,8 @@ import { Storage } from '@google-cloud/storage';
 import { randomBytes } from 'crypto';
 
 import mysql from 'mysql2/promise';
-import axios from 'axios';
 import adminAuth from '../../util/firebase/firebase-admin';
+import recaptchaVerification from '../../util/recaptchaVerification';
 
 const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
@@ -45,20 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let contentLength = Number(contentLengthHeader);
 
   // Recaptcha verification
-  const params = {
-    secret: process.env.GOOGLE_RECAPTCHA_KEY!,
-    response: recaptcha,
-  };
-  try {
-    const recaptchaRes = await axios.post('https://www.google.com/recaptcha/api/siteverify', undefined, {
-      params,
-    });
-    if (!recaptchaRes.data.success || recaptchaRes.data.score <= 0.5) {
-      res.status(400).end();
-      return;
-    }
-  } catch (e) {
-    res.status(400).end();
+  const isVerificationClear = await recaptchaVerification(<string>recaptcha!, res);
+  if (!isVerificationClear) {
     return;
   }
   // End of recaptcha verification
