@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Editor } from '@tinymce/tinymce-react';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import { AccountContext } from '../pages/_app';
-import { AccountType } from '../util/global';
 import { getStringBytes } from '../util/util';
+import { AccountContext } from '../pages/_app';
 
 interface ModalProps {
   showFlag: boolean,
@@ -17,7 +16,7 @@ const Modal = (props:ModalProps) => {
   const { showFlag, setFlag, id } = props;
   const editorRef = useRef<Editor>(null);
   const titleRef = useRef<HTMLInputElement>(null);
-  const [account, setAccount] = useState<AccountType>();
+  const { AccountState } = useContext(AccountContext);
   const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean | number>(false);
@@ -37,10 +36,9 @@ const Modal = (props:ModalProps) => {
         editorRef.current.editor?.setDirty(false);
 
         let accessToken;
-        if (account == null) {
+        if (AccountState == null) {
           accessToken = null;
         } else {
-          const { AccountState } = account;
           accessToken = await AccountState?.getIdToken();
         }
 
@@ -59,7 +57,7 @@ const Modal = (props:ModalProps) => {
     }
   };
 
-  let errorMsg: string;
+  let errorMsg: string = '';
   if (error === 0) errorMsg = '説明文が長すぎます。説明文を短くしてください。';
   else if (error === 1) errorMsg = 'タイトルが長すぎます。タイトルを短くしてください。';
   else if (typeof error === 'number') {
@@ -67,80 +65,74 @@ const Modal = (props:ModalProps) => {
   }
 
   return (
-    <AccountContext.Consumer>
-      {(value) => {
-        setAccount(value);
-
-        return (showFlag ? (
-          <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center">
-            <div className={`bg-white rounded w-full max-h-screen overflow-auto ${value.AccountState == null ? 'md:w-1/3 sm:w-1/2' : 'lg:w-5/6'}`}>
-              <FontAwesomeIcon icon={faXmark} onClick={() => setFlag()} className="block mr-0 ml-auto p-1 cursor-pointer" />
-              <div className={`m-2 mt-0 flex gap-2 flex-col-reverse ${value.AccountState == null ? '' : 'md:flex-row'}`}>
-                <div className="grow">
-                  {value.AccountState == null
-                    ? <p>タイトルと説明はログインすると記入できます。</p>
-                    : (
-                      <>
-                        <p className="m-2 text-xl">タイトル</p>
-                        <input
-                          type="text"
-                          className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2 w-full"
-                          ref={titleRef}
-                          onChange={() => {
-                            setDirty(true);
-                            setError(false);
-                          }}
-                        />
-                        <p className="m-2 text-xl">ファイルの説明</p>
-                        <Editor
-                          ref={editorRef}
-                          apiKey={process.env.NEXT_PUBLIC_TINY_APIKEY}
-                          initialValue=""
-                          init={{
-                            height: 500,
-                            menubar: true,
-                            plugins: [
-                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                              'anchor', 'searchreplace', 'visualblocks', 'codesample', 'fullscreen',
-                              'insertdatetime', 'media', 'table', 'help',
-                            ],
-                            toolbar: 'undo redo | blocks | '
+    showFlag ? (
+      <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-20">
+        <div className={`bg-white rounded-xl w-full max-h-screen overflow-auto ${AccountState == null ? 'md:w-1/3 sm:w-1/2' : 'lg:w-5/6'}`}>
+          <FontAwesomeIcon icon={faXmark} onClick={() => setFlag()} className="block mr-0 ml-auto p-1 cursor-pointer" />
+          <div className={`m-2 mt-0 flex gap-2 flex-col-reverse ${AccountState == null ? '' : 'md:flex-row'}`}>
+            <div className="grow">
+              {AccountState == null
+                ? <p>タイトルと説明はログインすると記入できます。</p>
+                : (
+                  <>
+                    <p className="m-2 text-xl">タイトル</p>
+                    <input
+                      type="text"
+                      className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2 w-full"
+                      ref={titleRef}
+                      onChange={() => {
+                        setDirty(true);
+                        setError(false);
+                      }}
+                    />
+                    <p className="m-2 text-xl">ファイルの説明</p>
+                    <Editor
+                      ref={editorRef}
+                      apiKey={process.env.NEXT_PUBLIC_TINY_APIKEY}
+                      initialValue=""
+                      init={{
+                        height: 500,
+                        menubar: true,
+                        plugins: [
+                          'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                          'anchor', 'searchreplace', 'visualblocks', 'codesample', 'fullscreen',
+                          'insertdatetime', 'media', 'table', 'help',
+                        ],
+                        toolbar: 'undo redo | blocks | '
                                 + 'bold italic forecolor backcolor | alignleft aligncenter '
                                 + 'alignright alignjustify | bullist numlist outdent indent | '
                                 + 'codesample removeformat | help',
-                            language: 'ja',
-                            language_url: './ja.js',
-                          }}
-                          onDirty={() => {
-                            setDirty(true);
-                            setError(false);
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={save}
-                          className="transition p-1 m-2 border bg-blue-200 border-blue-300 rounded-md hover:shadow-lg hover:border-blue-500 block text-center disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
-                          disabled={!dirty}
-                        >
-                          {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
-                          { dirty ? '保存' : '保存済み'}
-                        </button>
-                        <p className="text-red-500">{errorMsg}</p>
-                      </>
-                    )}
-                </div>
-                <div className="border-r border-t border-slate-200 border-2" />
-                <div>
-                  <p>共有URL</p>
-                  <p className="border rounded border-slate-500 select-all p-1 max-w-[250px] overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/${id}`}</p>
-                </div>
-              </div>
+                        language: 'ja',
+                        language_url: './ja.js',
+                      }}
+                      onDirty={() => {
+                        setDirty(true);
+                        setError(false);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={save}
+                      className="transition p-1 m-2 border bg-blue-200 border-blue-300 rounded-md hover:shadow-lg hover:border-blue-500 block text-center disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
+                      disabled={!dirty}
+                    >
+                      {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
+                      { dirty ? '保存' : '保存済み'}
+                    </button>
+                    <p className="text-red-500">{errorMsg}</p>
+                  </>
+                )}
+            </div>
+            <div className="border-r border-t border-slate-200 border-2" />
+            <div>
+              <p>共有URL</p>
+              <p className="border rounded border-slate-500 select-all p-1 max-w-[250px] overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/${id}`}</p>
             </div>
           </div>
-        )
-          : <div />);
-      }}
-    </AccountContext.Consumer>
+        </div>
+      </div>
+    )
+      : <div />
   );
 };
 
