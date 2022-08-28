@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
 import axios from 'axios';
-import { faSpinner, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faSpinner, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Prism from 'prismjs';
@@ -25,6 +25,7 @@ const download = () => {
   const [user, setUser] = useState<GetUserProps|null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, sethasMore] = useState<boolean>(false);
+  const [isIcon, setIsIcon] = useState<boolean>(false);
   const [fileList, setFileList] = useState<ReactElement[]>([]);
 
   function addRelations(page: number) {
@@ -95,6 +96,7 @@ const download = () => {
             setTitle(res.data.displayName);
             setDescription(res.data.description);
             setFileName(res.data.fileName);
+            setIsIcon(res.data.icon);
             setUser(res.data.user);
 
             addRelations(0);
@@ -137,7 +139,7 @@ const download = () => {
     showItem = (
       <>
         <p className="mb-3 flex items-center gap-1">
-          {user?.iconURL ? <Image src={user?.iconURL} alt="アイコン" width="30" height="30" className="rounded-full" /> : <FontAwesomeIcon icon={faUser} className="bg-black rounded-full px-[4px] py-[3px]" color="#fff" />}
+          {user?.iconURL ? <Image src={user?.iconURL} alt="アイコン" width="26" height="26" className="rounded-full" /> : <FontAwesomeIcon icon={faUser} className="bg-black rounded-full px-[6px] py-[5px]" color="#fff" />}
           {user?.isAnonymous ? '匿名ユーザー' : user?.displayName}
         </p>
         {title ? (
@@ -151,6 +153,14 @@ const download = () => {
             <pre className="italic text-sm">タイトルはありません。</pre>
           </>
         )}
+        {isIcon ? (
+          <p className="bg-blue-300/[.6] rounded border border-blue-400 p-2 my-2">
+            <FontAwesomeIcon icon={faCircleInfo} className="px-2" />
+            これは
+            {user?.displayName}
+            さんのユーザーアイコンです。
+          </p>
+        ) : null}
         {output.innerHTML === '<div>null</div>' ? null
           // eslint-disable-next-line react/no-danger
           : <div dangerouslySetInnerHTML={{ __html: output.innerHTML }} className="border-t-2 mt-2 p-1 overflow-auto" />}
