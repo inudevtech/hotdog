@@ -1,13 +1,8 @@
-import mysql from 'mysql2/promise';
 import { NextApiRequest, NextApiResponse } from 'next';
 import adminAuth from '../../util/firebase/firebase-admin';
+import { getConnection } from '../../util/serverUtil';
 
-const connection = await mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  database: process.env.MYSQL_DATABASE,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-});
+let connection = await getConnection();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -17,9 +12,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { id, index } = req.query;
 
   if (index === undefined) {
+    try {
+      connection.ping();
+    } catch (e) {
+      connection = await getConnection();
+    }
+
     await connection.query('DELETE FROM fileData WHERE expiration < NOW()');
 
-    const [rows] = await connection.query('SELECT uid, displayName, description, fileName FROM fileData WHERE id = ?', [id]);
+    const [rows] = await connection.query('SELECT uid, displayName, description, fileName, icon FROM fileData WHERE id = ?', [id]);
     if ((rows as unknown[]).length === 0) {
       res.status(200).json({
         exists: false,
@@ -70,7 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    const [fileRows] = await connection.query('SELECT id, displayName, fileName, description,uploadDate FROM fileData WHERE uid = ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?', [uid, Number(index)]);
+    const [fileRows] = await connection.query('SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?', [uid, Number(index)]);
     res.status(200).json(fileRows);
   }
 }

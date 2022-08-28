@@ -1,14 +1,8 @@
-import mysql from 'mysql2/promise';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Storage, GetSignedUrlConfig } from '@google-cloud/storage';
-import recaptchaVerification from '../../util/recaptchaVerification';
+import { getConnection, serverUtil } from '../../util/serverUtil';
 
-const connection = await mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  database: process.env.MYSQL_DATABASE,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-});
+let connection = await getConnection();
 
 const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
@@ -18,10 +12,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(405).end();
   }
 
+  try {
+    connection.ping();
+  } catch (e) {
+    connection = await getConnection();
+  }
+
   const { id, recaptcha } = req.query;
 
   // Recaptcha verification
-  const isVerificationClear = await recaptchaVerification(<string>recaptcha!, res);
+  const isVerificationClear = await serverUtil(<string>recaptcha!, res);
   if (!isVerificationClear) {
     return;
   }

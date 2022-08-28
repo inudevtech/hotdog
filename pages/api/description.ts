@@ -1,17 +1,18 @@
-import mysql from 'mysql2/promise';
 import { NextApiRequest, NextApiResponse } from 'next';
 import adminAuth from '../../util/firebase/firebase-admin';
+import { getConnection } from '../../util/serverUtil';
 
-const connection = await mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  database: process.env.MYSQL_DATABASE,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-});
+let connection = await getConnection();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return;
+  }
+
+  try {
+    connection.ping();
+  } catch (e) {
+    connection = await getConnection();
   }
 
   const { token, id } = req.query;

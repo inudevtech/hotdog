@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
 import { Storage } from '@google-cloud/storage';
-
 import { randomBytes } from 'crypto';
-
-import mysql from 'mysql2/promise';
 import adminAuth from '../../util/firebase/firebase-admin';
-import recaptchaVerification from '../../util/recaptchaVerification';
+import {
+  cors, getConnection, runMiddleware, serverUtil,
+} from '../../util/serverUtil';
 
 const storage = new Storage({ keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS });
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
@@ -15,12 +13,7 @@ function generateRandomString(length: number) {
   return randomBytes(length).reduce((p, i) => p + (i % 32).toString(32), '');
 }
 
-const connection = await mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  database: process.env.MYSQL_DATABASE,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-});
+let connection = await getConnection();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -28,13 +21,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
+  try {
+    connection.ping();
+  } catch (e) {
+    connection = await getConnection();
+  }
+
+  // Run the middleware
+  await runMiddleware(req, res, cors);
+
   const {
-    type, filename, token, recaptcha,
+    type, filename, token, recaptcha, icon,
   } = req.query;
+
+  if (icon !== undefined && token === undefined) {
+    res.status(400).end();
+    return;
+  }
 
   const contentLengthHeader = req.headers['content-length'];
   try {
     if (!contentLengthHeader || Number(contentLengthHeader) > 1000 * 1000 * 1000 * 5) {
+      res.status(413).end();
+      return;
+    } if (icon !== undefined && Number(contentLengthHeader) > 1000 * 1000 * 3) {
       res.status(413).end();
       return;
     }
@@ -45,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let contentLength = Number(contentLengthHeader);
 
   // Recaptcha verification
-  const isVerificationClear = await recaptchaVerification(<string>recaptcha!, res);
+  const isVerificationClear = await serverUtil(<string>recaptcha!, res);
   if (!isVerificationClear) {
     return;
   }
@@ -75,6 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       contentType: type,
       customTime,
     },
+    public: icon !== undefined,
   });
 
   const upload = new Promise<void>((resolve, reject) => {
@@ -104,9 +115,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const nowDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
   const id = generateRandomString(32);
-  connection.execute('CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME)').then(() => {
-    Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate) VALUES (?,?,?,?,?,?)', [id, directoryName, filename, uid, expiration, nowDate]), upload]).then(() => {
-      res.json({ id });
+  connection.execute('CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL)').then(() => {
+    Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)', [id, directoryName, filename, uid, expiration, nowDate, icon !== undefined]), upload]).then(() => {
+      if (icon !== undefined) {
+        res.json({ id: uploadFile.publicUrl() });
+      } else {
+        res.json({ id });
+      }
     }).catch(() => {
       res.status(500).end();
     });
