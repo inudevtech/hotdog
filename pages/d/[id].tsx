@@ -97,7 +97,16 @@ const download = () => {
             setDescription(res.data.description);
             setFileName(res.data.fileName);
             setIsIcon(res.data.icon);
-            setUser(res.data.user);
+
+            if (res.data.user.isDeletedUser) {
+              setUser({
+                isAnonymous: false,
+                iconURL: undefined,
+                displayName: '削除済みユーザー',
+              });
+            } else {
+              setUser(res.data.user);
+            }
 
             addRelations(0);
           }
