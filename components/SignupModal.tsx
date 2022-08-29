@@ -82,10 +82,10 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                     アカウントを作成
                   </button>
                 ) : null}
-                <p className={`whitespace-pre-wrap${state ? 'text-red-500' : ''}`}>
+                <p className={`whitespace-pre-wrap ${state ? 'text-red-500' : ''}`}>
                   {errMsg}
                 </p>
-                {state === false ? (
+                {state === false || state ? (
                   <button
                     type="button"
                     className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
