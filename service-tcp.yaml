@@ -58,4 +58,4 @@ spec:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: 70 # CPU使用率が常に70%になるように指定
+        targetAverageUtilization: 60 # CPU使用率が常に70%になるように指定
