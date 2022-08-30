@@ -89,13 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const upload = new Promise<void>((resolve, reject) => {
-    req.on('data', (d) => {
-      contentLength -= d.size;
-      if (contentLength < 0) {
-        reject(new Error('File too large'));
-      }
-    })
-      .pipe(uploadStream)
+    req.pipe(uploadStream)
       .on('error', (e) => {
         reject(e);
       })
@@ -116,11 +110,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const nowDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
   const id = generateRandomString(32);
   connection.execute('CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL)').then(() => {
-    Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)', [id, directoryName, filename, uid, expiration, nowDate, icon !== undefined]), upload]).then(() => {
+    Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)', [id, directoryName, filename, uid, expiration, nowDate, icon !== undefined]), upload]).then(async () => {
+      const [metadata] = await uploadFile.getMetadata();
+      console.log(metadata.size);
+      if(contentLength < metadata.size){
+        await uploadFile.delete();
+        res.status(400).end();
+        return;
+      }
+
       if (icon !== undefined) {
-        res.json({ id: uploadFile.publicUrl() });
+        res.json({id: uploadFile.publicUrl()});
       } else {
-        res.json({ id });
+        res.json({id});
       }
     }).catch(() => {
       res.status(500).end();

@@ -51,7 +51,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     >
       <AccountContext.Provider value={value}>
         <Head>
-          <title>ホットドッグ🌭</title>
+          <title>🌭ホットドッグ</title>
         </Head>
         {Loading ? (
           <div className="flex justify-center items-center h-screen flex-col">
