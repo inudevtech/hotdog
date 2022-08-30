@@ -71,7 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    const [fileRows] = await connection.query('SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?', [uid, Number(index)]);
+    const [fileRows] = await connection.query('SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?', [uid, id, Number(index)]);
     res.status(200).json(fileRows);
   }
 }
