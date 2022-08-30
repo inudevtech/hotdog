@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap');
 
 blockquote{
   position:relative;
@@ -41,4 +42,13 @@ blockquote{
 
 .gradient {
   background: linear-gradient( rgba(255, 255, 255, 0), #ffffff);
+}
+
+.logo-text {
+  font-family: 'RocknRoll One', sans-serif;
+}
+
+.item {
+  color: transparent;
+  -webkit-text-stroke: 0.05em rgb(0, 0, 0);
 }

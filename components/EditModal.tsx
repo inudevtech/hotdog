@@ -113,7 +113,7 @@ const Modal = (props:ModalProps) => {
                     <button
                       type="button"
                       onClick={save}
-                      className="transition p-1 m-2 border bg-blue-200 border-blue-300 rounded-md hover:shadow-lg hover:border-blue-500 block text-center disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
+                      className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
                       disabled={!dirty}
                     >
                       {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
