@@ -122,12 +122,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } else {
         res.json({ id });
       }
-    }).catch((e) => {
-      console.error(e);
+    }).catch(() => {
       res.status(500).end();
     });
-  }).catch((e) => {
-    console.error(e);
+  }).catch(() => {
     res.status(500).end();
   });
 }
