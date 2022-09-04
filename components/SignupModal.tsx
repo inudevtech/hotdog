@@ -29,11 +29,11 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
     e.preventDefault();
     const elements = e.currentTarget as unknown as HTMLInputElement[];
     this.setState({ loading: true });
-    signUp(elements[0].value, elements[1].value, elements[2].value)
+    signUp(0,elements[0].value, elements[1].value, elements[2].value)
       .then(async () => {
         this.setState({ state: false, errMsg: '仮登録処理が完了しました。\nメールを確認して本登録処理を完了してください。\n本登録が完了するまでログインすることはできません。' });
       })
-      .catch(() => this.setState({ state: true, errMsg: '登録ができませんでした。\n入力情報を確認してください。' }))
+      .catch(() => this.setState({ state: true, errMsg: '登録ができませんでした。\n既に登録されているメールアドレスが入力されていないかを確認してください。' }))
       .finally(() => this.setState({ loading: false }));
   }
 
@@ -72,7 +72,8 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                   required
                 />
 
-                {state === null ? (
+                {state === null || state ? (
+                  <>
                   <button
                     type="submit"
                     disabled={loading}
@@ -81,11 +82,16 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                     {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
                     アカウントを作成
                   </button>
+                    <Image src="/btn_google_signin.png" alt="Login With Google" onClick={async () => {
+                      await signUp(1);
+                      setFlag();
+                    }} className="mx-auto cursor-pointer" width="300" height="50" objectFit="contain" />
+                         </>
                 ) : null}
                 <p className={`whitespace-pre-wrap ${state ? 'text-red-500' : ''}`}>
                   {errMsg}
                 </p>
-                {state === false || state ? (
+                {state === false ? (
                   <button
                     type="button"
                     className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"

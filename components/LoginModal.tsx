@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Component, FormEvent } from 'react';
 import Image from 'next/image';
-import { login } from '../util/firebase/auth';
+import {login} from '../util/firebase/auth';
 
 interface ModalProps {
   showFlag: boolean,
@@ -24,7 +24,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
   submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const elements = e.currentTarget as unknown as HTMLInputElement[];
-    login(elements[0].value, elements[1].value)
+    login(0,elements[0].value, elements[1].value)
       .then(async (r) => {
         if (r.user.emailVerified) {
           const { setFlag } = this.props;
@@ -69,6 +69,10 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                   className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
                   value="ログイン"
                 />
+                <Image src="/btn_google_signin.png" alt="Login With Google" onClick={async () => {
+                  await login(1);
+                  setFlag();
+                }} className="mx-auto cursor-pointer" width="300" height="50" objectFit="contain" />
                 <p className="text-red-500 whitespace-pre-wrap">
                   {errMsg}
                 </p>

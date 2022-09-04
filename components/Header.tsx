@@ -19,7 +19,7 @@ const Header = () => {
 
   let icon;
   if (AccountState?.photoURL) {
-    icon = <Image src={AccountState?.photoURL} alt="アイコン" width="32" height="32" className="rounded-full" />;
+    icon = <img src={AccountState?.photoURL} alt="アイコン" width="32" height="32" className="rounded-full" />;
   } else {
     icon = <FontAwesomeIcon icon={faUser} className="bg-black rounded-full px-[9px] py-[8px]" color="#fff" />;
   }
@@ -52,7 +52,7 @@ const Header = () => {
     <>
       <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow border-slate-200 border flex-wrap bg-white z-10">
         <Link href="/">
-          <div className="text-2xl logo-text flex gap-1 items-center cursor-pointer">
+          <div className="text-2xl flex gap-1 items-center cursor-pointer">
             <Image src="/hotdog-emoji.svg" width="25" height="25" alt="Hotdog Emoji" className="" />
             <span className="item">ホットドッグ</span>
           </div>
@@ -76,7 +76,7 @@ const Header = () => {
           </div>
         ) : (
           <Tippy content={tooltipContent} trigger="click" interactive theme="light-border">
-            <div>
+            <div className="cursor-pointer">
               {icon}
             </div>
           </Tippy>
