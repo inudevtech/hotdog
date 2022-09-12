@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(400).end();
     return;
   }
-  let contentLength = Number(contentLengthHeader);
+  const contentLength = Number(contentLengthHeader);
 
   // Recaptcha verification
   const isVerificationClear = await serverUtil(<string>recaptcha!, res);
@@ -113,16 +113,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     Promise.all([connection.execute('INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)', [id, directoryName, filename, uid, expiration, nowDate, icon !== undefined]), upload]).then(async () => {
       const [metadata] = await uploadFile.getMetadata();
       console.log(metadata.size);
-      if(contentLength < metadata.size){
+      if (contentLength < metadata.size) {
         await uploadFile.delete();
         res.status(400).end();
         return;
       }
 
       if (icon !== undefined) {
-        res.json({id: uploadFile.publicUrl()});
+        res.json({ id: uploadFile.publicUrl() });
       } else {
-        res.json({id});
+        res.json({ id });
       }
     }).catch(() => {
       res.status(500).end();

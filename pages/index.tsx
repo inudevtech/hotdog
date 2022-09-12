@@ -6,10 +6,10 @@ import {
 import { faFolder } from '@fortawesome/free-regular-svg-icons';
 import { IWithGoogleReCaptchaProps, withGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Dropzone from 'react-dropzone';
+import Image from 'next/image';
 import ShowFile from '../components/ShowFile';
 import Header from '../components/Header';
 import { AccountContext } from './_app';
-import Image from "next/image";
 
 interface indexProps {
   file: ReactElement[],
@@ -126,11 +126,11 @@ class index extends Component<{}, indexProps> {
                   ) : null}
                 </div>
                 <div className="container xl:max-w-5xl mx-auto relative top-[-10vh]">
-                  <a className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap" href="/about">
+                  <a className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap" href="https://www.inu-dev.tech/hotdog">
                     <Image src="/hotdog-emoji.svg" width="40" height="40" alt="Hotdog Emoji" className="" />
                     <span className="item transition-all">ホットドッグ</span>
                     <span>とは？</span>
-                    <span className="relative h-[25px]"><div className="w-[50px]"></div></span>
+                    <span className="relative h-[25px]"><div className="w-[50px]" /></span>
                   </a>
                 </div>
               </>
