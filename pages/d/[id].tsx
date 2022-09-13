@@ -32,8 +32,8 @@ const download = () => {
   const [isIcon, setIsIcon] = useState<boolean>(false);
   const [fileList, setFileList] = useState<ReactElement[]>([]);
 
-  function addRelations(page: number) {
-    if (!user?.isAnonymous) {
+  function addRelations(page: number, u: GetUserProps | null) {
+    if (!u?.isAnonymous) {
       axios
         .get("/api/get", { params: { id: router.query.id, index: page * 3 } })
         .then((r) => {
@@ -121,18 +121,19 @@ const download = () => {
               setDescription(res.data.description);
               setFileName(res.data.fileName);
               setIsIcon(res.data.icon);
-
+              let u: GetUserProps | null;
               if (res.data.user.isDeletedUser) {
-                setUser({
+                u = {
                   isAnonymous: false,
                   iconURL: undefined,
                   displayName: "削除済みユーザー",
-                });
+                };
               } else {
-                setUser(res.data.user);
+                u = res.data.user;
               }
 
-              addRelations(0);
+              setUser(u);
+              addRelations(0, u);
             }
           })
           .catch(() => {
@@ -176,7 +177,8 @@ const download = () => {
       <>
         <p className="mb-3 flex items-center gap-1">
           {user?.iconURL ? (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={user?.iconURL}
               alt="アイコン"
               width="26"
@@ -279,7 +281,7 @@ const download = () => {
             さんの他のファイル
           </h2>
           <InfiniteScroll
-            loadMore={(page) => addRelations(page)} // 項目を読み込む際に処理するコールバック関数
+            loadMore={(page) => addRelations(page, user)} // 項目を読み込む際に処理するコールバック関数
             hasMore={hasMore} // 読み込みを行うかどうかの判定
             loader={
               <div className="text-2xl" key={0}>
