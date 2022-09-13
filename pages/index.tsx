@@ -143,7 +143,7 @@ class index extends Component<{}, indexProps> {
                     </div>
                   ) : null}
                 </div>
-                <div className="container xl:max-w-5xl mx-auto relative top-[-10vh]">
+                <div className="w-full mx-auto absolute top-[90vh] flex items-center justify-center transition ease-out duration-300 transform hover:scale-125">
                   <a
                     className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap"
                     href="https://www.inu-dev.tech/hotdog"
@@ -157,10 +157,8 @@ class index extends Component<{}, indexProps> {
                     />
                     <span className="item transition-all">ホットドッグ</span>
                     <span>とは？</span>
-                    <span className="relative h-[25px]">
-                      <div className="w-[50px]" />
-                    </span>
                   </a>
+                  <p className="yazirusi flex" />
                 </div>
               </>
             )}

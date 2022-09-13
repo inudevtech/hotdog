@@ -52,3 +52,13 @@ blockquote {
   color: transparent;
   -webkit-text-stroke: 0.05em rgb(0, 0, 0);
 }
+
+.yazirusi::after {
+  content: "";
+  transition: padding 0.3s ease;
+  width: 100px;
+  height: 15px;
+  border-bottom: solid 1px;
+  border-right: solid 1px;
+  transform: skew(45deg);
+}
