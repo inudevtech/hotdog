@@ -1,23 +1,23 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Component, FormEvent } from 'react';
-import Image from 'next/image';
-import { login } from '../util/firebase/auth';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Component, FormEvent } from "react";
+import Image from "next/image";
+import { login } from "../util/firebase/auth";
 
 interface ModalProps {
-  showFlag: boolean,
-  setFlag: any,
+  showFlag: boolean;
+  setFlag: any;
 }
 
 interface LoginStateProps {
-  errMsg: string
+  errMsg: string;
 }
 
 class loginModal extends Component<ModalProps, LoginStateProps> {
   constructor(props: ModalProps | Readonly<ModalProps>) {
     super(props);
     this.state = {
-      errMsg: '',
+      errMsg: "",
     };
   }
 
@@ -31,11 +31,18 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
           setFlag(false);
           window.location.reload();
         } else {
-          this.setState({ errMsg: 'メール認証ができていません。\n届いているメールをご確認ください。' });
+          this.setState({
+            errMsg:
+              "メール認証ができていません。\n届いているメールをご確認ください。",
+          });
         }
         // Cookies.set('access_token', await r.user.getIdToken(true));
       })
-      .catch(() => this.setState({ errMsg: 'ログインできませんでした。\n入力情報を確認してください。' }));
+      .catch(() =>
+        this.setState({
+          errMsg: "ログインできませんでした。\n入力情報を確認してください。",
+        })
+      );
   }
 
   render() {
@@ -51,9 +58,21 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                 onClick={() => setFlag()}
                 className="block mr-0 ml-auto p-1 cursor-pointer"
               />
-              <form className="m-5 mt-0 flex flex-col gap-2" onSubmit={this.submit.bind(this)}>
-                <Image src="/logo.png" className="mx-auto" alt="ロゴ" width="300" height="200" objectFit="contain" />
-                <h3 className="text-center text-xl">犬開発サービスにログイン</h3>
+              <form
+                className="m-5 mt-0 flex flex-col gap-2"
+                onSubmit={this.submit.bind(this)}
+              >
+                <Image
+                  src="/logo.png"
+                  className="mx-auto"
+                  alt="ロゴ"
+                  width="300"
+                  height="200"
+                  objectFit="contain"
+                />
+                <h3 className="text-center text-xl">
+                  犬開発サービスにログイン
+                </h3>
                 <input
                   type="email"
                   placeholder="メールアドレス"
@@ -81,14 +100,13 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                   height="50"
                   objectFit="contain"
                 />
-                <p className="text-red-500 whitespace-pre-wrap">
-                  {errMsg}
-                </p>
+                <p className="text-red-500 whitespace-pre-wrap">{errMsg}</p>
               </form>
             </div>
           </div>
-        )
-          : <div />}
+        ) : (
+          <div />
+        )}
       </div>
     );
   }

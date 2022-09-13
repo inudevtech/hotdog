@@ -1,39 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap");
 
-blockquote{
-  position:relative;
-  border-top:1px solid #1d3026;
-  border-bottom:1px solid #1d3026;
-  padding:10px;
+blockquote {
+  position: relative;
+  border-top: 1px solid #1d3026;
+  border-bottom: 1px solid #1d3026;
+  padding: 10px;
 
-  &:before{
-    position:absolute;
-    background-color:#FFFFFF;
-    content:'🌭';
-    line-height:1;
-    text-align:center;
-    top:-10px;
-    left:-10px;
-    font-size:20px;
+  &:before {
+    position: absolute;
+    background-color: #ffffff;
+    content: "🌭";
+    line-height: 1;
+    text-align: center;
+    top: -10px;
+    left: -10px;
+    font-size: 20px;
   }
 
-  &:after{
-    position:absolute;
-    right:-10px;
-    bottom:-10px;
-    background-color:#FFFFFF;
-    content:'🌭';
-    line-height:1;
-    text-align:center;
-    font-size:20px;
+  &:after {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    background-color: #ffffff;
+    content: "🌭";
+    line-height: 1;
+    text-align: center;
+    font-size: 20px;
   }
 
   cite {
     display: block;
-    padding-right:30px;
+    padding-right: 30px;
     font-size: 0.8rem;
     text-align: right;
     color: #aaa;
@@ -41,11 +41,11 @@ blockquote{
 }
 
 .gradient {
-  background: linear-gradient( rgba(255, 255, 255, 0), #ffffff);
+  background: linear-gradient(rgba(255, 255, 255, 0), #ffffff);
 }
 
 .logo-text {
-  font-family: 'RocknRoll One', sans-serif;
+  font-family: "RocknRoll One", sans-serif;
 }
 
 .item {

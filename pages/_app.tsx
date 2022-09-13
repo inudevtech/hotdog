@@ -1,19 +1,17 @@
-import '../styles/global.scss';
-import type { AppProps } from 'next/app';
-import { config } from '@fortawesome/fontawesome-svg-core';
-import '@fortawesome/fontawesome-svg-core/styles.css';
-import {
-  createContext, useEffect, useMemo, useState,
-} from 'react';
-import { User } from '@firebase/auth';
-import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import { onAuthStateChanged } from '../util/firebase/auth';
-import { AccountType } from '../util/global';
-import { GA_ID, pageview } from '../util/gtag';
+import "../styles/global.scss";
+import type { AppProps } from "next/app";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { createContext, useEffect, useMemo, useState } from "react";
+import { User } from "@firebase/auth";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import { onAuthStateChanged } from "../util/firebase/auth";
+import { AccountType } from "../util/global";
+import { GA_ID, pageview } from "../util/gtag";
 
 config.autoAddCss = false;
 
@@ -29,7 +27,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       setLoading(false);
     });
   }, []);
-  const value = useMemo(() => ({ AccountState, setAccountState }), [AccountState, setAccountState]);
+  const value = useMemo(
+    () => ({ AccountState, setAccountState }),
+    [AccountState, setAccountState]
+  );
 
   const router = useRouter();
   useEffect(() => {
@@ -39,8 +40,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     const handleRouteChange = (url: string) => {
       pageview(url);
     };
-    router.events.on('routeChangeComplete', handleRouteChange);
-    router.events.off('routeChangeComplete', handleRouteChange);
+    router.events.on("routeChangeComplete", handleRouteChange);
+    router.events.off("routeChangeComplete", handleRouteChange);
   }, [router.events]);
 
   return (
@@ -60,13 +61,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
               読み込み中
             </h3>
             <blockquote className="md:w-1/2">
-              ホットドッグ（英語: hot dog）は、ソーセージを細長いバンで挟んだ食品である。
+              ホットドッグ（英語: hot
+              dog）は、ソーセージを細長いバンで挟んだ食品である。
               <br />
-              なお、英語の&quot;hot dog&quot;（熱い犬）は、ソーセージ単体と、ソーセージを細長いバンで挟んだ食品との両方の意味を持つ。
+              なお、英語の&quot;hot
+              dog&quot;（熱い犬）は、ソーセージ単体と、ソーセージを細長いバンで挟んだ食品との両方の意味を持つ。
               <cite>https://ja.wikipedia.org/wiki/ホットドッグ</cite>
             </blockquote>
           </div>
-        ) : <Component {...pageProps} />}
+        ) : (
+          <Component {...pageProps} />
+        )}
       </AccountContext.Provider>
     </GoogleReCaptchaProvider>
   );

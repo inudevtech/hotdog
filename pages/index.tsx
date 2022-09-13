@@ -1,20 +1,21 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpload, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FormEvent, Component, ReactElement } from "react";
+import { faFolder } from "@fortawesome/free-regular-svg-icons";
 import {
-  FormEvent, Component, ReactElement,
-} from 'react';
-import { faFolder } from '@fortawesome/free-regular-svg-icons';
-import { IWithGoogleReCaptchaProps, withGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import Dropzone from 'react-dropzone';
-import Image from 'next/image';
-import ShowFile from '../components/ShowFile';
-import Header from '../components/Header';
-import { AccountContext } from './_app';
+  IWithGoogleReCaptchaProps,
+  withGoogleReCaptcha,
+} from "react-google-recaptcha-v3";
+import Dropzone from "react-dropzone";
+import Image from "next/image";
+import ShowFile from "../components/ShowFile";
+import Header from "../components/Header";
+import { AccountContext } from "./_app";
 
 interface indexProps {
-  file: ReactElement[],
-  isWarningOpen: boolean,
-  excess: boolean
+  file: ReactElement[];
+  isWarningOpen: boolean;
+  excess: boolean;
 }
 
 class index extends Component<{}, indexProps> {
@@ -34,10 +35,11 @@ class index extends Component<{}, indexProps> {
     };
   }
 
-  addFiles(files: FileList|File[]) {
+  addFiles(files: FileList | File[]) {
     const { file } = this.state;
-    const { executeRecaptcha } = (this.props as unknown as IWithGoogleReCaptchaProps)
-      .googleReCaptchaProps;
+    const { executeRecaptcha } = (
+      this.props as unknown as IWithGoogleReCaptchaProps
+    ).googleReCaptchaProps;
 
     // Recaptcha認証を行う
     if (executeRecaptcha) {
@@ -46,12 +48,14 @@ class index extends Component<{}, indexProps> {
           this.setState({ excess: true });
           break;
         }
-        executeRecaptcha!('upload').then((token) => {
-          file.push(<ShowFile
-            file={files[i]}
-            key={file.length}
-            recaptchaToken={token}
-          />);
+        executeRecaptcha!("upload").then((token) => {
+          file.push(
+            <ShowFile
+              file={files[i]}
+              key={file.length}
+              recaptchaToken={token}
+            />
+          );
           this.setState({ file });
         });
       }
@@ -59,7 +63,7 @@ class index extends Component<{}, indexProps> {
   }
 
   fileSelected(e: FormEvent<HTMLLabelElement>) {
-    const target = (e.target as HTMLInputElement);
+    const target = e.target as HTMLInputElement;
     if (!target.files || target.files.length === 0) return;
     this.addFiles(target.files!);
   }
@@ -74,18 +78,18 @@ class index extends Component<{}, indexProps> {
               <>
                 <Header />
                 <div className="flex justify-center items-center h-screen flex-col">
-                  <div
-                    className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] border border-slate-300 rounded-xl"
-                  >
+                  <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] border border-slate-300 rounded-xl">
                     <div className="basis-1/3 flex flex-col gap-2">
                       <div
                         {...getRootProps()}
-                        className={`border-dashed border-2 rounded-md flex justify-center items-center p-5 flex-auto ${isDragActive ? 'border-blue-600 bg-blue-100' : 'border-slate-600'}`}
+                        className={`border-dashed border-2 rounded-md flex justify-center items-center p-5 flex-auto ${
+                          isDragActive
+                            ? "border-blue-600 bg-blue-100"
+                            : "border-slate-600"
+                        }`}
                       >
                         <input {...getInputProps()} />
-                        <p>
-                          ファイルをドラッグ&ドロップ
-                        </p>
+                        <p>ファイルをドラッグ&ドロップ</p>
                       </div>
                       <p className="text-center text-2xl">or</p>
                       <label
@@ -95,30 +99,44 @@ class index extends Component<{}, indexProps> {
                       >
                         <FontAwesomeIcon icon={faUpload} className="pr-2" />
                         ファイルをアップロード
-                        <input type="file" id="upload" className="hidden" multiple />
+                        <input
+                          type="file"
+                          id="upload"
+                          className="hidden"
+                          multiple
+                        />
                       </label>
-                      <p className="text-lg text-red-500" hidden={!excess}>一度に送信できるファイルは10件までです！</p>
+                      <p className="text-lg text-red-500" hidden={!excess}>
+                        一度に送信できるファイルは10件までです！
+                      </p>
                     </div>
                     <div className="border-r border-t border-slate-200 border-2" />
                     <div
-                      className={`flex gap-2 basis-2/3 flex-col overflow-auto ${file.length === 0 ? ' items-center justify-center' : ''}`}
+                      className={`flex gap-2 basis-2/3 flex-col overflow-auto ${
+                        file.length === 0 ? " items-center justify-center" : ""
+                      }`}
                     >
-                      {file.length !== 0 ? file
-                        : (
-                          <FontAwesomeIcon
-                            icon={faFolder}
-                            className="h-1/2 w-1/2 md:h-1/2 md:w-1/2"
-                            color="rgb(226 232 240)"
-                          />
-                        )}
+                      {file.length !== 0 ? (
+                        file
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faFolder}
+                          className="h-1/2 w-1/2 md:h-1/2 md:w-1/2"
+                          color="rgb(226 232 240)"
+                        />
+                      )}
                     </div>
                   </div>
                   {value.AccountState == null && isWarningOpen ? (
-                    <div
-                      className="bg-yellow-200/[.6] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10"
-                    >
-                      <FontAwesomeIcon icon={faXmark} onClick={() => this.setState({ isWarningOpen: false })} className="p-1 cursor-pointer absolute top-0 right-0 md:hidden" />
-                      <p className="text-xl">ログインせずにホットドッグを使用しています</p>
+                    <div className="bg-yellow-200/[.6] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10">
+                      <FontAwesomeIcon
+                        icon={faXmark}
+                        onClick={() => this.setState({ isWarningOpen: false })}
+                        className="p-1 cursor-pointer absolute top-0 right-0 md:hidden"
+                      />
+                      <p className="text-xl">
+                        ログインせずにホットドッグを使用しています
+                      </p>
                       <p className="text-red-500">
                         ログインしていない状態でアップロードされたファイルは7日後に自動的に削除されます！
                       </p>
@@ -126,11 +144,22 @@ class index extends Component<{}, indexProps> {
                   ) : null}
                 </div>
                 <div className="container xl:max-w-5xl mx-auto relative top-[-10vh]">
-                  <a className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap" href="https://www.inu-dev.tech/hotdog">
-                    <Image src="/hotdog-emoji.svg" width="40" height="40" alt="Hotdog Emoji" className="" />
+                  <a
+                    className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap"
+                    href="https://www.inu-dev.tech/hotdog"
+                  >
+                    <Image
+                      src="/hotdog-emoji.svg"
+                      width="40"
+                      height="40"
+                      alt="Hotdog Emoji"
+                      className=""
+                    />
                     <span className="item transition-all">ホットドッグ</span>
                     <span>とは？</span>
-                    <span className="relative h-[25px]"><div className="w-[50px]" /></span>
+                    <span className="relative h-[25px]">
+                      <div className="w-[50px]" />
+                    </span>
                   </a>
                 </div>
               </>

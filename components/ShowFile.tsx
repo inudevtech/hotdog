@@ -1,22 +1,26 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleExclamation, faLink, faPen } from '@fortawesome/free-solid-svg-icons';
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
-import EditModal from './EditModal';
-import { AccountContext } from '../pages/_app';
-import { AccountType } from '../util/global';
+import axios, { AxiosRequestConfig } from "axios";
+import { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleExclamation,
+  faLink,
+  faPen,
+} from "@fortawesome/free-solid-svg-icons";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import EditModal from "./EditModal";
+import { AccountContext } from "../pages/_app";
+import { AccountType } from "../util/global";
 
 interface showFileProps {
-  file: File,
-  recaptchaToken: string
+  file: File;
+  recaptchaToken: string;
 }
 
 interface showFileStateProps {
-  progress: number,
-  id: string,
-  editOpen:boolean
+  progress: number;
+  id: string;
+  editOpen: boolean;
 }
 
 class index extends Component<showFileProps, showFileStateProps> {
@@ -27,7 +31,7 @@ class index extends Component<showFileProps, showFileStateProps> {
     super(props);
     this.state = {
       progress: 0,
-      id: '',
+      id: "",
       editOpen: false,
     };
 
@@ -59,21 +63,25 @@ class index extends Component<showFileProps, showFileStateProps> {
 
       const config: AxiosRequestConfig = {
         onUploadProgress(progressEvent) {
-          self.setState({ progress: (progressEvent.loaded * 100) / progressEvent.total });
+          self.setState({
+            progress: (progressEvent.loaded * 100) / progressEvent.total,
+          });
         },
         params,
       };
 
-      axios.post('/api/upload', file, config)
+      axios
+        .post("/api/upload", file, config)
         .then((res) => {
           this.setState({ id: res.data.id });
-        }).catch(() => {
+        })
+        .catch(() => {
           this.setState({ progress: -1 });
         });
     }
   }
 
-  setShowFlag(flag:boolean) {
+  setShowFlag(flag: boolean) {
     this.setState({ editOpen: flag });
   }
 
@@ -90,9 +98,7 @@ class index extends Component<showFileProps, showFileStateProps> {
     if (progress === -2) {
       showItem = (
         <Tippy content="ファイルが大きすぎます！">
-          <div
-            className="w-full p-[2px] border border-red-300 rounded overflow-hidden whitespace-nowrap bg-red-200"
-          >
+          <div className="w-full p-[2px] border border-red-300 rounded overflow-hidden whitespace-nowrap bg-red-200">
             <FontAwesomeIcon icon={faCircleExclamation} className="mx-2" />
             ファイルが大きすぎます：
             {file.name}
@@ -102,9 +108,7 @@ class index extends Component<showFileProps, showFileStateProps> {
     } else if (progress === -1) {
       showItem = (
         <Tippy content="何らかのエラーが発生しました">
-          <div
-            className="w-full p-[2px] border border-red-300 rounded overflow-hidden whitespace-nowrap bg-red-200"
-          >
+          <div className="w-full p-[2px] border border-red-300 rounded overflow-hidden whitespace-nowrap bg-red-200">
             <FontAwesomeIcon icon={faCircleExclamation} className="mx-2" />
             {file.name}
           </div>
@@ -115,22 +119,26 @@ class index extends Component<showFileProps, showFileStateProps> {
         <>
           <div
             className="w-full p-[2px] border border-slate-300 rounded overflow-hidden whitespace-nowrap"
-            style={{ background: `linear-gradient(to right, rgb(129 140 248) ${progress}%, #fff 0` }}
+            style={{
+              background: `linear-gradient(to right, rgb(129 140 248) ${progress}%, #fff 0`,
+            }}
           >
             {file.name}
           </div>
-          <span>
-            {Math.round(progress)}
-            %
-          </span>
+          <span>{Math.round(progress)}%</span>
         </>
       );
     } else {
       showItem = (
         <>
-          <span className="overflow-hidden whitespace-nowrap w-full">{file.name}</span>
+          <span className="overflow-hidden whitespace-nowrap w-full">
+            {file.name}
+          </span>
           <div className="flex gap-1">
-            <Tippy content="リンクをクリップボードにコピーしました!" trigger="click">
+            <Tippy
+              content="リンクをクリップボードにコピーしました!"
+              trigger="click"
+            >
               <Tippy content="リンクをコピーする">
                 <button
                   type="button"

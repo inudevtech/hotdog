@@ -1,8 +1,5 @@
-import Document, {
-  Head,
-  Html, Main, NextScript,
-} from 'next/document';
-import { GA_ID } from '../util/gtag';
+import Document, { Head, Html, Main, NextScript } from "next/document";
+import { GA_ID } from "../util/gtag";
 
 export default class MyDocument extends Document {
   render() {
@@ -11,7 +8,10 @@ export default class MyDocument extends Document {
         <Head>
           {GA_ID && (
             <>
-              <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              />
               <script
                 dangerouslySetInnerHTML={{
                   __html: `

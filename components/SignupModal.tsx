@@ -1,25 +1,25 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Component, FormEvent } from 'react';
-import Image from 'next/image';
-import { signUp } from '../util/firebase/auth';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Component, FormEvent } from "react";
+import Image from "next/image";
+import { signUp } from "../util/firebase/auth";
 
 interface ModalProps {
-  showFlag: boolean,
-  setFlag: any,
+  showFlag: boolean;
+  setFlag: any;
 }
 
 interface LoginStateProps {
-  errMsg: string,
-  state: boolean|null,
-  loading: boolean
+  errMsg: string;
+  state: boolean | null;
+  loading: boolean;
 }
 
 class loginModal extends Component<ModalProps, LoginStateProps> {
   constructor(props: ModalProps | Readonly<ModalProps>) {
     super(props);
     this.state = {
-      errMsg: '',
+      errMsg: "",
       state: null,
       loading: false,
     };
@@ -31,9 +31,19 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
     this.setState({ loading: true });
     signUp(0, elements[0].value, elements[1].value, elements[2].value)
       .then(async () => {
-        this.setState({ state: false, errMsg: '仮登録処理が完了しました。\nメールを確認して本登録処理を完了してください。\n本登録が完了するまでログインすることはできません。' });
+        this.setState({
+          state: false,
+          errMsg:
+            "仮登録処理が完了しました。\nメールを確認して本登録処理を完了してください。\n本登録が完了するまでログインすることはできません。",
+        });
       })
-      .catch(() => this.setState({ state: true, errMsg: '登録ができませんでした。\n既に登録されているメールアドレスが入力されていないかを確認してください。' }))
+      .catch(() =>
+        this.setState({
+          state: true,
+          errMsg:
+            "登録ができませんでした。\n既に登録されているメールアドレスが入力されていないかを確認してください。",
+        })
+      )
       .finally(() => this.setState({ loading: false }));
   }
 
@@ -50,8 +60,18 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                 onClick={() => setFlag()}
                 className="block mr-0 ml-auto p-1 cursor-pointer"
               />
-              <form className="m-5 mt-0 flex flex-col gap-2" onSubmit={this.submit.bind(this)}>
-                <Image src="/logo.png" alt="ロゴ" className="mx-auto" width="300" height="200" objectFit="contain" />
+              <form
+                className="m-5 mt-0 flex flex-col gap-2"
+                onSubmit={this.submit.bind(this)}
+              >
+                <Image
+                  src="/logo.png"
+                  alt="ロゴ"
+                  className="mx-auto"
+                  width="300"
+                  height="200"
+                  objectFit="contain"
+                />
                 <h3 className="text-center text-xl">犬開発アカウントを作成</h3>
                 <input
                   type="email"
@@ -79,7 +99,12 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                       disabled={loading}
                       className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
                     >
-                      {loading ? (<FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />) : null}
+                      {loading ? (
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="animate-spin px-2"
+                        />
+                      ) : null}
                       アカウントを作成
                     </button>
                     <Image
@@ -96,7 +121,11 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                     />
                   </>
                 ) : null}
-                <p className={`whitespace-pre-wrap ${state ? 'text-red-500' : ''}`}>
+                <p
+                  className={`whitespace-pre-wrap ${
+                    state ? "text-red-500" : ""
+                  }`}
+                >
                   {errMsg}
                 </p>
                 {state === false ? (
@@ -111,8 +140,9 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
               </form>
             </div>
           </div>
-        )
-          : <div />}
+        ) : (
+          <div />
+        )}
       </div>
     );
   }

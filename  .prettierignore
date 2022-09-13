@@ -1,0 +1,8 @@
+public/ja.js
+.next/
+.eslintrc.json
+next-env.d.ts
+renovate.json
+key.json
+.babelrc
+*.yaml

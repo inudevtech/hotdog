@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-require('dotenv').config();
+require("dotenv").config();
 
 const nextConfig = {
   reactStrictMode: false,
@@ -12,7 +12,7 @@ const nextConfig = {
     // config.experiments.topLevelAwait = true
     return config;
   },
-  images: { domains: ['storage.googleapis.com'] },
+  images: { domains: ["storage.googleapis.com"] },
 };
 
 module.exports = nextConfig;

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { NextApiRequest, NextApiResponse } from 'next';
-import Cors from 'cors';
-import mysql from 'mysql2/promise';
+import axios from "axios";
+import { NextApiRequest, NextApiResponse } from "next";
+import Cors from "cors";
+import mysql from "mysql2/promise";
 
 export const serverUtil = async (token: string, res: NextApiResponse) => {
   const params = {
@@ -9,9 +9,13 @@ export const serverUtil = async (token: string, res: NextApiResponse) => {
     response: token,
   };
   try {
-    const recaptchaRes = await axios.post('https://www.google.com/recaptcha/api/siteverify', undefined, {
-      params,
-    });
+    const recaptchaRes = await axios.post(
+      "https://www.google.com/recaptcha/api/siteverify",
+      undefined,
+      {
+        params,
+      }
+    );
     if (!recaptchaRes.data.success || recaptchaRes.data.score <= 0.5) {
       res.status(400).end();
       return false;
@@ -32,7 +36,7 @@ export const cors = Cors();
 export function runMiddleware(
   req: NextApiRequest,
   res: NextApiResponse,
-  fn: Function,
+  fn: Function
 ) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
@@ -45,9 +49,10 @@ export function runMiddleware(
   });
 }
 
-export const getConnection = () => mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  database: process.env.MYSQL_DATABASE,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-});
+export const getConnection = () =>
+  mysql.createConnection({
+    host: process.env.MYSQL_HOST,
+    database: process.env.MYSQL_DATABASE,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+  });
