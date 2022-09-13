@@ -9,7 +9,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Prism from "prismjs";
-import Image from "next/image";
 import InfiniteScroll from "react-infinite-scroller";
 import Header from "../../components/Header";
 
@@ -173,64 +172,75 @@ const download = () => {
     output.innerHTML = `<div>${description}</div>`;
     Prism.highlightAllUnder(output);
 
-    showItem = (
-      <>
-        <p className="mb-3 flex items-center gap-1">
-          {user?.iconURL ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user?.iconURL}
-              alt="アイコン"
-              width="26"
-              height="26"
-              className="rounded-full"
-            />
-          ) : (
-            <FontAwesomeIcon
-              icon={faUser}
-              className="bg-black rounded-full px-[6px] py-[5px]"
-              color="#fff"
-            />
-          )}
-          {user?.isAnonymous ? "匿名ユーザー" : user?.displayName}
-        </p>
-        {title ? (
-          <>
-            <h2 className="text-2xl leading-5">{title}</h2>
-            <pre className="italic text-sm">{fileName}</pre>
-          </>
+    const userElement = (
+      <p className="mb-3 flex items-center gap-1">
+        {user?.iconURL ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user?.iconURL}
+            alt="アイコン"
+            width="26"
+            height="26"
+            className="rounded-full"
+          />
         ) : (
-          <>
-            <p className="text-2xl leading-5">{fileName}</p>
-            <pre className="italic text-sm">タイトルはありません。</pre>
-          </>
-        )}
-        {isIcon ? (
-          <p className="bg-blue-300/[.6] rounded border border-blue-400 p-2 my-2">
-            <FontAwesomeIcon icon={faCircleInfo} className="px-2" />
-            これは
-            {user?.displayName}
-            さんのユーザーアイコンです。
-          </p>
-        ) : null}
-        {output.innerHTML === "<div>null</div>" ? null : (
-          // eslint-disable-next-line react/no-danger
-          <div
-            dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-            className="border-t-2 mt-2 p-1 overflow-auto"
+          <FontAwesomeIcon
+            icon={faUser}
+            className="bg-black rounded-full px-[6px] py-[5px]"
+            color="#fff"
           />
         )}
-        <button
-          type="button"
-          className="transition p-1 my-2 min-w-[300px] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
-          onClick={downloadFile}
-        >
-          {loading ? (
-            <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
+        {user?.isAnonymous ? "匿名ユーザー" : user?.displayName}
+      </p>
+    );
+
+    showItem = (
+      <div className="flex flex-col lg:flex-row gap-2">
+        <div className="ml6">
+          <div className="lg:hidden">{userElement}</div>
+          {title ? (
+            <>
+              <h2 className="text-2xl leading-6">{title}</h2>
+              <pre className="italic text-sm text-ellipsis truncate">
+                {fileName}
+              </pre>
+            </>
+          ) : (
+            <>
+              <p className="text-2xl leading-6 truncate">{fileName}</p>
+              <pre className="italic text-sm">タイトルはありません。</pre>
+            </>
+          )}
+          {isIcon ? (
+            <p className="bg-blue-300/[.6] rounded border border-blue-400 p-2 my-2">
+              <FontAwesomeIcon icon={faCircleInfo} className="px-2" />
+              これは
+              {user?.displayName}
+              さんのユーザーアイコンです。
+            </p>
           ) : null}
-          ダウンロード
-        </button>
-      </>
+          {output.innerHTML === "<div>null</div>" ? null : (
+            // eslint-disable-next-line react/no-danger
+            <div
+              dangerouslySetInnerHTML={{ __html: output.innerHTML }}
+              className="border-t-2 mt-2 p-1 overflow-auto break-words"
+            />
+          )}
+        </div>
+        <div className="justify-between flex flex-col w-full">
+          <div className="hidden lg:block">{userElement}</div>
+          <button
+            type="button"
+            className="transition p-1 my-2 min-w-[300px] lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+            onClick={downloadFile}
+          >
+            {loading ? (
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
+            ) : null}
+            ダウンロード
+          </button>
+        </div>
+      </div>
     );
   } else if (isExists === false) {
     showItem = (
@@ -270,7 +280,7 @@ const download = () => {
     <>
       <Header />
       <div className="flex justify-center items-center h-screen flex-col">
-        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl max-h-[70%]">
+        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] max-h-[70%]">
           {showItem}
         </div>
       </div>
@@ -289,7 +299,7 @@ const download = () => {
               </div>
             }
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-[90%] mx-auto">
               {fileList}
             </div>
           </InfiniteScroll>

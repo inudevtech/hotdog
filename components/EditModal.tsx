@@ -73,7 +73,9 @@ const Modal = (props: ModalProps) => {
     <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-20">
       <div
         className={`bg-white rounded-xl w-full max-h-screen overflow-auto ${
-          AccountState == null ? "md:w-1/3 sm:w-1/2" : "lg:w-5/6"
+          AccountState == null
+            ? "md:w-1/3 sm:w-1/2"
+            : "xl:w-2/3 xl:max-w-[1024px] lg:w-3/4 w-1/1"
         }`}
       >
         <FontAwesomeIcon

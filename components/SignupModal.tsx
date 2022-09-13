@@ -112,7 +112,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                       alt="Login With Google"
                       onClick={async () => {
                         await signUp(1);
-                        setFlag();
+                        window.location.reload();
                       }}
                       className="mx-auto cursor-pointer"
                       width="300"

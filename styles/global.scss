@@ -62,3 +62,45 @@ blockquote {
   border-right: solid 1px;
   transform: skew(45deg);
 }
+
+i {
+  cursor: pointer;
+  padding: 10px 12px 8px;
+  background: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 0 15px;
+  color: #aaa;
+  transition: 0.2s;
+
+  &:hover {
+    color: #666;
+  }
+
+  &:before {
+    font-family: fontawesome;
+    content: "\f004";
+    font-style: normal;
+  }
+
+  .press {
+    animation: size 0.4s;
+    color: #e23b3b;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ml6 {
+    max-width: calc(100% - 260px);
+  }
+}
+
+h1 {
+  @apply text-2xl;
+}
+h2 {
+  @apply text-xl;
+}
+h3 {
+  @apply text-lg;
+}
