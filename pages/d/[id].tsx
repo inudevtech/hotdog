@@ -3,6 +3,8 @@ import { ReactElement, useEffect, useState } from "react";
 import axios from "axios";
 import {
   faCircleInfo,
+  faDownload,
+  faHeart,
   faSpinner,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Prism from "prismjs";
 import InfiniteScroll from "react-infinite-scroller";
+import { parseCookies, setCookie } from "nookies";
 import Header from "../../components/Header";
 
 interface GetUserProps {
@@ -30,6 +33,9 @@ const download = () => {
   const [hasMore, sethasMore] = useState<boolean>(false);
   const [isIcon, setIsIcon] = useState<boolean>(false);
   const [fileList, setFileList] = useState<ReactElement[]>([]);
+  const [like, setLike] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [downloadCount, setDownloadCount] = useState<number>(0);
 
   function addRelations(page: number, u: GetUserProps | null) {
     if (!u?.isAnonymous) {
@@ -70,14 +76,18 @@ const download = () => {
                   >
                     {file.displayName ? (
                       <>
-                        <h2 className="text-2xl leading-5">
+                        <h2 className="text-2xl leading-5 truncate">
                           {file.displayName}
                         </h2>
-                        <pre className="italic text-sm">{file.fileName}</pre>
+                        <pre className="italic text-sm truncate">
+                          {file.fileName}
+                        </pre>
                       </>
                     ) : (
                       <>
-                        <p className="text-2xl leading-5">{file.fileName}</p>
+                        <p className="text-2xl leading-5 truncate">
+                          {file.fileName}
+                        </p>
                         <pre className="italic text-sm">
                           タイトルはありません。
                         </pre>
@@ -86,7 +96,7 @@ const download = () => {
                     <div className="border-t-2 mt-2 relative">
                       <div
                         dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-                        className="h-[200px] overflow-hidden mt-2 p-1"
+                        className="h-[200px] overflow-hidden mt-2 p-1 break-words"
                       />
                       <div className="gradient absolute w-full mt-2 p-1 top-0 h-[200px]" />
                       <a
@@ -106,41 +116,41 @@ const download = () => {
   }
 
   useEffect(() => {
-    // idがundefinedにならないようにする
-    if (router.isReady) {
-      const { id } = router.query;
+    const { id } = router.query;
+    setLike(parseCookies().like === "1");
 
-      if (id) {
-        axios
-          .get("/api/get", { params: { id } })
-          .then((res) => {
-            setIsExists(res.data.exists);
-            if (res.data.exists) {
-              setTitle(res.data.displayName);
-              setDescription(res.data.description);
-              setFileName(res.data.fileName);
-              setIsIcon(res.data.icon);
-              let u: GetUserProps | null;
-              if (res.data.user.isDeletedUser) {
-                u = {
-                  isAnonymous: false,
-                  iconURL: undefined,
-                  displayName: "削除済みユーザー",
-                };
-              } else {
-                u = res.data.user;
-              }
-
-              setUser(u);
-              addRelations(0, u);
+    if (id) {
+      axios
+        .get("/api/get", { params: { id } })
+        .then((res) => {
+          setIsExists(res.data.exists);
+          if (res.data.exists) {
+            setTitle(res.data.displayName);
+            setDescription(res.data.description);
+            setFileName(res.data.fileName);
+            setIsIcon(res.data.icon);
+            setLikeCount(res.data.favorite);
+            setDownloadCount(res.data.download);
+            let u: GetUserProps | null;
+            if (res.data.user.isDeletedUser) {
+              u = {
+                isAnonymous: false,
+                iconURL: undefined,
+                displayName: "削除済みユーザー",
+              };
+            } else {
+              u = res.data.user;
             }
-          })
-          .catch(() => {
-            setIsExists(undefined);
-          });
-      } else {
-        setIsExists(false);
-      }
+
+            setUser(u);
+            addRelations(0, u);
+          }
+        })
+        .catch(() => {
+          setIsExists(undefined);
+        });
+    } else {
+      setIsExists(false);
     }
   }, [router]);
 
@@ -164,6 +174,22 @@ const download = () => {
           });
       });
     }
+  };
+
+  const toggleLike = () => {
+    executeRecaptcha!("favorite").then(async (token) => {
+      const { id } = router.query;
+      const type = parseCookies().like === "1" ? "0" : "1";
+      setCookie(null, "like", type, {
+        maxAge: 60 * 60 * 24 * 365 * 100,
+        path: `/d/${id}`,
+      });
+      await axios.post("/api/favorite", null, {
+        params: { id, type, recaptcha: token },
+      });
+      setLike(parseCookies().like === "1");
+      setLikeCount((prev) => (type === "1" ? prev + 1 : prev - 1));
+    });
   };
 
   if (isExists) {
@@ -195,20 +221,20 @@ const download = () => {
     );
 
     showItem = (
-      <div className="flex flex-col lg:flex-row gap-2">
-        <div className="ml6">
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="lg:min-w-[250px]">
           <div className="lg:hidden">{userElement}</div>
           {title ? (
             <>
-              <h2 className="text-2xl leading-6">{title}</h2>
-              <pre className="italic text-sm text-ellipsis truncate">
-                {fileName}
-              </pre>
+              <h2 className="text-2xl leading-6 truncate">{title}</h2>
+              <pre className="italic text-sm truncate">{fileName}</pre>
             </>
           ) : (
             <>
               <p className="text-2xl leading-6 truncate">{fileName}</p>
-              <pre className="italic text-sm">タイトルはありません。</pre>
+              <pre className="italic text-sm truncate">
+                タイトルはありません。
+              </pre>
             </>
           )}
           {isIcon ? (
@@ -227,18 +253,45 @@ const download = () => {
             />
           )}
         </div>
-        <div className="justify-between flex flex-col w-full">
+        <div className="justify-between flex flex-col min-w-[250px] flex-grow">
           <div className="hidden lg:block">{userElement}</div>
-          <button
-            type="button"
-            className="transition p-1 my-2 min-w-[300px] lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
-            onClick={downloadFile}
-          >
-            {loading ? (
-              <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
-            ) : null}
-            ダウンロード
-          </button>
+          <div>
+            <div className="flex flex-row justify-around">
+              <div className="flex flex-row items-center gap-2">
+                <FontAwesomeIcon
+                  icon={faHeart}
+                  onClick={toggleLike}
+                  className={`border hover:shadow-lg cursor-pointer p-[10px] rounded-full transition ${
+                    like
+                      ? " text-red-500 hover:text-red-400"
+                      : "text-slate-400 hover:text-slate-500"
+                  }`}
+                />
+                {likeCount}
+              </div>
+              <div className="flex flex-row items-center gap-2">
+                <FontAwesomeIcon
+                  icon={faDownload}
+                  size="lg"
+                  className="text-slate-400"
+                />
+                {downloadCount}
+              </div>
+            </div>
+            <button
+              type="button"
+              className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              onClick={downloadFile}
+            >
+              {loading ? (
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="animate-spin px-2"
+                />
+              ) : null}
+              ダウンロード
+            </button>
+          </div>
         </div>
       </div>
     );

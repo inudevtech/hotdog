@@ -76,6 +76,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     </GoogleReCaptchaProvider>
   );
 };
+MyApp.getInitialProps = async () => ({ pageProps: {} })
 
 export default MyApp;
 export { AccountContext };

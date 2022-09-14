@@ -24,7 +24,7 @@ export default async function handler(
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
     const [rows] = await connection.query(
-      "SELECT uid, displayName, description, fileName, icon FROM fileData WHERE id = ?",
+      "SELECT uid, displayName, description, fileName, icon, favorite, download FROM fileData WHERE id = ?",
       [id]
     );
     if ((rows as unknown[]).length === 0) {

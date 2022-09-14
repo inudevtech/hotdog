@@ -32,7 +32,8 @@ export default async function handler(
   }
   // End of recaptcha verification
 
-  const [rows] = await connection.execute(
+  await connection.query("UPDATE fileData SET download   = download + 1 WHERE id = ?", [id]);
+  const [rows] = await connection.query(
     "SELECT dir,fileName FROM fileData WHERE id = ?",
     [id]
   );
