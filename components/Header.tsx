@@ -12,6 +12,7 @@ import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
+import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light-border.css";
 
 const Header = () => {
@@ -67,7 +68,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow border-slate-200 border flex-wrap bg-white z-10">
+      <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-10">
         <Link href="/">
           <div className="text-2xl flex gap-1 items-center cursor-pointer">
             <Image

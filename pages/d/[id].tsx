@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   faCircleInfo,
   faDownload,
+  faFontAwesome,
   faHeart,
   faSpinner,
   faUser,
@@ -13,7 +14,9 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Prism from "prismjs";
 import InfiniteScroll from "react-infinite-scroller";
 import { parseCookies, setCookie } from "nookies";
+import Tippy from "@tippyjs/react";
 import Header from "../../components/Header";
+import "tippy.js/dist/tippy.css";
 
 interface GetUserProps {
   isAnonymous: boolean;
@@ -192,6 +195,12 @@ const download = () => {
     });
   };
 
+  const report = () => {
+    router.push(
+      `https://docs.google.com/forms/d/e/1FAIpQLSeeGS0tST9HROEDAJCpMb1DBbKBzQ6xQyJYHOgmqZDmZkKstw/viewform?usp=pp_url&entry.1778469610=利用規約等に違反しているファイルがアップロードされている&entry.1885650888=${router.query.id}`
+    );
+  };
+
   if (isExists) {
     // コンポーネントの再レンダリング時にシンタックスハイライトを実行
     const output = document.createElement("div");
@@ -256,27 +265,40 @@ const download = () => {
         <div className="justify-between flex flex-col min-w-[250px] flex-grow">
           <div className="hidden lg:block">{userElement}</div>
           <div>
-            <div className="flex flex-row justify-around">
-              <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row justify-around items-center">
+              <Tippy
+                content={like ? "いいねありがとうございます！" : "いいねの数"}
+              >
+                <div className="flex flex-row items-center gap-2">
+                  <FontAwesomeIcon
+                    icon={faHeart}
+                    onClick={toggleLike}
+                    className={`border hover:shadow-lg cursor-pointer p-[10px] rounded-full transition ${
+                      like
+                        ? " text-red-500 hover:text-red-400"
+                        : "text-slate-400 hover:text-slate-500"
+                    }`}
+                  />
+                  {likeCount}
+                </div>
+              </Tippy>
+              <Tippy content="ダウンロード数">
+                <div className="flex flex-row items-center gap-2">
+                  <FontAwesomeIcon
+                    icon={faDownload}
+                    size="lg"
+                    className="text-slate-400"
+                  />
+                  {downloadCount}
+                </div>
+              </Tippy>
+              <Tippy content="このファイルを報告">
                 <FontAwesomeIcon
-                  icon={faHeart}
-                  onClick={toggleLike}
-                  className={`border hover:shadow-lg cursor-pointer p-[10px] rounded-full transition ${
-                    like
-                      ? " text-red-500 hover:text-red-400"
-                      : "text-slate-400 hover:text-slate-500"
-                  }`}
+                  icon={faFontAwesome}
+                  onClick={report}
+                  className="text-slate-300 cursor-pointer"
                 />
-                {likeCount}
-              </div>
-              <div className="flex flex-row items-center gap-2">
-                <FontAwesomeIcon
-                  icon={faDownload}
-                  size="lg"
-                  className="text-slate-400"
-                />
-                {downloadCount}
-              </div>
+              </Tippy>
             </div>
             <button
               type="button"
