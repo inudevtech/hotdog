@@ -125,29 +125,27 @@ export default async function handler(
       "CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL, favorite INT UNSIGNED DEFAULT 0, download INT UNSIGNED DEFAULT 0)"
     )
     .then(() => {
-      Promise.all([
-        connection.execute(
-          "INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)",
-          [
-            id,
-            directoryName,
-            filename,
-            uid,
-            expiration,
-            nowDate,
-            icon !== undefined,
-          ]
-        ),
-        upload,
-      ])
+      upload
         .then(async () => {
           const [metadata] = await uploadFile.getMetadata();
-          console.log(metadata.size);
           if (contentLength < metadata.size) {
             await uploadFile.delete();
             res.status(400).end();
             return;
           }
+
+          await connection.execute(
+            "INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)",
+            [
+              id,
+              directoryName,
+              filename,
+              uid,
+              expiration,
+              nowDate,
+              icon !== undefined,
+            ]
+          );
 
           if (icon !== undefined) {
             res.json({ id: uploadFile.publicUrl() });
