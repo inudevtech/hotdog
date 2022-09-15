@@ -15,7 +15,6 @@ import Prism from "prismjs";
 import InfiniteScroll from "react-infinite-scroller";
 import { parseCookies, setCookie } from "nookies";
 import Tippy from "@tippyjs/react";
-import Header from "../../components/Header";
 import "tippy.js/dist/tippy.css";
 
 interface GetUserProps {
@@ -353,7 +352,6 @@ const download = () => {
 
   return (
     <>
-      <Header />
       <div className="flex justify-center items-center h-screen flex-col">
         <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] max-h-[70%]">
           {showItem}

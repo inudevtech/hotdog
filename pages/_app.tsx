@@ -12,6 +12,7 @@ import Head from "next/head";
 import { onAuthStateChanged } from "../util/firebase/auth";
 import { AccountType } from "../util/global";
 import { GA_ID, pageview } from "../util/gtag";
+import Header from "../components/Header";
 
 config.autoAddCss = false;
 
@@ -55,12 +56,12 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <title>🌭ホットドッグ</title>
         </Head>
         {Loading ? (
-          <div className="flex justify-center items-center h-screen flex-col">
-            <h3 className="m-2 text-2xl">
+          <div className="flex justify-center items-center h-screen flex-col loading">
+            <h3 className="m-2 text-2xl monospace">
               <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
-              読み込み中
+              Loading...
             </h3>
-            <blockquote className="md:w-1/2">
+            <blockquote className="max-w-lg">
               ホットドッグ（英語: hot
               dog）は、ソーセージを細長いバンで挟んだ食品である。
               <br />
@@ -70,13 +71,18 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             </blockquote>
           </div>
         ) : (
-          <Component {...pageProps} />
+          <>
+            <Header />
+            <div id="page-warp" className="min-h-screen">
+              <Component {...pageProps} />
+            </div>
+          </>
         )}
       </AccountContext.Provider>
     </GoogleReCaptchaProvider>
   );
 };
-MyApp.getInitialProps = async () => ({ pageProps: {} })
+MyApp.getInitialProps = async () => ({ pageProps: {} });
 
 export default MyApp;
 export { AccountContext };

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
 
 blockquote {
   position: relative;
@@ -46,6 +47,7 @@ blockquote {
 
 .logo-text {
   font-family: "RocknRoll One", sans-serif;
+  font-display: swap;
 }
 
 .item {
@@ -71,4 +73,101 @@ h2 {
 }
 h3 {
   @apply text-lg;
+}
+
+.monospace {
+  font-family: "Share Tech Mono", monospace;
+  font-display: swap;
+}
+
+.header_menu {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -10px;
+    height: 100%;
+    @apply transition;
+  }
+
+  &.active {
+    font-weight: bold !important;
+    &::after {
+      @apply border-l-2;
+      @apply border-slate-300;
+      display: block;
+    }
+  }
+
+  &:hover {
+    font-weight: bold !important;
+    &::after {
+      @apply border-l-4;
+      @apply border-slate-600;
+      display: block;
+    }
+  }
+}
+
+/* バーガーボタンの位置とサイズ */
+.bm-burger-button {
+  position: relative;
+  width: 30px;
+}
+
+/* クロスボタンの位置とサイズ */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* クロスボタンのカラー・形状 */
+.bm-cross {
+  @apply bg-black;
+}
+
+/*
+サイドバーのラッパースタイル - アニメーションが壊れる可能性があるため触るときは注意
+*/
+.bm-menu-wrap {
+  position: fixed;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* サイドバーのスタイル */
+.bm-menu {
+  @apply bg-white;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
+
+/* メニューリストのラッパースタイル*/
+.bm-item-list {
+  @apply bg-white;
+  padding: 0.8em;
+}
+
+/* 個々のリストのスタイル */
+.bm-item {
+  display: inline-block;
+}
+
+/* オーバーレイ(overlay)のスタイリング */
+.bm-overlay {
+  @apply bg-slate-800/[.3];
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#__next {
+  @apply bg-slate-700;
+}
+
+#page-warp,
+.loading {
+  @apply bg-white;
 }

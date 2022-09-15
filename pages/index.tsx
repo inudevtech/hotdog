@@ -9,7 +9,6 @@ import {
 import Dropzone from "react-dropzone";
 import Image from "next/image";
 import ShowFile from "../components/ShowFile";
-import Header from "../components/Header";
 import { AccountContext } from "./_app";
 
 interface indexProps {
@@ -76,7 +75,6 @@ class index extends Component<{}, indexProps> {
           <AccountContext.Consumer>
             {(value) => (
               <>
-                <Header />
                 <div className="flex justify-center items-center h-screen flex-col">
                   <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] border border-slate-300 rounded-xl">
                     <div className="basis-1/3 flex flex-col gap-2">

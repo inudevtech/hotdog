@@ -3,11 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   faArrowUpRightFromSquare,
+  faBars,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tippy from "@tippyjs/react";
 import { useRouter } from "next/router";
+import { scaleDown as Menu } from "react-burger-menu";
 import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";
 import LoginModal from "./LoginModal";
@@ -18,6 +20,7 @@ import "tippy.js/themes/light-border.css";
 const Header = () => {
   const [loginOpen, setLoginOpen] = useState(false);
   const [signUpOpen, setSignUpOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { AccountState } = useContext(AccountContext);
   const router = useRouter();
 
@@ -66,21 +69,54 @@ const Header = () => {
     </div>
   );
 
+  const link = (
+    <Link href="/">
+      <div
+        className="text-2xl flex gap-1 items-center cursor-pointer"
+        onClick={() => setIsOpen(false)}
+        aria-hidden
+      >
+        <Image
+          src="/hotdog-emoji.svg"
+          width="25"
+          height="25"
+          alt="Hotdog Emoji"
+        />
+        <span className="item">ホットドッグ</span>
+      </div>
+    </Link>
+  );
+
+  console.log(router.pathname);
+
   return (
     <>
       <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-10">
-        <Link href="/">
-          <div className="text-2xl flex gap-1 items-center cursor-pointer">
-            <Image
-              src="/hotdog-emoji.svg"
-              width="25"
-              height="25"
-              alt="Hotdog Emoji"
-              className=""
-            />
-            <span className="item">ホットドッグ</span>
-          </div>
-        </Link>
+        <div className="flex flex-row items-center gap-4 py-1">
+          <Menu
+            customBurgerIcon={<FontAwesomeIcon icon={faBars} />}
+            outerContainerId="__next"
+            pageWrapId="page-warp"
+            isOpen={isOpen}
+            onStateChange={(state) => setIsOpen(state.isOpen)}
+          >
+            <div className="flex flex-col items-center gap-4">
+              {link}
+              <Link href="/dashboard">
+                <span
+                  className={`cursor-pointer header_menu ${
+                    router.pathname === "/dashboard" ? "active" : ""
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                  aria-hidden
+                >
+                  ダッシュボード
+                </span>
+              </Link>
+            </div>
+          </Menu>
+          {link}
+        </div>
         {AccountState == null ? (
           <div className="flex gap-2">
             <button

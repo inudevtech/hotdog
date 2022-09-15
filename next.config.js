@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 require("dotenv").config();
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
@@ -15,4 +19,4 @@ const nextConfig = {
   images: { domains: ["storage.googleapis.com"] },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);
