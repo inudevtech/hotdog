@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGoogle,
-  faTwitter,
+//   faTwitter,
   faGithub,
 } from "@fortawesome/free-brands-svg-icons";
 import { Dispatch, FC, SetStateAction } from "react";
