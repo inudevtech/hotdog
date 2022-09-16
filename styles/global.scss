@@ -171,3 +171,7 @@ h3 {
 .loading {
   @apply bg-white;
 }
+
+.animate__animated.animate__slideInUp {
+  --animate-duration: 400ms;
+}

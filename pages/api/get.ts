@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import adminAuth from "../../util/firebase/firebase-admin";
 import { getConnection } from "../../util/serverUtil";
+import { GetUserProps } from "../../util/util";
 
 let connection = await getConnection();
 
@@ -12,7 +13,7 @@ export default async function handler(
     res.status(405).end();
   }
 
-  const { id, index } = req.query;
+  const { id, index, isuid } = req.query;
 
   if (index === undefined) {
     try {
@@ -36,12 +37,7 @@ export default async function handler(
     const fileData = (rows as unknown as { uid?: string | null }[])[0];
 
     // User情報の取得
-    const returnUserData: {
-      isDeletedUser: boolean;
-      isAnonymous: boolean;
-      iconURL?: string;
-      displayName?: string;
-    } = {
+    const returnUserData: GetUserProps = {
       isDeletedUser: false,
       isAnonymous: false,
     };
@@ -52,6 +48,7 @@ export default async function handler(
         const user = await adminAuth.getUser(fileData?.uid!);
         returnUserData.iconURL = user.photoURL;
         returnUserData.displayName = user.displayName;
+        returnUserData.uid = fileData.uid;
       } catch {
         returnUserData.isDeletedUser = true;
       }
@@ -63,23 +60,29 @@ export default async function handler(
       ...fileData,
       user: returnUserData,
     });
-  } else {
-    const [rows] = await connection.query(
-      "SELECT uid FROM fileData WHERE id = ?",
-      [id]
-    );
-    if ((rows as unknown[]).length === 0) {
-      res.status(400).json({
-        exists: false,
-      });
-      return;
-    }
-    const { uid } = (rows as unknown as { uid?: string | null }[])[0];
-    if (uid === null) {
+  } else {let uid;
+    if (isuid === "false") {
+      const [rows] = await connection.query(
+        "SELECT uid FROM fileData WHERE id = ?",
+        [id]
+      );
+      if ((rows as unknown[]).length === 0) {
+        res.status(400).json({
+          exists: false,
+        });
+        return;
+      }
+      uid = (rows as unknown as { uid?: string | null }[])[0].uid;
+      if (uid === null) {
+        res.status(400).end();
+        return;
+      }
+    } else if (id !== undefined) {
+      uid = id;
+    } else {
       res.status(400).end();
       return;
     }
-
     const [fileRows] = await connection.query(
       "SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?",
       [uid, id, Number(index)]

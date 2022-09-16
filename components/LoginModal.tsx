@@ -3,6 +3,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Component, FormEvent } from "react";
 import Image from "next/image";
 import { login } from "../util/firebase/auth";
+import Modal from "./Modal";
 
 interface ModalProps {
   showFlag: boolean;
@@ -50,14 +51,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
     const { errMsg } = this.state;
     return (
       <div>
-        {showFlag ? (
-          <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded">
-              <FontAwesomeIcon
-                icon={faXmark}
-                onClick={() => setFlag()}
-                className="block mr-0 ml-auto p-1 cursor-pointer"
-              />
+          <Modal isOpen={showFlag} setOpen={setFlag}>
               <form
                 className="m-5 mt-0 flex flex-col gap-2"
                 onSubmit={this.submit.bind(this)}
@@ -102,11 +96,7 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
                 />
                 <p className="text-red-500 whitespace-pre-wrap">{errMsg}</p>
               </form>
-            </div>
-          </div>
-        ) : (
-          <div />
-        )}
+            </Modal>
       </div>
     );
   }

@@ -1,13 +1,15 @@
 import { useRouter } from "next/router";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
   faCircleInfo,
   faDownload,
   faFontAwesome,
   faHeart,
+  faPen,
   faSpinner,
   faUser,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
@@ -16,12 +18,10 @@ import InfiniteScroll from "react-infinite-scroller";
 import { parseCookies, setCookie } from "nookies";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-
-interface GetUserProps {
-  isAnonymous: boolean;
-  iconURL?: string;
-  displayName?: string;
-}
+import { addRelations, GetUserProps } from "../../util/util";
+import RemoveModal from "../../components/RemoveModal";
+import { AccountContext } from "../_app";
+import EditModal from "../../components/EditModal";
 
 const download = () => {
   const router = useRouter();
@@ -32,90 +32,15 @@ const download = () => {
   const [description, setDescription] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, sethasMore] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(false);
   const [isIcon, setIsIcon] = useState<boolean>(false);
   const [fileList, setFileList] = useState<ReactElement[]>([]);
   const [like, setLike] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [downloadCount, setDownloadCount] = useState<number>(0);
-
-  function addRelations(page: number, u: GetUserProps | null) {
-    if (!u?.isAnonymous) {
-      axios
-        .get("/api/get", { params: { id: router.query.id, index: page * 3 } })
-        .then((r) => {
-          if (r.data.length === 3) {
-            sethasMore(true);
-          } else if (r.data.length === 0) {
-            sethasMore(false);
-          }
-
-          setFileList([
-            ...fileList,
-            r.data.map(
-              (
-                file: {
-                  id: string;
-                  fileName: string;
-                  displayName: string;
-                  description: string;
-                },
-                index: number
-              ) => {
-                const output = document.createElement("div");
-                output.innerHTML = `<div>${file.description}</div>`;
-                Prism.highlightAllUnder(output);
-                if (output.innerHTML === "<div>null</div>") {
-                  output.innerHTML =
-                    "<div class='italic'>このファイルに説明はありません。</div>";
-                }
-
-                return (
-                  <div
-                    className="p-5 flex flex-col border border-slate-300 rounded-xl"
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={fileList.length + index + 1}
-                  >
-                    {file.displayName ? (
-                      <>
-                        <h2 className="text-2xl leading-5 truncate">
-                          {file.displayName}
-                        </h2>
-                        <pre className="italic text-sm truncate">
-                          {file.fileName}
-                        </pre>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-2xl leading-5 truncate">
-                          {file.fileName}
-                        </p>
-                        <pre className="italic text-sm">
-                          タイトルはありません。
-                        </pre>
-                      </>
-                    )}
-                    <div className="border-t-2 mt-2 relative">
-                      <div
-                        dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-                        className="h-[200px] overflow-hidden mt-2 p-1 break-words"
-                      />
-                      <div className="gradient absolute w-full mt-2 p-1 top-0 h-[200px]" />
-                      <a
-                        href={`/d/${file.id}`}
-                        className="transition p-1 px-5 absolute top-[150px] w-[90%] right-[5%] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
-                      >
-                        詳細を見る
-                      </a>
-                    </div>
-                  </div>
-                );
-              }
-            ),
-          ]);
-        });
-    }
-  }
+  const flag = useState<boolean>(false);
+  const { AccountState } = useContext(AccountContext);
+  const [editOpen, setEditOpen] = useState<boolean>(0);
 
   useEffect(() => {
     const { id } = router.query;
@@ -137,6 +62,7 @@ const download = () => {
             if (res.data.user.isDeletedUser) {
               u = {
                 isAnonymous: false,
+                isDeletedUser: true,
                 iconURL: undefined,
                 displayName: "削除済みユーザー",
               };
@@ -145,7 +71,14 @@ const download = () => {
             }
 
             setUser(u);
-            addRelations(0, u);
+            addRelations(
+              0,
+              u,
+              router.query.id as string,
+              setHasMore,
+              fileList,
+              setFileList
+            );
           }
         })
         .catch(() => {
@@ -182,12 +115,12 @@ const download = () => {
     executeRecaptcha!("favorite").then(async (token) => {
       const { id } = router.query;
       const type = parseCookies().like === "1" ? "0" : "1";
+      await axios.post("/api/favorite", null, {
+        params: { id, type, recaptcha: token },
+      });
       setCookie(null, "like", type, {
         maxAge: 60 * 60 * 24 * 365 * 100,
         path: `/d/${id}`,
-      });
-      await axios.post("/api/favorite", null, {
-        params: { id, type, recaptcha: token },
       });
       setLike(parseCookies().like === "1");
       setLikeCount((prev) => (type === "1" ? prev + 1 : prev - 1));
@@ -257,13 +190,13 @@ const download = () => {
             // eslint-disable-next-line react/no-danger
             <div
               dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-              className="border-t-2 mt-2 p-1 overflow-auto break-words"
+              className="border-t-2 mt-2 p-1 max-h-[50vh] xl:max-h-[70vh] overflow-auto break-words"
             />
           )}
         </div>
         <div className="justify-between flex flex-col min-w-[250px] flex-grow">
           <div className="hidden lg:block">{userElement}</div>
-          <div>
+          <div className="flex gap-2 flex-col">
             <div className="flex flex-row justify-around items-center">
               <Tippy
                 content={like ? "いいねありがとうございます！" : "いいねの数"}
@@ -274,7 +207,7 @@ const download = () => {
                     onClick={toggleLike}
                     className={`border hover:shadow-lg cursor-pointer p-[10px] rounded-full transition ${
                       like
-                        ? " text-red-500 hover:text-red-400"
+                        ? " text-red-500 hover:text-red-400 bg-red-100"
                         : "text-slate-400 hover:text-slate-500"
                     }`}
                   />
@@ -286,7 +219,7 @@ const download = () => {
                   <FontAwesomeIcon
                     icon={faDownload}
                     size="lg"
-                    className="text-slate-400"
+                    className="text-slate-400 hover:text-green-500 transition"
                   />
                   {downloadCount}
                 </div>
@@ -295,10 +228,33 @@ const download = () => {
                 <FontAwesomeIcon
                   icon={faFontAwesome}
                   onClick={report}
-                  className="text-slate-300 cursor-pointer"
+                  className="text-slate-300 cursor-pointer hover:text-red-500 transition"
                 />
               </Tippy>
             </div>
+            {user?.uid === AccountState?.uid && (
+              <>
+                <span className="border-b-2" />
+                <div className="flex flex-row justify-around items-center">
+                  <Tippy content="ファイルを削除">
+                    <FontAwesomeIcon
+                      icon={faXmark}
+                      onClick={() => flag[1](true)}
+                      fixedWidth
+                      className="border hover:shadow-lg cursor-pointer px-[8px] py-[10px] rounded-full transition text-slate-400 hover:text-red-500"
+                    />
+                  </Tippy>
+                  <Tippy content="ファイル情報を編集する">
+                    <FontAwesomeIcon
+                      icon={faPen}
+                      onClick={() => setEditOpen(true)}
+                      fixedWidth
+                      className="border hover:shadow-lg cursor-pointer px-[8px] py-[10px] rounded-full transition text-slate-400 hover:text-slate-500"
+                    />
+                  </Tippy>
+                </div>
+              </>
+            )}
             <button
               type="button"
               className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
@@ -352,19 +308,34 @@ const download = () => {
 
   return (
     <>
+      <RemoveModal id={router.query.id as string} flag={flag} />
+      <EditModal
+        showFlag={editOpen}
+        setFlag={setEditOpen}
+        id={router.query.id as string}
+      />
       <div className="flex justify-center items-center h-screen flex-col">
-        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] max-h-[70%]">
+        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] max-h-[70%] overflow-auto">
           {showItem}
         </div>
       </div>
-      {user?.isAnonymous ? null : (
+      {user?.isAnonymous || !isExists ? null : (
         <div className="container xl:max-w-5xl mx-auto relative top-[-10vh]">
           <h2 className="text-2xl text-center m-2">
             {user?.displayName}
             さんの他のファイル
           </h2>
           <InfiniteScroll
-            loadMore={(page) => addRelations(page, user)} // 項目を読み込む際に処理するコールバック関数
+            loadMore={(page) =>
+              addRelations(
+                page,
+                user,
+                router.query.id as string,
+                setHasMore,
+                fileList,
+                setFileList
+              )
+            } // 項目を読み込む際に処理するコールバック関数
             hasMore={hasMore} // 読み込みを行うかどうかの判定
             loader={
               <div className="text-2xl" key={0}>

@@ -3,6 +3,7 @@ import { faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Component, FormEvent } from "react";
 import Image from "next/image";
 import { signUp } from "../util/firebase/auth";
+import Modal from "./Modal";
 
 interface ModalProps {
   showFlag: boolean;
@@ -52,97 +53,82 @@ class loginModal extends Component<ModalProps, LoginStateProps> {
     const { errMsg, loading, state } = this.state;
     return (
       <div>
-        {showFlag ? (
-          <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded">
-              <FontAwesomeIcon
-                icon={faXmark}
-                onClick={() => setFlag()}
-                className="block mr-0 ml-auto p-1 cursor-pointer"
-              />
-              <form
-                className="m-5 mt-0 flex flex-col gap-2"
-                onSubmit={this.submit.bind(this)}
-              >
+        <Modal isOpen={showFlag} setOpen={setFlag}>
+          <form
+            className="m-5 mt-0 flex flex-col gap-2"
+            onSubmit={this.submit.bind(this)}
+          >
+            <Image
+              src="/logo.png"
+              alt="ロゴ"
+              className="mx-auto"
+              width="300"
+              height="200"
+              objectFit="contain"
+            />
+            <h3 className="text-center text-xl">犬開発アカウントを作成</h3>
+            <input
+              type="email"
+              placeholder="メールアドレス"
+              className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
+              required
+            />
+            <input
+              type="password"
+              placeholder="パスワード"
+              className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="ニックネーム"
+              className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
+              required
+            />
+
+            {state === null || state ? (
+              <>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+                >
+                  {loading ? (
+                    <FontAwesomeIcon
+                      icon={faSpinner}
+                      className="animate-spin px-2"
+                    />
+                  ) : null}
+                  アカウントを作成
+                </button>
                 <Image
-                  src="/logo.png"
-                  alt="ロゴ"
-                  className="mx-auto"
+                  src="/btn_google_signin.png"
+                  alt="Login With Google"
+                  onClick={async () => {
+                    await signUp(1);
+                    window.location.reload();
+                  }}
+                  className="mx-auto cursor-pointer"
                   width="300"
-                  height="200"
+                  height="50"
                   objectFit="contain"
                 />
-                <h3 className="text-center text-xl">犬開発アカウントを作成</h3>
-                <input
-                  type="email"
-                  placeholder="メールアドレス"
-                  className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="パスワード"
-                  className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="ニックネーム"
-                  className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
-                  required
-                />
-
-                {state === null || state ? (
-                  <>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
-                    >
-                      {loading ? (
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          className="animate-spin px-2"
-                        />
-                      ) : null}
-                      アカウントを作成
-                    </button>
-                    <Image
-                      src="/btn_google_signin.png"
-                      alt="Login With Google"
-                      onClick={async () => {
-                        await signUp(1);
-                        window.location.reload();
-                      }}
-                      className="mx-auto cursor-pointer"
-                      width="300"
-                      height="50"
-                      objectFit="contain"
-                    />
-                  </>
-                ) : null}
-                <p
-                  className={`whitespace-pre-wrap ${
-                    state ? "text-red-500" : ""
-                  }`}
-                >
-                  {errMsg}
-                </p>
-                {state === false ? (
-                  <button
-                    type="button"
-                    className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
-                    onClick={() => setFlag()}
-                  >
-                    画面を閉じる
-                  </button>
-                ) : null}
-              </form>
-            </div>
-          </div>
-        ) : (
-          <div />
-        )}
+              </>
+            ) : null}
+            <p className={`whitespace-pre-wrap ${state ? "text-red-500" : ""}`}>
+              {errMsg}
+            </p>
+            {state === false ? (
+              <button
+                type="button"
+                className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
+                onClick={() => setFlag()}
+              >
+                画面を閉じる
+              </button>
+            ) : null}
+          </form>
+        </Modal>
       </div>
     );
   }

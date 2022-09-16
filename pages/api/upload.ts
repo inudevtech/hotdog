@@ -72,14 +72,12 @@ export default async function handler(
   // End of recaptcha verification
 
   let uid: string | null = null;
-  if (typeof token === "string") {
-    try {
-      const user = await adminAuth.verifyIdToken(token);
-      uid = user.uid;
-    } catch (e) {
-      res.status(400).end();
-      return;
-    }
+  try {
+    const user = await adminAuth.verifyIdToken(token as string);
+    uid = user.uid;
+  } catch (e) {
+    res.status(400).end();
+    return;
   }
   const directoryName = generateRandomString(32);
 

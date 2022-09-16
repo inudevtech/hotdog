@@ -9,7 +9,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tippy from "@tippyjs/react";
 import { useRouter } from "next/router";
-import { scaleDown as Menu } from "react-burger-menu";
+// @ts-ignore
+import Menu from "react-burger-menu/lib/menus/scaleDown";
 import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";
 import LoginModal from "./LoginModal";
@@ -87,8 +88,6 @@ const Header = () => {
     </Link>
   );
 
-  console.log(router.pathname);
-
   return (
     <>
       <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-10">
@@ -98,7 +97,7 @@ const Header = () => {
             outerContainerId="__next"
             pageWrapId="page-warp"
             isOpen={isOpen}
-            onStateChange={(state) => setIsOpen(state.isOpen)}
+            onStateChange={(state: any) => setIsOpen(state.isOpen)}
           >
             <div className="flex flex-col items-center gap-4">
               {link}
