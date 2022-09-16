@@ -12,10 +12,12 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { Dispatch, SetStateAction } from "react";
-import { User } from "@firebase/auth";
+import { GithubAuthProvider, TwitterAuthProvider, User } from "@firebase/auth";
 import auth from "./firebase";
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
+const twitterProvider = new TwitterAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 export function login(
   type: number,
@@ -31,7 +33,15 @@ export function login(
         .catch((e) => reject(e));
     } else if (type === 1) {
       setPersistence(auth, browserSessionPersistence)
-        .then(() => resolve(signInWithPopup(auth, provider)))
+        .then(() => resolve(signInWithPopup(auth, googleProvider)))
+        .catch((e) => reject(e));
+    } else if (type === 2) {
+      setPersistence(auth, browserSessionPersistence)
+        .then(() => resolve(signInWithPopup(auth, twitterProvider)))
+        .catch((e) => reject(e));
+    } else if (type === 3) {
+      setPersistence(auth, browserSessionPersistence)
+        .then(() => resolve(signInWithPopup(auth, githubProvider)))
         .catch((e) => reject(e));
     }
   });
@@ -66,7 +76,7 @@ export async function signUp(
       displayName,
     });
     await sendEmailVerification(user);
-  } else if (type === 1) {
+  } else if (type > 0) {
     await login(type);
   }
 }
@@ -75,7 +85,10 @@ export const onAuthStateChanged = (
   callback: Dispatch<SetStateAction<User | null>>
 ) => {
   onFirebaseAuthStateChanged(auth, async (user) => {
-    if (user?.emailVerified) {
+    if (
+      user?.emailVerified ||
+      user?.providerData[0].providerId !== "password"
+    ) {
       callback(user);
     } else {
       await logout();
