@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Editor } from "@tinymce/tinymce-react";
-import { useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { getStringBytes } from "../util/util";
 import { AccountContext } from "../pages/_app";
@@ -22,7 +22,6 @@ const Edit = (props: ModalProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean | number>(false);
   const [defaultContent, setDefaultContent] = useState<string | null>(null);
-  console.log(id);
 
   const save = async () => {
     if (editorRef.current && titleRef.current) {
@@ -67,7 +66,6 @@ const Edit = (props: ModalProps) => {
   useMemo(() => {
     if (showFlag) {
       axios.get("/api/description", { params: { id } }).then((res) => {
-        console.log(res.data);
         let { description } = res.data;
         if (description === null) {
           description = "";

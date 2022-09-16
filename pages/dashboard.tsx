@@ -13,7 +13,7 @@ const dashboard = () => {
   useEffect(() => {
     addRelations(
       0,
-      { isAnonymous: false },
+      { isAnonymous: false, isDeletedUser: false },
       AccountState?.uid!,
       setHasMore,
       fileList,
@@ -41,7 +41,7 @@ const dashboard = () => {
           loadMore={(page) =>
             addRelations(
               page,
-              { isAnonymous: false },
+              { isAnonymous: false, isDeletedUser: false },
               AccountState?.uid,
               setHasMore,
               fileList,

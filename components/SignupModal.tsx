@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Component, FormEvent } from "react";
 import Image from "next/image";
 import { signUp } from "../util/firebase/auth";

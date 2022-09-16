@@ -40,7 +40,7 @@ const download = () => {
   const [downloadCount, setDownloadCount] = useState<number>(0);
   const flag = useState<boolean>(false);
   const { AccountState } = useContext(AccountContext);
-  const [editOpen, setEditOpen] = useState<boolean>(0);
+  const [editOpen, setEditOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const { id } = router.query;
