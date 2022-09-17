@@ -76,7 +76,7 @@ class index extends Component<{}, indexProps> {
             {(value) => (
               <>
                 <div className="flex justify-center items-center h-screen flex-col">
-                  <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] border border-slate-300 rounded-xl">
+                  <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] max-h-[80vh] overflow-y-auto border border-slate-300 rounded-xl">
                     <div className="basis-1/3 flex flex-col gap-2">
                       <div
                         {...getRootProps()}
@@ -141,7 +141,7 @@ class index extends Component<{}, indexProps> {
                     </div>
                   ) : null}
                 </div>
-                <div className="w-full mx-auto absolute top-[90vh] flex items-center justify-center transition ease-out duration-300 transform hover:scale-125">
+                <div className="w-full mx-auto absolute top-[90vh] flex items-center justify-center transition ease-out duration-300 transform hover:scale-125 overflow-x-hidden">
                   <a
                     className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap"
                     href="https://www.inu-dev.tech/hotdog"

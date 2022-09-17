@@ -13,7 +13,7 @@ export default async function handler(
   }
 
   try {
-    connection.ping();
+    await connection.ping();
   } catch (e) {
     connection = await getConnection();
   }

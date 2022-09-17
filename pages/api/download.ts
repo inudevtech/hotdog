@@ -18,7 +18,7 @@ export default async function handler(
   }
 
   try {
-    connection.ping();
+    await connection.ping();
   } catch (e) {
     connection = await getConnection();
   }
@@ -32,7 +32,10 @@ export default async function handler(
   }
   // End of recaptcha verification
 
-  await connection.query("UPDATE fileData SET download   = download + 1 WHERE id = ?", [id]);
+  await connection.query(
+    "UPDATE fileData SET download   = download + 1 WHERE id = ?",
+    [id]
+  );
   const [rows] = await connection.query(
     "SELECT dir,fileName FROM fileData WHERE id = ?",
     [id]

@@ -13,7 +13,7 @@ export default async function handler(
   }
 
   try {
-    connection.ping();
+    await connection.ping();
   } catch (e) {
     connection = await getConnection();
   }
@@ -51,7 +51,9 @@ export default async function handler(
         return;
       }
 
-      res.status(200).json((rows as {displayName: string, description: string}[])[0]);
+      res
+        .status(200)
+        .json((rows as { displayName: string; description: string }[])[0]);
     }
   } else {
     res.status(400).end();

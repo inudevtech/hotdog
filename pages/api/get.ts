@@ -17,7 +17,7 @@ export default async function handler(
 
   if (index === undefined) {
     try {
-      connection.ping();
+      await connection.ping();
     } catch (e) {
       connection = await getConnection();
     }
@@ -60,7 +60,8 @@ export default async function handler(
       ...fileData,
       user: returnUserData,
     });
-  } else {let uid;
+  } else {
+    let uid;
     if (isuid === "false") {
       const [rows] = await connection.query(
         "SELECT uid FROM fileData WHERE id = ?",

@@ -9,7 +9,6 @@ const storage = new Storage({
 });
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -20,7 +19,7 @@ export default async function handler(
   }
 
   try {
-    connection.ping();
+    await connection.ping();
   } catch (e) {
     connection = await getConnection();
   }
@@ -42,7 +41,7 @@ export default async function handler(
     res.status(400).end();
     return;
   }
-  const fileData = (rows as unknown as { dir: string, fileName: string }[])[0];
+  const fileData = (rows as unknown as { dir: string; fileName: string }[])[0];
 
   const file = bucket.file(`${fileData.dir}/${fileData.fileName}`);
   await file.delete();
