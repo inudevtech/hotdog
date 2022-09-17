@@ -60,6 +60,7 @@ export default async function handler(
     }
   } catch (e) {
     res.status(400).end();
+    console.warn("content-length");
     return;
   }
   const contentLength = Number(contentLengthHeader);
@@ -73,8 +74,10 @@ export default async function handler(
 
   let uid: string | null = null;
   try {
-    const user = await adminAuth.verifyIdToken(token as string);
-    uid = user.uid;
+    if (token) {
+      const user = await adminAuth.verifyIdToken(token as string);
+      uid = user.uid;
+    }
   } catch (e) {
     res.status(400).end();
     return;

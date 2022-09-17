@@ -23,8 +23,10 @@ export default async function handler(
     if (req.method === "POST") {
       let uid;
       try {
-        const user = await adminAuth.verifyIdToken(token as string);
-        uid = user.uid;
+        if (token) {
+          const user = await adminAuth.verifyIdToken(token as string);
+          uid = user.uid;
+        }
       } catch (e) {
         res.status(400).end();
         return;

@@ -232,7 +232,7 @@ const download = () => {
                 />
               </Tippy>
             </div>
-            {user?.uid === AccountState?.uid && (
+            {user?.uid === AccountState?.uid && AccountState !== null && (
               <>
                 <span className="border-b-2" />
                 <div className="flex flex-row justify-around items-center">

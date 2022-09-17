@@ -54,7 +54,7 @@ export default async function handler(
     version: "v4",
     action: "read",
     expires: Date.now() + 60 * 1000, // 1 minutes
-    cname: "storage.hotdog.inu-dev.tech"
+    cname: "https://storage.hotdog.inu-dev.tech"
   };
   const [url] = await bucket.file(`${dir}/${fileName}`).getSignedUrl(options);
   res.status(200).json({

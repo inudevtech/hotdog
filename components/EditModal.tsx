@@ -178,7 +178,7 @@ const Edit = (props: ModalProps) => {
         <div className="border-r border-t border-slate-200 border-2" />
         <div>
           <p>共有URL</p>
-          <p className="border rounded border-slate-500 select-all p-1 max-w-[250px] overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/${id}`}</p>
+          <p className="border rounded border-slate-500 select-all p-1 max-w-[250px] overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/d/${id}`}</p>
         </div>
       </div>
     </Modal>

@@ -26,7 +26,9 @@ export default async function handler(
 
   const { id, token } = req.query;
   try {
-    await adminAuth.verifyIdToken(token as string);
+    if (token) {
+      await adminAuth.verifyIdToken(token as string);
+    }
   } catch (e) {
     res.status(400).end();
     return;
