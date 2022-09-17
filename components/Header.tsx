@@ -99,7 +99,7 @@ const Header = () => {
             isOpen={isOpen}
             onStateChange={(state: any) => setIsOpen(state.isOpen)}
           >
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-start gap-4">
               {link}
               <Link href="/dashboard">
                 <span
@@ -110,6 +110,26 @@ const Header = () => {
                   aria-hidden
                 >
                   ダッシュボード
+                </span>
+              </Link>
+              <Link href="https://www.inu-dev.tech/hotdog">
+                <span
+                  className="cursor-pointer header_menu flex gap-2 items-center"
+                  onClick={() => setIsOpen(false)}
+                  aria-hidden
+                >
+                  ホットドッグについて
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                </span>
+              </Link>
+              <Link href="https://forms.gle/b8ED6GkTkn9RMocQ6">
+                <span
+                  className="cursor-pointer header_menu flex gap-2 items-center"
+                  onClick={() => setIsOpen(false)}
+                  aria-hidden
+                >
+                  お問い合わせ
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                 </span>
               </Link>
             </div>
