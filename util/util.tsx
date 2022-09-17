@@ -2,7 +2,7 @@ import axios from "axios";
 import Prism from "prismjs";
 import { Dispatch, ReactElement, SetStateAction } from "react";
 
-export interface GetUserProps{
+export interface GetUserProps {
   isDeletedUser: boolean;
   isAnonymous: boolean;
   iconURL?: string;
@@ -30,6 +30,7 @@ export const addRelations = (
           setHasMore(true);
         } else if (r.data.length === 0) {
           setHasMore(false);
+          return;
         }
 
         setFileList([

@@ -77,10 +77,10 @@ class index extends Component<{}, indexProps> {
               <>
                 <div className="flex justify-center items-center h-screen flex-col">
                   <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] max-h-[80vh] overflow-y-auto border border-slate-300 rounded-xl">
-                    <div className="basis-1/3 flex flex-col gap-2">
+                    <div className="md:basis-1/3 flex flex-col gap-2">
                       <div
                         {...getRootProps()}
-                        className={`border-dashed border-2 rounded-md flex justify-center items-center p-5 flex-auto ${
+                        className={`border-dashed border-2 rounded-md justify-center items-center p-5 flex-auto hidden md:flex ${
                           isDragActive
                             ? "border-blue-600 bg-blue-100"
                             : "border-slate-600"
@@ -89,7 +89,7 @@ class index extends Component<{}, indexProps> {
                         <input {...getInputProps()} />
                         <p>ファイルをドラッグ&ドロップ</p>
                       </div>
-                      <p className="text-center text-2xl">or</p>
+                      <p className="text-center text-2xl hidden md:block">or</p>
                       <label
                         htmlFor="upload"
                         className="transition p-2 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block w-full text-center"
@@ -126,7 +126,7 @@ class index extends Component<{}, indexProps> {
                     </div>
                   </div>
                   {value.AccountState == null && isWarningOpen ? (
-                    <div className="bg-yellow-200/[.6] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10">
+                    <div className="bg-yellow-200/[.8] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10">
                       <FontAwesomeIcon
                         icon={faXmark}
                         onClick={() => this.setState({ isWarningOpen: false })}
@@ -141,7 +141,7 @@ class index extends Component<{}, indexProps> {
                     </div>
                   ) : null}
                 </div>
-                <div className="w-full mx-auto absolute top-[90vh] flex items-center justify-center transition ease-out duration-300 transform hover:scale-125 overflow-x-hidden">
+                <div className="w-full mx-auto md:absolute top-[90vh] flex items-center justify-center transition ease-out duration-300 transform hover:scale-125 overflow-x-hidden">
                   <a
                     className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap"
                     href="https://www.inu-dev.tech/hotdog"
