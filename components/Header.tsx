@@ -112,6 +112,17 @@ const Header = () => {
                   ダッシュボード
                 </span>
               </Link>
+              <Link href="/">
+                <span
+                  className={`cursor-pointer header_menu ${
+                    router.pathname.startsWith("/d/") ? "active" : ""
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                  aria-hidden
+                >
+                  ダウンロード
+                </span>
+              </Link>
               <Link href="https://www.inu-dev.tech/hotdog">
                 <span
                   className="cursor-pointer header_menu flex gap-2 items-center"

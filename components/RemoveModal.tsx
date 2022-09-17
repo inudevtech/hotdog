@@ -47,10 +47,10 @@ const removeModal: FC<{
           <p className="text-sm">
             システムの仕様上削除までに時間がかかる場合があります。
           </p>
-          <div className="flex gap-2">
+          <div className="flex md:gap-2 flex-col md:flex-row">
             <button
               type="button"
-              className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-red-600 block text-center bg-red-400"
+              className="transition p-1 my-2 w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-red-600 block text-center bg-red-400"
               onClick={remove}
             >
               {loading ? (
@@ -63,7 +63,7 @@ const removeModal: FC<{
             </button>
             <button
               type="button"
-              className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="transition p-1 my-2 w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
               onClick={() => flag[1](false)}
             >
               キャンセル
