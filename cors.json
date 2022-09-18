@@ -1,0 +1,14 @@
+[
+  {
+    "origin": ["*"],
+    "method": ["PUT", "POST"],
+    "responseHeader": [
+      "Access-Control-Allow-Origin",
+      "Content-Type",
+      "x-goog-acl",
+      "x-goog-content-length-range",
+      "x-goog-custom-time"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

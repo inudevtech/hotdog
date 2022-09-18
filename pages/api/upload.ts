@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Storage } from "@google-cloud/storage";
+import { GetSignedUrlConfig, Storage } from "@google-cloud/storage";
 import { randomBytes } from "crypto";
+import {OutgoingHttpHeaders} from "http";
 import adminAuth from "../../util/firebase/firebase-admin";
 import {
   cors,
@@ -38,32 +39,26 @@ export default async function handler(
   // Run the middleware
   await runMiddleware(req, res, cors);
 
-  const { type, filename, token, recaptcha, icon } = req.query;
+  const { type, filename, token, recaptcha, icon, contentLength } = req.query;
 
   if (icon !== undefined && token === undefined) {
     res.status(400).end();
     return;
   }
 
-  const contentLengthHeader = req.headers["content-length"];
   try {
-    if (
-      !contentLengthHeader ||
-      Number(contentLengthHeader) > 1000 * 1000 * 1000 * 5
-    ) {
+    if (!contentLength || Number(contentLength) > 1000 * 1000 * 1000 * 5) {
       res.status(413).end();
       return;
     }
-    if (icon !== undefined && Number(contentLengthHeader) > 1000 * 1000 * 3) {
+    if (icon !== undefined && Number(contentLength) > 1000 * 1000 * 3) {
       res.status(413).end();
       return;
     }
   } catch (e) {
     res.status(400).end();
-    console.warn("content-length");
     return;
   }
-  const contentLength = Number(contentLengthHeader);
 
   // Recaptcha verification
   const isVerificationClear = await serverUtil(<string>recaptcha!, res);
@@ -84,31 +79,31 @@ export default async function handler(
   }
   const directoryName = generateRandomString(32);
 
-  const uploadFile = bucket.file(`${directoryName}/${filename as string}`);
-  let customTime;
-  if (uid) {
-    customTime = null;
-  } else {
-    customTime = new Date().toISOString();
-  }
-  const uploadStream = uploadFile.createWriteStream({
-    metadata: {
-      contentType: type,
-      customTime,
-    },
-    public: icon !== undefined,
-  });
+  const extensionHeaders: OutgoingHttpHeaders = {
+    "x-goog-content-length-range": `${contentLength},${contentLength}`,
+    "x-goog-acl": icon !== undefined ? "public-read" : "private"
+  };
 
-  const upload = new Promise<void>((resolve, reject) => {
-    req
-      .pipe(uploadStream)
-      .on("error", (e) => {
-        reject(e);
-      })
-      .on("finish", () => {
-        resolve();
-      });
-  });
+  let customTime;
+  if (!uid) {
+    customTime = new Date().toISOString();
+    extensionHeaders["x-goog-custom-time"] = customTime;
+  }
+
+  const options: GetSignedUrlConfig = {
+    version: "v4",
+    action: "write",
+    expires: Date.now() + 60 * 1000, // 1 minutes
+    cname: "https://hotdog.inu-dev.tech/storage",
+    extensionHeaders,
+    contentType: type as string,
+  };
+  const uploadFile = bucket.file(`${directoryName}/${filename as string}`);
+  const url = await uploadFile.getSignedUrl(options);
+
+  await connection.execute(
+    "CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL, favorite INT UNSIGNED DEFAULT 0, download INT UNSIGNED DEFAULT 0)"
+  );
 
   let expiration: string | null;
   if (uid) {
@@ -121,46 +116,17 @@ export default async function handler(
 
   const nowDate = new Date().toISOString().slice(0, 19).replace("T", " ");
   const id = generateRandomString(32);
-  connection
-    .execute(
-      "CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL, favorite INT UNSIGNED DEFAULT 0, download INT UNSIGNED DEFAULT 0)"
-    )
-    .then(() => {
-      upload
-        .then(async () => {
-          const [metadata] = await uploadFile.getMetadata();
-          if (contentLength < metadata.size) {
-            await uploadFile.delete();
-            res.status(400).end();
-            return;
-          }
 
-          await connection.execute(
-            "INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)",
-            [
-              id,
-              directoryName,
-              filename,
-              uid,
-              expiration,
-              nowDate,
-              icon !== undefined,
-            ]
-          );
+  await connection.execute(
+    "INSERT INTO `fileData` (id,dir,fileName,uid,expiration,uploadDate,icon) VALUES (?,?,?,?,?,?,?)",
+    [id, directoryName, filename, uid, expiration, nowDate, icon !== undefined]
+  );
 
-          if (icon !== undefined) {
-            res.json({ id: uploadFile.publicUrl() });
-          } else {
-            res.json({ id });
-          }
-        })
-        .catch(() => {
-          res.status(500).end();
-        });
-    })
-    .catch(() => {
-      res.status(500).end();
-    });
+  if (icon !== undefined) {
+    res.json({ id: uploadFile.publicUrl(), url, customTime });
+  } else {
+    res.json({ id, url, customTime });
+  }
 }
 
 export const config = {

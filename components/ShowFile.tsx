@@ -59,21 +59,37 @@ class index extends Component<showFileProps, showFileStateProps> {
         filename: file.name,
         token: accessToken,
         recaptcha: recaptchaToken,
-      };
-
-      const config: AxiosRequestConfig = {
-        onUploadProgress(progressEvent) {
-          self.setState({
-            progress: (progressEvent.loaded * 100) / progressEvent.total,
-          });
-        },
-        params,
+        contentLength: file.size,
       };
 
       axios
-        .post("/api/upload", file, config)
+        .post("/api/upload", null, { params })
         .then((res) => {
-          this.setState({ id: res.data.id });
+          const config: AxiosRequestConfig = {
+            onUploadProgress: (progressEvent) => {
+              self.setState({
+                progress: (progressEvent.loaded * 100) / progressEvent.total,
+              });
+            },
+            headers: {
+              "Content-Type": file.type,
+              "x-goog-acl": "private",
+              "x-goog-content-length-range": `${file.size},${file.size}`,
+            },
+          };
+          if (res.data.customTime) {
+            config.headers!["x-goog-custom-time"] = res.data.customTime;
+          }
+
+          axios
+            .put(res.data.url, file, config)
+            .then(() => {
+              this.setState({ id: res.data.id });
+            })
+            .catch((e) => {
+              console.warn(e);
+              this.setState({ progress: -1 });
+            });
         })
         .catch(() => {
           this.setState({ progress: -1 });
