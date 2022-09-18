@@ -1,9 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { Storage } from "@google-cloud/storage";
 import adminAuth from "../../util/firebase/firebase-admin";
 import { getConnection } from "../../util/serverUtil";
 import { GetUserProps } from "../../util/util";
 
 let connection = await getConnection();
+
+const storage = new Storage({
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+});
+const bucket = storage.bucket(process.env.GCS_BUCKET_NAME!);
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,7 +31,7 @@ export default async function handler(
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
     const [rows] = await connection.query(
-      "SELECT uid, displayName, description, fileName, icon, favorite, download FROM fileData WHERE id = ?",
+      "SELECT uid, dir, fileName, displayName, description, fileName, icon, favorite, download FROM fileData WHERE id = ?",
       [id]
     );
     if ((rows as unknown[]).length === 0) {
@@ -34,7 +40,23 @@ export default async function handler(
       });
       return;
     }
-    const fileData = (rows as unknown as { uid?: string | null }[])[0];
+    const fileData = (
+      rows as unknown as {
+        fileName: string;
+        dir: string;
+        uid?: string | null;
+      }[]
+    )[0];
+    const fileExists = await bucket
+      .file(`${fileData.dir}/${fileData.fileName}`)
+      .exists();
+    if (!fileExists) {
+      await connection.query("DELETE FROM fileData WHERE id = ?", [id]);
+      res.status(200).json({
+        exists: false,
+      });
+      return;
+    }
 
     // User情報の取得
     const returnUserData: GetUserProps = {
