@@ -257,7 +257,7 @@ const download = () => {
             )}
             <button
               type="button"
-              className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="transition p-1 my-2 md:min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
               onClick={downloadFile}
             >
               {loading ? (
@@ -314,13 +314,13 @@ const download = () => {
         setFlag={setEditOpen}
         id={router.query.id as string}
       />
-      <div className="flex justify-center items-center h-screen flex-col">
-        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] max-h-[70%] overflow-auto">
+      <div className="flex lg:justify-center pt-[120px] lg:pt-0 items-center lg:h-screen flex-col">
+        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] lg:max-h-[70%] overflow-auto">
           {showItem}
         </div>
       </div>
       {user?.isAnonymous || !isExists ? null : (
-        <div className="container xl:max-w-5xl mx-auto relative top-[-10vh]">
+        <div className="container xl:max-w-5xl mx-auto lg:relative lg:top-[-10vh] mt-3 lg:mt-0">
           <h2 className="text-2xl text-center m-2">
             {user?.displayName}
             さんの他のファイル

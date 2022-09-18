@@ -75,8 +75,8 @@ class index extends Component<{}, indexProps> {
           <AccountContext.Consumer>
             {(value) => (
               <>
-                <div className="flex justify-center items-center h-screen flex-col">
-                  <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 min-h-[400px] max-h-[80vh] overflow-y-auto border border-slate-300 rounded-xl">
+                <div className="flex lg:justify-center items-center lg:h-screen flex-col pt-[120px] lg:pt-0">
+                  <div className="shadow-xl p-5 flex flex-col md:flex-row-reverse gap-2 lg:w-3/4 w-full xl:w-1/2 lg:min-h-[400px] max-h-[80vh] overflow-y-auto border border-slate-300 rounded-xl">
                     <div className="md:basis-1/3 flex flex-col gap-2">
                       <div
                         {...getRootProps()}
@@ -126,11 +126,12 @@ class index extends Component<{}, indexProps> {
                     </div>
                   </div>
                   {value.AccountState == null && isWarningOpen ? (
-                    <div className="bg-yellow-200/[.8] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10">
+                    <div className="md:relative bg-yellow-200/[.8] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10">
                       <FontAwesomeIcon
                         icon={faXmark}
                         onClick={() => this.setState({ isWarningOpen: false })}
-                        className="p-1 cursor-pointer absolute top-0 right-0 md:hidden"
+                        className="absolute top-0 right-0 p-2 cursor-pointer"
+                        size="xl"
                       />
                       <p className="text-xl">
                         ログインせずにホットドッグを使用しています
@@ -141,22 +142,23 @@ class index extends Component<{}, indexProps> {
                     </div>
                   ) : null}
                 </div>
-                <div className="w-full mx-auto md:absolute top-[90vh] flex items-center justify-center transition ease-out duration-300 transform hover:scale-125 overflow-x-hidden">
-                  <a
-                    className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap"
-                    href="https://www.inu-dev.tech/hotdog"
-                  >
-                    <Image
-                      src="/hotdog-emoji.svg"
-                      width="40"
-                      height="40"
-                      alt="Hotdog Emoji"
-                      className=""
-                    />
-                    <span className="item transition-all">ホットドッグ</span>
-                    <span>とは？</span>
-                  </a>
-                  <p className="yazirusi flex" />
+                <div className="w-full md:absolute smh:static md:top-[90vh] flex justify-center">
+                  <div className="transition ease-out duration-300 transform hover:scale-125 overflow-x-hidden flex items-center">
+                    <a
+                      className="text-2xl md:text-4xl logo-text flex gap-1 items-center justify-center m-2 about-link transition flex-wrap"
+                      href="https://www.inu-dev.tech/hotdog"
+                    >
+                      <Image
+                        src="/hotdog-emoji.svg"
+                        width="40"
+                        height="40"
+                        alt="Hotdog Emoji"
+                      />
+                      <span className="item transition-all">ホットドッグ</span>
+                      <span>とは？</span>
+                    </a>
+                    <p className="w-[100px] h-[15px] border-b border-r transform skew-x-[45deg] mr-2 border-slate-900" />
+                  </div>
                 </div>
               </>
             )}
