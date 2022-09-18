@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { GetSignedUrlConfig, Storage } from "@google-cloud/storage";
 import { randomBytes } from "crypto";
-import {OutgoingHttpHeaders} from "http";
+import { OutgoingHttpHeaders } from "http";
 import adminAuth from "../../util/firebase/firebase-admin";
 import {
   cors,
@@ -81,7 +81,7 @@ export default async function handler(
 
   const extensionHeaders: OutgoingHttpHeaders = {
     "x-goog-content-length-range": `${contentLength},${contentLength}`,
-    "x-goog-acl": icon !== undefined ? "public-read" : "private"
+    "x-goog-acl": icon !== undefined ? "public-read" : "private",
   };
 
   let customTime;
