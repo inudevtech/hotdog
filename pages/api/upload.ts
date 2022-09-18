@@ -94,12 +94,16 @@ export default async function handler(
     version: "v4",
     action: "write",
     expires: Date.now() + 60 * 1000, // 1 minutes
-    cname: "https://hotdog.inu-dev.tech/storage",
+    cname: "https://hotdog.inu-dev.tech/",
     extensionHeaders,
     contentType: type as string,
   };
   const uploadFile = bucket.file(`${directoryName}/${filename as string}`);
-  const url = await uploadFile.getSignedUrl(options);
+  const [signedUrl] = await uploadFile.getSignedUrl(options);
+  const url = signedUrl.replace(
+    "https://hotdog.inu-dev.tech/",
+    "https://hotdog.inu-dev.tech/storage/"
+  );
 
   await connection.execute(
     "CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL, favorite INT UNSIGNED DEFAULT 0, download INT UNSIGNED DEFAULT 0)"
