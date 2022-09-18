@@ -47,7 +47,7 @@ export default async function handler(
         uid?: string | null;
       }[]
     )[0];
-    const fileExists = await bucket
+    const [fileExists] = await bucket
       .file(`${fileData.dir}/${fileData.fileName}`)
       .exists();
     if (!fileExists) {
