@@ -55,7 +55,6 @@ class index extends Component<showFileProps, showFileStateProps> {
       }
 
       const params = {
-        type: file.type,
         filename: file.name,
         token: accessToken,
         recaptcha: recaptchaToken,
@@ -72,7 +71,7 @@ class index extends Component<showFileProps, showFileStateProps> {
               });
             },
             headers: {
-              "Content-Type": file.type,
+              "Content-Type": "application/octet-stream",
               "x-goog-acl": "private",
               "x-goog-content-length-range": `${file.size},${file.size}`,
             },
