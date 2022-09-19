@@ -22,8 +22,6 @@ const dashboard = () => {
     );
   }, []);
 
-  console.log(fileList);
-
   return (
     <div
       className={`relative flex flex-col items-center h-screen p-2 container mx-auto xl:max-w-5xl ${

@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { ReactElement, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
+  faCheckCircle,
   faCircleInfo,
   faDownload,
   faFontAwesome,
@@ -158,6 +159,11 @@ const download = () => {
           />
         )}
         {user?.isAnonymous ? "匿名ユーザー" : user?.displayName}
+        {user?.official && (
+          <Tippy content="運営または認証済みのユーザー">
+            <FontAwesomeIcon icon={faCheckCircle} className="text-sky-500" />
+          </Tippy>
+        )}
       </p>
     );
 

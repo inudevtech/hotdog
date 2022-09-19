@@ -85,8 +85,7 @@ class index extends Component<showFileProps, showFileStateProps> {
             .then(() => {
               this.setState({ id: res.data.id });
             })
-            .catch((e) => {
-              console.warn(e);
+            .catch(() => {
               this.setState({ progress: -1 });
             });
         })

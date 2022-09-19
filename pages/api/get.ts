@@ -28,6 +28,10 @@ export default async function handler(
       connection = await getConnection();
     }
 
+    await connection.query(
+      "CREATE TABLE IF NOT EXISTS `user` (uid VARCHAR(36) NOT NULL PRIMARY KEY, official BOOLEAN NOT NULL DEFAULT false)"
+    );
+
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
     const [rows] = await connection.query(
@@ -71,6 +75,13 @@ export default async function handler(
         returnUserData.iconURL = user.photoURL;
         returnUserData.displayName = user.displayName;
         returnUserData.uid = fileData.uid;
+        const [r] = await connection.query(
+          "SELECT official FROM `user` WHERE uid = ?",
+          [fileData.uid]
+        );
+        if ((r as unknown[]).length === 1) {
+          returnUserData.official = (r as { official: boolean }[])[0].official;
+        }
       } catch {
         returnUserData.isDeletedUser = true;
       }

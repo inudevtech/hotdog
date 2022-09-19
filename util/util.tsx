@@ -8,6 +8,7 @@ export interface GetUserProps {
   iconURL?: string;
   displayName?: string;
   uid?: string;
+  official?: boolean;
 }
 
 export const getStringBytes = (string: string): number =>
