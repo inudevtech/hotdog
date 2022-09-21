@@ -118,7 +118,7 @@ export default async function handler(
       return;
     }
     const [fileRows] = await connection.query(
-      "SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? ORDER BY uploadDate DESC LIMIT 3 OFFSET ?",
+      "SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? AND private = false ORDER BY uploadDate DESC LIMIT 3 OFFSET ?",
       [uid, id, Number(index)]
     );
     res.status(200).json(fileRows);
