@@ -94,7 +94,7 @@ export default async function handler(
     version: "v4",
     action: "write",
     expires: Date.now() + 60 * 1000, // 1 minutes
-    // cname: "https://storage.hotdog.inu-dev.tech/",
+    cname: process.env.STORAGE_CNAME,
     virtualHostedStyle: true,
     extensionHeaders,
     contentType: "application/octet-stream",
