@@ -126,7 +126,7 @@ class index extends Component<{}, indexProps> {
                     </div>
                   </div>
                   {value.AccountState == null && isWarningOpen ? (
-                    <div className="md:relative bg-yellow-200/[.8] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 md:static z-10">
+                    <div className="md:relative bg-yellow-200/[.8] md:m-3 p-2 rounded border-2 border-yellow-300 lg:w-3/4 w-full xl:w-1/2 fixed bottom-0 left-0 z-10">
                       <FontAwesomeIcon
                         icon={faXmark}
                         onClick={() => this.setState({ isWarningOpen: false })}

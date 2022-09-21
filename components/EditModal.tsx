@@ -91,7 +91,6 @@ const Edit = (props: ModalProps) => {
   }
 
   const togglePrivate = () => {
-    console.log(privateFile);
     setPrivateFile(!privateFile);
     setDirty(true);
   };
