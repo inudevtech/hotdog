@@ -22,6 +22,7 @@ const Edit = (props: ModalProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean | number>(false);
   const [defaultContent, setDefaultContent] = useState<string | null>(null);
+  const [privateFile, setPrivateFile] = useState<boolean>(false);
 
   const save = async () => {
     if (editorRef.current && titleRef.current) {
@@ -48,11 +49,13 @@ const Edit = (props: ModalProps) => {
         const params = {
           token: accessToken,
           id,
+          privateFile,
         };
         axios
           .post("/api/description", { description: content, title }, { params })
           .then(() => {
             setLoading(false);
+            setError(false);
           })
           .catch((e: AxiosError) => {
             setLoading(false);
@@ -71,6 +74,7 @@ const Edit = (props: ModalProps) => {
           description = "";
         }
         setDefaultContent(description);
+        setPrivateFile(res.data.private);
         editorRef.current?.editor?.setContent(description);
         titleRef.current!.value = res.data.displayName;
       });
@@ -85,6 +89,12 @@ const Edit = (props: ModalProps) => {
     errorMsg =
       "何らかの原因により保存できませんでした。少し経ってからもう一度保存してください。";
   }
+
+  const togglePrivate = () => {
+    console.log(privateFile);
+    setPrivateFile(!privateFile);
+    setDirty(true);
+  };
 
   return (
     <Modal
@@ -176,9 +186,23 @@ const Edit = (props: ModalProps) => {
           )}
         </div>
         <div className="border-r border-t border-slate-200 border-2" />
-        <div>
+        <div className="flex flex-col gap-2">
           <p>共有URL</p>
           <p className="border rounded border-slate-500 select-all p-1 max-w-[250px] overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/d/${id}`}</p>
+          <label
+            htmlFor="privateSwitch"
+            className="flex relative cursor-pointer gap-3"
+          >
+            <input
+              type="checkbox"
+              id="privateSwitch"
+              className="sr-only peer"
+              onChange={togglePrivate}
+              checked={privateFile}
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+            <span>非公開ファイル</span>
+          </label>
         </div>
       </div>
     </Modal>
