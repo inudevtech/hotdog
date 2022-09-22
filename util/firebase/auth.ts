@@ -12,12 +12,20 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { Dispatch, SetStateAction } from "react";
-import { GithubAuthProvider, TwitterAuthProvider, User } from "@firebase/auth";
+import { GithubAuthProvider, sendPasswordResetEmail, TwitterAuthProvider, User } from "@firebase/auth";
 import auth from "./firebase";
 
 const googleProvider = new GoogleAuthProvider();
 const twitterProvider = new TwitterAuthProvider();
 const githubProvider = new GithubAuthProvider();
+
+export const resetPassword = async (email?: string) => {
+  if(email) {
+  await sendPasswordResetEmail(auth, email);
+  } else {
+  await sendPasswordResetEmail(auth, <string>auth.currentUser?.email);
+  }
+};
 
 export function login(
   type: number,
