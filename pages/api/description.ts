@@ -33,31 +33,22 @@ export default async function handler(
         return;
       }
 
-      let hash;
       let sql =
         "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, password = ? WHERE id = ? AND uid = ?";
-      let values = [
+      const values = [
         req.body.title,
         req.body.description,
-        req.body.privateFile === "true",
-        hash,
+        req.body.privateFile,
+        null,
         id,
         uid,
       ];
       if (req.body.password) {
-        hash = await bcrypt.hash(req.body.password, 10);
-      } else if (req.body.password === "") {
-        hash = null;
+        values[3] = await bcrypt.hash(req.body.password, 10);
       } else {
         sql =
           "UPDATE `fileData` SET displayName = ?, description = ?, private = ? WHERE id = ? AND uid = ?";
-        values = [
-          req.body.title,
-          req.body.description,
-          req.body.privateFile === "true",
-          id,
-          uid,
-        ];
+        values.splice(3, 1);
       }
 
       connection

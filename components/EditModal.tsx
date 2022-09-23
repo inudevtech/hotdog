@@ -103,7 +103,6 @@ const Edit = (props: ModalProps) => {
   const inputPassword = (e: FormEvent<HTMLInputElement>) => {
     setDirty(true);
     setPassword(e.currentTarget.value);
-    console.log(e.currentTarget.value);
   };
 
   return (
