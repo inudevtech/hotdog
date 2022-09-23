@@ -1,10 +1,17 @@
 import { useRouter } from "next/router";
-import { ReactElement, useContext, useEffect, useState } from "react";
+import {
+  FormEvent,
+  ReactElement,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import axios from "axios";
 import {
   faCheckCircle,
   faCircleInfo,
   faDownload,
+  faExclamationCircle,
   faFontAwesome,
   faHeart,
   faPen,
@@ -23,6 +30,7 @@ import { addRelations, GetUserProps } from "../../util/util";
 import RemoveModal from "../../components/RemoveModal";
 import { AccountContext } from "../_app";
 import EditModal from "../../components/EditModal";
+import Modal from "../../components/Modal";
 
 const download = () => {
   const router = useRouter();
@@ -42,6 +50,9 @@ const download = () => {
   const flag = useState<boolean>(false);
   const { AccountState } = useContext(AccountContext);
   const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [isProtected, setIsProtected] = useState<boolean>(false);
+  const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
+  const [errMsg, setErrMsg] = useState<string>("");
 
   useEffect(() => {
     const { id } = router.query;
@@ -53,12 +64,15 @@ const download = () => {
         .then((res) => {
           setIsExists(res.data.exists);
           if (res.data.exists) {
-            setTitle(res.data.displayName);
-            setDescription(res.data.description);
+            setTitle(res.data.displayName === "" ? null : res.data.displayName);
+            setDescription(
+              res.data.description === "" ? null : res.data.description
+            );
             setFileName(res.data.fileName);
             setIsIcon(res.data.icon);
             setLikeCount(res.data.favorite);
             setDownloadCount(res.data.download);
+            setIsProtected(res.data.isProtected);
             let u: GetUserProps | null;
             if (res.data.user.isDeletedUser) {
               u = {
@@ -92,14 +106,16 @@ const download = () => {
 
   let showItem;
 
-  const downloadFile = () => {
+  const getDownloadLink = (password?: string) => {
     setLoading(true);
     // Recaptcha認証を行う
     if (executeRecaptcha) {
       executeRecaptcha!("download").then((token) => {
         const { id } = router.query;
         axios
-          .get("/api/download", { params: { id, recaptcha: token } })
+          .get("/api/download", {
+            params: { id, recaptcha: token, pass: password },
+          })
           .then((res) => {
             const link = document.createElement("a");
             link.download = fileName!;
@@ -107,9 +123,31 @@ const download = () => {
             link.click();
             link.remove();
             setLoading(false);
+            setErrMsg("");
+          })
+          .catch((res) => {
+            if (res.response.status === 403) {
+              setLoading(false);
+              setErrMsg("パスワードが違います");
+            }
           });
       });
     }
+  };
+
+  const downloadFile = () => {
+    if (isProtected) {
+      setPasswordOpen(true);
+      return;
+    }
+
+    getDownloadLink();
+  };
+
+  const passwordDownload = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const elements = e.currentTarget as unknown as HTMLInputElement[];
+    getDownloadLink(elements[0].value);
   };
 
   const toggleLike = () => {
@@ -190,6 +228,12 @@ const download = () => {
               これは
               {user?.displayName}
               さんのユーザーアイコンです。
+            </p>
+          ) : null}
+          {isProtected ? (
+            <p className="bg-yellow-300/[.6] rounded border border-yellow-400 p-2 my-2">
+              <FontAwesomeIcon icon={faExclamationCircle} className="px-2" />
+              パスワード保護されたファイルです。
             </p>
           ) : null}
           {output.innerHTML === "<div>null</div>" ? null : (
@@ -320,6 +364,29 @@ const download = () => {
         setFlag={setEditOpen}
         id={router.query.id as string}
       />
+      <Modal isOpen={passwordOpen} setOpen={setPasswordOpen} className="p-5">
+        <form className="flex flex-col gap-2" onSubmit={passwordDownload}>
+          <h2>ダウンロードパスワードの入力</h2>
+          <p>
+            このファイルはパスワード保護されています。ダウンロードにはパスワードが必要です。
+          </p>
+          <input
+            type="password"
+            placeholder="パスワード"
+            className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
+          />
+          <button
+            type="submit"
+            className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+          >
+            {loading ? (
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
+            ) : null}
+            ダウンロード
+          </button>
+        </form>
+        <p className="text-red-500 whitespace-pre-wrap">{errMsg}</p>
+      </Modal>
       <div className="flex lg:justify-center pt-[120px] lg:pt-0 items-center lg:h-screen flex-col">
         <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] lg:max-h-[70%] overflow-auto">
           {showItem}

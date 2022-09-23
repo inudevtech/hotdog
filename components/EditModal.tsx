@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Editor } from "@tinymce/tinymce-react";
-import { useContext, useMemo, useRef, useState } from "react";
+import { FormEvent, useContext, useMemo, useRef, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { getStringBytes } from "../util/util";
 import { AccountContext } from "../pages/_app";
@@ -23,6 +23,7 @@ const Edit = (props: ModalProps) => {
   const [error, setError] = useState<boolean | number>(false);
   const [defaultContent, setDefaultContent] = useState<string | null>(null);
   const [privateFile, setPrivateFile] = useState<boolean>(false);
+  const [password, setPassword] = useState<string | null>("");
 
   const save = async () => {
     if (editorRef.current && titleRef.current) {
@@ -49,10 +50,13 @@ const Edit = (props: ModalProps) => {
         const params = {
           token: accessToken,
           id,
-          privateFile,
         };
         axios
-          .post("/api/description", { description: content, title }, { params })
+          .post(
+            "/api/description",
+            { description: content, title, privateFile, password },
+            { params }
+          )
           .then(() => {
             setLoading(false);
             setError(false);
@@ -67,7 +71,7 @@ const Edit = (props: ModalProps) => {
   };
 
   useMemo(() => {
-    if (showFlag) {
+    if (showFlag && AccountState) {
       axios.get("/api/description", { params: { id } }).then((res) => {
         let { description } = res.data;
         if (description === null) {
@@ -75,6 +79,7 @@ const Edit = (props: ModalProps) => {
         }
         setDefaultContent(description);
         setPrivateFile(res.data.private);
+        setPassword(res.data.password === 1 ? null : "");
         editorRef.current?.editor?.setContent(description);
         titleRef.current!.value = res.data.displayName;
       });
@@ -95,9 +100,15 @@ const Edit = (props: ModalProps) => {
     setDirty(true);
   };
 
+  const inputPassword = (e: FormEvent<HTMLInputElement>) => {
+    setDirty(true);
+    setPassword(e.currentTarget.value);
+    console.log(e.currentTarget.value);
+  };
+
   return (
     <Modal
-      className={`w-full ${
+      className={`w-full p-5 ${
         AccountState == null
           ? "md:w-1/3 sm:w-1/2"
           : "xl:w-2/3 xl:max-w-[1024px] lg:w-3/4"
@@ -106,13 +117,13 @@ const Edit = (props: ModalProps) => {
       setOpen={setFlag}
     >
       <div
-        className={`m-5 flex gap-2 flex-col-reverse ${
+        className={`flex gap-2 flex-col ${
           AccountState == null ? "" : "md:flex-row"
         }`}
       >
         <div className="grow">
           {AccountState == null ? (
-            <p>タイトルと説明はログインすると記入できます。</p>
+            <p>タイトルや説明など、詳細設定はログインすると記入できます。</p>
           ) : (
             <>
               <p className="m-2 text-xl">タイトル</p>
@@ -166,44 +177,67 @@ const Edit = (props: ModalProps) => {
                   }}
                 />
               )}
-              <button
-                type="button"
-                onClick={save}
-                className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
-                disabled={!dirty}
-              >
-                {loading ? (
-                  <FontAwesomeIcon
-                    icon={faSpinner}
-                    className="animate-spin px-2"
-                  />
-                ) : null}
-                {dirty ? "保存" : "保存済み"}
-              </button>
-              <p className="text-red-500">{errorMsg}</p>
             </>
           )}
         </div>
         <div className="border-r border-t border-slate-200 border-2" />
-        <div className="flex flex-col gap-2">
+        <div
+          className={`flex flex-col gap-2 ${
+            AccountState ? "md:max-w-[250px]" : ""
+          }`}
+        >
           <p>共有URL</p>
-          <p className="border rounded border-slate-500 select-all p-1 max-w-[250px] overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/d/${id}`}</p>
-          <label
-            htmlFor="privateSwitch"
-            className="flex relative cursor-pointer gap-3"
-          >
+          <p className="border rounded border-slate-500 select-all p-1 overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/d/${id}`}</p>
+          <div hidden={!AccountState}>
+            <label
+              htmlFor="privateSwitch"
+              className="flex relative cursor-pointer gap-3"
+            >
+              <input
+                type="checkbox"
+                id="privateSwitch"
+                className="sr-only peer"
+                onChange={togglePrivate}
+                checked={privateFile}
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+              <span>非公開ファイル</span>
+            </label>
+            <p className="text-sm">
+              非公開にすると関連欄にファイルが表示されなくなります
+            </p>
+          </div>
+          <div hidden={!AccountState}>
+            <span>ダウンロードパスワード</span>
+            <p className="text-sm">
+              パスワードを設定するとダウンロード時にパスワードを求められます。
+            </p>
             <input
-              type="checkbox"
-              id="privateSwitch"
-              className="sr-only peer"
-              onChange={togglePrivate}
-              checked={privateFile}
+              type="password"
+              placeholder="パスワード"
+              className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
+              onChange={inputPassword}
+              maxLength={72}
+              value={password === null ? "passwordpassword" : password}
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
-            <span>非公開ファイル</span>
-          </label>
+            <p className="text-sm">
+              保存したパスワードは16桁のパスワードとして表示されます
+            </p>
+          </div>
         </div>
       </div>
+      <button
+        type="button"
+        onClick={save}
+        className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
+        disabled={!dirty}
+      >
+        {loading ? (
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
+        ) : null}
+        {dirty ? "保存" : "保存済み"}
+      </button>
+      <p className="text-red-500">{errorMsg}</p>
     </Modal>
   );
 };

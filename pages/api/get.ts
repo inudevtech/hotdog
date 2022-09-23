@@ -35,7 +35,7 @@ export default async function handler(
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
     const [rows] = await connection.query(
-      "SELECT uid, dir, fileName, displayName, description, fileName, icon, favorite, download FROM fileData WHERE id = ?",
+      "SELECT uid, dir, fileName, displayName, description, fileName, icon, favorite, download, password FROM fileData WHERE id = ?",
       [id]
     );
     if ((rows as unknown[]).length === 0) {
@@ -46,6 +46,7 @@ export default async function handler(
     }
     const fileData = (
       rows as unknown as {
+        password?: string | null;
         fileName: string;
         dir: string;
         uid?: string | null;
@@ -86,10 +87,17 @@ export default async function handler(
         returnUserData.isDeletedUser = true;
       }
     }
+
+    let isProtected = false;
+    if(fileData.password !== null) {
+      isProtected = true;
+    }
     delete fileData.uid;
+    delete fileData.password;
 
     res.status(200).json({
       exists: true,
+      isProtected,
       ...fileData,
       user: returnUserData,
     });

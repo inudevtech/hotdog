@@ -49,7 +49,10 @@ export const addRelations = (
               const output = document.createElement("div");
               output.innerHTML = `<div>${file.description}</div>`;
               Prism.highlightAllUnder(output);
-              if (output.innerHTML === "<div>null</div>") {
+              if (
+                output.innerHTML === "<div>null</div>" ||
+                file.description === ""
+              ) {
                 output.innerHTML =
                   "<div class='italic'>このファイルに説明はありません。</div>";
               }
