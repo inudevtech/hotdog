@@ -17,6 +17,7 @@ import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light-border.css";
+import packageJson from "../package.json";
 
 const Header = () => {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -55,7 +56,7 @@ const Header = () => {
       <button
         type="button"
         onClick={() => router.push("https://account.inu-dev.tech/")}
-        className="transition border p-1.5 border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 flex items-center gap-2"
+        className="transition border p-1.5 border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 text-center bg-sky-400 flex items-center gap-2"
       >
         アカウント情報の変更
         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -99,50 +100,62 @@ const Header = () => {
             isOpen={isOpen}
             onStateChange={(state: any) => setIsOpen(state.isOpen)}
           >
-            <div className="flex flex-col items-start gap-4">
-              {link}
-              <Link href="/dashboard">
-                <span
-                  className={`cursor-pointer header_menu ${
-                    router.pathname === "/dashboard" ? "active" : ""
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                  aria-hidden
-                >
-                  ダッシュボード
-                </span>
-              </Link>
-              <Link href="/">
-                <span
-                  className={`cursor-pointer header_menu ${
-                    router.pathname.startsWith("/d/") ? "active" : ""
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                  aria-hidden
-                >
-                  ダウンロード
-                </span>
-              </Link>
-              <Link href="https://www.inu-dev.tech/hotdog">
-                <span
-                  className="cursor-pointer header_menu flex gap-2 items-center"
-                  onClick={() => setIsOpen(false)}
-                  aria-hidden
-                >
-                  ホットドッグについて
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </span>
-              </Link>
-              <Link href="https://forms.gle/b8ED6GkTkn9RMocQ6">
-                <span
-                  className="cursor-pointer header_menu flex gap-2 items-center"
-                  onClick={() => setIsOpen(false)}
-                  aria-hidden
-                >
-                  お問い合わせ
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </span>
-              </Link>
+            <div className="flex flex-col h-full">
+              <div className="flex flex-col items-start gap-4 grow">
+                {link}
+                <Link href="/dashboard">
+                  <span
+                    className={`cursor-pointer header_menu ${
+                      router.pathname === "/dashboard" ? "active" : ""
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                    aria-hidden
+                  >
+                    ダッシュボード
+                  </span>
+                </Link>
+                <Link href="/">
+                  <span
+                    className={`cursor-pointer header_menu ${
+                      router.pathname.startsWith("/d/") ? "active" : ""
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                    aria-hidden
+                  >
+                    ダウンロード
+                  </span>
+                </Link>
+                <Link href="https://www.inu-dev.tech/hotdog">
+                  <span
+                    className="cursor-pointer header_menu flex gap-2 items-center"
+                    onClick={() => setIsOpen(false)}
+                    aria-hidden
+                  >
+                    ホットドッグについて
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </span>
+                </Link>
+                <Link href="https://forms.gle/b8ED6GkTkn9RMocQ6">
+                  <span
+                    className="cursor-pointer header_menu flex gap-2 items-center"
+                    onClick={() => setIsOpen(false)}
+                    aria-hidden
+                  >
+                    お問い合わせ
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </span>
+                </Link>
+              </div>
+              <div className="grow-none">
+                <Link href="/static/changelog">
+                  <span onClick={() => setIsOpen(false)} aria-hidden>
+                    ver {packageJson.version} |{" "}
+                    <span className="text-blue-500 underline cursor-pointer">
+                      チェンジログ
+                    </span>
+                  </span>
+                </Link>
+              </div>
             </div>
           </Menu>
           {link}

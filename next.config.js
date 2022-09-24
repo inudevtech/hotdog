@@ -1,10 +1,6 @@
 /** @type {import('next').NextConfig} */
 require("dotenv").config();
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
-
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
@@ -17,6 +13,17 @@ const nextConfig = {
     return config;
   },
   images: { domains: ["storage.googleapis.com"] },
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+    // `MDXProvider`を使う場合はコメントを外すこと
+    // providerImportSource: "@mdx-js/react",
+  },
+})
+
+module.exports = withMDX(nextConfig);
