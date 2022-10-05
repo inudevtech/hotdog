@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getConnection, serverUtil } from "../../util/serverUtil";
+import { getConnectionPool, serverUtil } from "../../util/serverUtil";
 
-let connection = await getConnection();
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,11 +11,7 @@ export default async function handler(
     return;
   }
 
-  try {
-    await connection.ping();
-  } catch (e) {
-    connection = await getConnection();
-  }
+  const connection = await getConnectionPool().getConnection();
 
   const { id, recaptcha, type } = req.query;
   // Recaptcha verification

@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Storage } from "@google-cloud/storage";
-import { getConnection } from "../../util/serverUtil";
 import adminAuth from "../../util/firebase/firebase-admin";
+import { getConnectionPool } from "../../util/serverUtil";
 
-let connection = await getConnection();
 const storage = new Storage({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
@@ -18,11 +17,7 @@ export default async function handler(
     return;
   }
 
-  try {
-    await connection.ping();
-  } catch (e) {
-    connection = await getConnection();
-  }
+  const connection = await getConnectionPool().getConnection();
 
   const { id, token } = req.query;
   try {

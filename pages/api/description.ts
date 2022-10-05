@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import adminAuth from "../../util/firebase/firebase-admin";
-import { getConnection } from "../../util/serverUtil";
+import { getConnectionPool } from "../../util/serverUtil";
 
-let connection = await getConnection();
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,11 +12,7 @@ export default async function handler(
     return;
   }
 
-  try {
-    await connection.ping();
-  } catch (e) {
-    connection = await getConnection();
-  }
+  const connection = await getConnectionPool().getConnection();
 
   const { token, id } = req.query;
   if (id !== undefined) {

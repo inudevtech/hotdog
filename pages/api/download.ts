@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Storage, GetSignedUrlConfig } from "@google-cloud/storage";
 import bcrypt from "bcrypt";
-import { getConnection, serverUtil } from "../../util/serverUtil";
-
-let connection = await getConnection();
+import { getConnectionPool, serverUtil } from "../../util/serverUtil";
 
 const storage = new Storage({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
@@ -18,11 +16,7 @@ export default async function handler(
     res.status(405).end();
   }
 
-  try {
-    await connection.ping();
-  } catch (e) {
-    connection = await getConnection();
-  }
+  const connection = await getConnectionPool().getConnection();
 
   const { id, recaptcha, pass } = req.query;
 

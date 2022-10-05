@@ -5,7 +5,7 @@ import { OutgoingHttpHeaders } from "http";
 import adminAuth from "../../util/firebase/firebase-admin";
 import {
   cors,
-  getConnection,
+  getConnectionPool,
   runMiddleware,
   serverUtil,
 } from "../../util/serverUtil";
@@ -19,7 +19,6 @@ function generateRandomString(length: number) {
   return randomBytes(length).reduce((p, i) => p + (i % 32).toString(32), "");
 }
 
-let connection = await getConnection();
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,11 +29,7 @@ export default async function handler(
     return;
   }
 
-  try {
-    await connection.ping();
-  } catch (e) {
-    connection = await getConnection();
-  }
+  const connection = await getConnectionPool().getConnection();
 
   // Run the middleware
   await runMiddleware(req, res, cors);

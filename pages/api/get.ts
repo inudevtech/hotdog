@@ -1,10 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Storage } from "@google-cloud/storage";
 import adminAuth from "../../util/firebase/firebase-admin";
-import { getConnection } from "../../util/serverUtil";
+import { getConnectionPool } from "../../util/serverUtil";
 import { GetUserProps } from "../../util/util";
-
-let connection = await getConnection();
 
 const storage = new Storage({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
@@ -21,13 +19,9 @@ export default async function handler(
 
   const { id, index, isuid } = req.query;
 
-  if (index === undefined) {
-    try {
-      await connection.ping();
-    } catch (e) {
-      connection = await getConnection();
-    }
+  const connection = await getConnectionPool().getConnection();
 
+  if (index === undefined) {
     await connection.query(
       "CREATE TABLE IF NOT EXISTS `user` (uid VARCHAR(36) NOT NULL PRIMARY KEY, official BOOLEAN NOT NULL DEFAULT false)"
     );
