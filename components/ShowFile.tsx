@@ -67,7 +67,7 @@ class index extends Component<showFileProps, showFileStateProps> {
           const config: AxiosRequestConfig = {
             onUploadProgress: (progressEvent) => {
               self.setState({
-                progress: (progressEvent.loaded * 100) / progressEvent.total,
+                progress: (progressEvent.loaded * 100) / progressEvent.total!,
               });
             },
             headers: {
