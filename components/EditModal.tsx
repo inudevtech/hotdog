@@ -3,6 +3,11 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Editor } from "@tinymce/tinymce-react";
 import { FormEvent, useContext, useMemo, useRef, useState } from "react";
 import axios, { AxiosError } from "axios";
+// @ts-ignore
+import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
+import "react-datetime-picker/dist/DateTimePicker.css";
 import { getStringBytes } from "../util/util";
 import { AccountContext } from "../pages/_app";
 import Modal from "./Modal";
@@ -24,6 +29,7 @@ const Edit = (props: ModalProps) => {
   const [defaultContent, setDefaultContent] = useState<string | null>(null);
   const [privateFile, setPrivateFile] = useState<boolean>(false);
   const [password, setPassword] = useState<string | null>("");
+  const [uploadDate, setUploadDate] = useState<Date | string>(new Date());
 
   const save = async () => {
     if (editorRef.current && titleRef.current) {
@@ -54,7 +60,13 @@ const Edit = (props: ModalProps) => {
         axios
           .post(
             "/api/description",
-            { description: content, title, privateFile, password },
+            {
+              description: content,
+              title,
+              privateFile,
+              password,
+              uploadDate,
+            },
             { params }
           )
           .then(() => {
@@ -80,6 +92,7 @@ const Edit = (props: ModalProps) => {
         setDefaultContent(description);
         setPrivateFile(res.data.private);
         setPassword(res.data.password === 1 ? null : "");
+        setUploadDate(res.data.uploadDate);
         editorRef.current?.editor?.setContent(description);
         titleRef.current!.value = res.data.displayName;
       });
@@ -199,7 +212,7 @@ const Edit = (props: ModalProps) => {
                 onChange={togglePrivate}
                 checked={privateFile}
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full focus:border-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
               <span>非公開ファイル</span>
             </label>
             <p className="text-sm">
@@ -214,7 +227,7 @@ const Edit = (props: ModalProps) => {
             <input
               type="password"
               placeholder="パスワード"
-              className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
+              className="border border-slate-500 p-1 rounded transition focus:border-slate-800 focus:border-2 w-full"
               onChange={inputPassword}
               maxLength={72}
               value={password === null ? "passwordpassword" : password}
@@ -222,6 +235,25 @@ const Edit = (props: ModalProps) => {
             <p className="text-sm">
               保存したパスワードは16桁のパスワードとして表示されます
             </p>
+          </div>
+          <div hidden={!AccountState}>
+            <span>予約投稿</span>
+            <p className="text-sm">
+              設定した時間にファイルが公開されます。設定しない場合は即時公開されます。
+            </p>
+            <DateTimePicker
+              onChange={(value: string) => {
+                setUploadDate(value);
+                setDirty(true);
+              }}
+              value={
+                typeof uploadDate === "string"
+                  ? new Date(uploadDate)
+                  : uploadDate
+              }
+              required
+              minDate={new Date()}
+            />
           </div>
         </div>
       </div>

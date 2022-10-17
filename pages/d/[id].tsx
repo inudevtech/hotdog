@@ -55,53 +55,64 @@ const download = () => {
   const [errMsg, setErrMsg] = useState<string>("");
 
   useEffect(() => {
-    const { id } = router.query;
-    setLike(parseCookies().like === "1");
+    (async () => {
+      const { id } = router.query;
+      setLike(parseCookies().like === "1");
 
-    if (id) {
-      axios
-        .get("/api/get", { params: { id } })
-        .then((res) => {
-          setIsExists(res.data.exists);
-          if (res.data.exists) {
-            setTitle(res.data.displayName === "" ? null : res.data.displayName);
-            setDescription(
-              res.data.description === "" ? null : res.data.description
-            );
-            setFileName(res.data.fileName);
-            setIsIcon(res.data.icon);
-            setLikeCount(res.data.favorite);
-            setDownloadCount(res.data.download);
-            setIsProtected(res.data.isProtected);
-            let u: GetUserProps | null;
-            if (res.data.user.isDeletedUser) {
-              u = {
-                isAnonymous: false,
-                isDeletedUser: true,
-                iconURL: undefined,
-                displayName: "削除済みユーザー",
-              };
-            } else {
-              u = res.data.user;
+      let accessToken;
+      if (AccountState == null) {
+        accessToken = undefined;
+      } else {
+        accessToken = await AccountState?.getIdToken();
+      }
+
+      if (id) {
+        axios
+          .get("/api/get", { params: { id, token: accessToken } })
+          .then((res) => {
+            setIsExists(res.data.exists);
+            if (res.data.exists) {
+              setTitle(
+                res.data.displayName === "" ? null : res.data.displayName
+              );
+              setDescription(
+                res.data.description === "" ? null : res.data.description
+              );
+              setFileName(res.data.fileName);
+              setIsIcon(res.data.icon);
+              setLikeCount(res.data.favorite);
+              setDownloadCount(res.data.download);
+              setIsProtected(res.data.isProtected);
+              let u: GetUserProps | null;
+              if (res.data.user.isDeletedUser) {
+                u = {
+                  isAnonymous: false,
+                  isDeletedUser: true,
+                  iconURL: undefined,
+                  displayName: "削除済みユーザー",
+                };
+              } else {
+                u = res.data.user;
+              }
+
+              setUser(u);
+              addRelations(
+                0,
+                u,
+                router.query.id as string,
+                setHasMore,
+                fileList,
+                setFileList
+              );
             }
-
-            setUser(u);
-            addRelations(
-              0,
-              u,
-              router.query.id as string,
-              setHasMore,
-              fileList,
-              setFileList
-            );
-          }
-        })
-        .catch(() => {
-          setIsExists(undefined);
-        });
-    } else {
-      setIsExists(false);
-    }
+          })
+          .catch(() => {
+            setIsExists(undefined);
+          });
+      } else {
+        setIsExists(false);
+      }
+    })();
   }, [router]);
 
   let showItem;

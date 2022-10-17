@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import adminAuth from "../../util/firebase/firebase-admin";
 import { getConnectionPool } from "../../util/serverUtil";
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -29,21 +28,22 @@ export default async function handler(
       }
 
       let sql =
-        "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, password = ? WHERE id = ? AND uid = ?";
+        "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, password = ?, uploadDate = ? WHERE id = ? AND uid = ?";
       const values = [
         req.body.title,
         req.body.description,
         req.body.privateFile,
         null,
+        new Date(req.body.uploadDate),
         id,
         uid,
       ];
-      if (req.body.password) {
-        values[3] = await bcrypt.hash(req.body.password, 10);
-      } else {
+      if (req.body.password === null) {
         sql =
-          "UPDATE `fileData` SET displayName = ?, description = ?, private = ? WHERE id = ? AND uid = ?";
+          "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, uploadDate = ? WHERE id = ? AND uid = ?";
         values.splice(3, 1);
+      } else if (req.body.password !== ""){
+        values[3] = await bcrypt.hash(req.body.password, 10);
       }
 
       connection
@@ -56,7 +56,7 @@ export default async function handler(
         });
     } else if (req.method === "GET") {
       const [rows] = await connection.query(
-        "SELECT displayName, description, private, password FROM fileData WHERE id = ?",
+        "SELECT displayName, description, private, password, uploadDate FROM fileData WHERE id = ?",
         [id]
       );
       if ((rows as unknown[]).length === 0) {

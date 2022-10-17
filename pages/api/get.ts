@@ -17,7 +17,7 @@ export default async function handler(
     res.status(405).end();
   }
 
-  const { id, index, isuid } = req.query;
+  const { id, index, isuid, token } = req.query;
 
   const connection = await getConnectionPool().getConnection();
 
@@ -28,24 +28,47 @@ export default async function handler(
 
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
+    // tokenがあったときは確認してuidを取得
+    let uid;
+    try {
+      if (token) {
+        const user = await adminAuth.verifyIdToken(token as string);
+        uid = user.uid;
+      }
+    } catch (e) {
+      res.status(400).end();
+      return;
+    }
+
     const [rows] = await connection.query(
-      "SELECT uid, dir, fileName, displayName, description, fileName, icon, favorite, download, password FROM fileData WHERE id = ?",
+      "SELECT uid, dir, fileName, displayName, description, uploadDate, fileName, icon, favorite, download, password FROM fileData WHERE id = ?",
       [id]
     );
+
     if ((rows as unknown[]).length === 0) {
       res.status(200).json({
         exists: false,
       });
       return;
     }
+
     const fileData = (
       rows as unknown as {
         password?: string | null;
         fileName: string;
         dir: string;
         uid?: string | null;
+        uploadDate: Date;
       }[]
     )[0];
+
+    if (fileData.uid !== uid && fileData.uploadDate > new Date()) {
+      res.status(200).json({
+        exists: false,
+      });
+      return;
+    }
+
     const [fileExists] = await bucket
       .file(`${fileData.dir}/${fileData.fileName}`)
       .exists();
@@ -83,7 +106,7 @@ export default async function handler(
     }
 
     let isProtected = false;
-    if(fileData.password !== null) {
+    if (fileData.password !== null) {
       isProtected = true;
     }
     delete fileData.uid;
@@ -121,7 +144,7 @@ export default async function handler(
     }
     const [fileRows] = await connection.query(
       `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? ${
-        isuid === "false" ? "AND private = false" : ""
+        isuid === "false" ? "AND private = false AND uploadDate < NOW()" : ""
       } ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
       [uid, id, Number(index)]
     );
