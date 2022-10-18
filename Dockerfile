@@ -7,8 +7,12 @@ ARG NEXT_PUBLIC_TINY_APIKEY
 ARG NEXT_PUBLIC_GA_TRACKING_ID
 ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
 
-COPY --chown=node:node package.json package-lock.json ./
-RUN npm ci
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
+RUN chmod +x /tini
+
+COPY --chown=node:node package.json yarn.lock ./
+RUN yarn install --prod --frozen-lockfile
 
 COPY --chown=node:node . .
 
@@ -17,11 +21,14 @@ RUN /app/node_modules/.bin/next build
 FROM gcr.io/distroless/nodejs:18
 WORKDIR /app
 
-COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/.next /app/.next
-COPY --from=builder /app/public /app/public
-COPY --from=builder /app/next.config.js /app/next.config.js
+COPY --from=builder --chown=nonroot:nonroot /tini /tini
+COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
+COPY --from=builder --chown=nonroot:nonroot /app/.next ./.next
+COPY --from=builder --chown=nonroot:nonroot /app/public ./public
+COPY --from=builder --chown=nonroot:nonroot /app/next.config.js ./next.config.js
 
+USER nonroot
 EXPOSE 3000
 
-CMD ["/app/node_modules/.bin/next","start","-p","80"]
+ENTRYPOINT [ "/tini", "--", "/app/node_modules/.bin/next" ]
+CMD ["start","-p","80"]
