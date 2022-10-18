@@ -30,5 +30,5 @@ COPY --from=builder --chown=nonroot:nonroot /app/next.config.js ./next.config.js
 USER nonroot
 EXPOSE 3000
 
-ENTRYPOINT [ "/tini", "--", "/app/node_modules/.bin/next" ]
-CMD ["start","-p","80"]
+ENTRYPOINT [ "/tini", "--", "/nodejs/bin/node" ]
+CMD ["/app/node_modules/.bin/next","start","-p","80"]
