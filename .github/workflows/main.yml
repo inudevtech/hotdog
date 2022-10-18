@@ -11,7 +11,6 @@ env:
   DEPLOYMENT_NAME: hotdog
   IMAGE: hotdog
 
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -21,92 +20,91 @@ jobs:
     environment: production
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: google-github-actions/setup-gcloud@v0.6.0
-      with:
-        service_account_key: ${{ secrets.GKE_SA_KEY_DEV }}
-        project_id: ${{ secrets.GKE_PROJECT_DEV }}
+      - uses: google-github-actions/setup-gcloud@v0.6.0
+        with:
+          service_account_key: ${{ secrets.GKE_SA_KEY_DEV }}
+          project_id: ${{ secrets.GKE_PROJECT_DEV }}
 
-    - run: |-
-        gcloud --quiet auth configure-docker
+      - run: |-
+          gcloud --quiet auth configure-docker
 
-    # Get the GKE credentials so we can deploy to the cluster
-    - uses: google-github-actions/get-gke-credentials@v0.8.2
-      with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
-        credentials: ${{ secrets.GKE_SA_KEY_DEV }}
+      # Get the GKE credentials so we can deploy to the cluster
+      - uses: google-github-actions/get-gke-credentials@v0.8.2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+          credentials: ${{ secrets.GKE_SA_KEY_DEV }}
 
-    - name: download
-      if: github.ref == 'refs/heads/main'
-      run: |
-        gsutil cp gs://bot-env/key.json .
+      - name: download
+        if: github.ref == 'refs/heads/main'
+        run: |
+          gsutil cp gs://bot-env/key.json .
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Cache Docker layers
-      uses: actions/cache@v3
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
-    - name: Build and Push image
-      if: github.ref == 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      id: build-image
-      with:
-        build-args: |
-          NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-          NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
-          NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
-          NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-        push: true
-        tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Build and Push image
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v3
+        id: build-image
+        with:
+          build-args: |
+            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+            NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
+            NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
+            NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
+            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          push: true
+          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
-    - name: Build image
-      if: github.ref != 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        build-args: |
-          NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-          NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
-          NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
-          NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-        push: false
-        tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Build image
+        if: github.ref != 'refs/heads/main'
+        uses: docker/build-push-action@v3
+        with:
+          build-args: |
+            NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+            NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY=${{ secrets.GOOGLE_RECAPTCHA_KEY }}
+            NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
+            NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
+            NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          push: false
+          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
 
-    # kustomize を設定する
-    - name: Set up Kustomize
-      if: github.ref == 'refs/heads/main'
-      run: |-
-        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-        chmod u+x ./kustomize
-    # secretファイルのダウンロード
-    - name: download
-      if: github.ref == 'refs/heads/main'
-      run: gsutil cp gs://bot-env/$DEPLOYMENT_NAME.env .
+      # kustomize を設定する
+      - name: Set up Kustomize
+        if: github.ref == 'refs/heads/main'
+        run: |-
+          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+      # secretファイルのダウンロード
+      - name: download
+        if: github.ref == 'refs/heads/main'
+        run: gsutil cp gs://bot-env/$DEPLOYMENT_NAME.env .
 
-    - name: delete secret
-      if: github.ref == 'refs/heads/main'
-      run: kubectl delete secret $DEPLOYMENT_NAME
-      continue-on-error: true
+      - name: delete secret
+        if: github.ref == 'refs/heads/main'
+        run: kubectl delete secret $DEPLOYMENT_NAME
+        continue-on-error: true
 
-    # Docker イメージを GKE クラスタにデプロイする
-    - name: Deploy
-      if: github.ref == 'refs/heads/main'
-      run: |-
-        kubectl create secret generic $DEPLOYMENT_NAME --from-env-file=./$DEPLOYMENT_NAME.env
-        ./kustomize edit set image hotdog:v1=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-        ./kustomize build . | kubectl apply -f -
-        kubectl rollout status deploy $DEPLOYMENT_NAME
-        kubectl get services -o wide
+      # Docker イメージを GKE クラスタにデプロイする
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: |-
+          kubectl create secret generic $DEPLOYMENT_NAME --from-env-file=./$DEPLOYMENT_NAME.env
+          ./kustomize edit set image hotdog:v1=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          ./kustomize build . | kubectl apply -f -
+          kubectl rollout status deploy $DEPLOYMENT_NAME
