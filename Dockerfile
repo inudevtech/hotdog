@@ -21,14 +21,13 @@ RUN /app/node_modules/.bin/next build
 FROM gcr.io/distroless/nodejs:18
 WORKDIR /app
 
-COPY --from=builder --chown=nonroot:nonroot /tini /tini
-COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
-COPY --from=builder --chown=nonroot:nonroot /app/.next ./.next
-COPY --from=builder --chown=nonroot:nonroot /app/public ./public
-COPY --from=builder --chown=nonroot:nonroot /app/next.config.js ./next.config.js
+COPY --from=builder /tini /tini
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./next.config.js
 
-USER nonroot
-EXPOSE 3000
+EXPOSE 80
 
 ENTRYPOINT [ "/tini", "--", "/nodejs/bin/node" ]
 CMD ["/app/node_modules/.bin/next","start","-p","80"]
