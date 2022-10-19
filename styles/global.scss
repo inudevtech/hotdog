@@ -182,3 +182,14 @@ h3 {
   @apply hover:shadow-xl;
   @apply transition-all;
 }
+
+ul li, ol li {
+  @apply leading-5;
+  @apply py-2;
+  @apply list-disc;
+}
+
+a {
+  @apply underline;
+  @apply underline-offset-2;
+}
