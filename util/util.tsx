@@ -102,7 +102,7 @@ export const addRelations = (
                     <div className="gradient absolute w-full mt-2 p-1 top-0 h-[200px]" />
                     <a
                       href={`/d/${file.id}`}
-                      className="transition p-1 px-5 absolute top-[150px] w-[90%] right-[5%] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+                      className="no-underline transition p-1 px-5 absolute top-[150px] w-[90%] right-[5%] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
                     >
                       詳細を見る
                     </a>

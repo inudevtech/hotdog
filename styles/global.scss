@@ -183,10 +183,18 @@ h3 {
   @apply transition-all;
 }
 
-ul li, ol li {
+ul li,
+ol li {
   @apply leading-5;
   @apply py-2;
+}
+
+ul {
   @apply list-disc;
+}
+
+ol {
+  @apply list-decimal;
 }
 
 a {
