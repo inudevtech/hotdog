@@ -4661,9 +4661,9 @@ react-burger-menu@3.0.8:
     prop-types "^15.7.2"
     snapsvg-cjs "0.0.6"
 
-react-calendar@^3.7.0, react-calendar@^3.9.0:
+react-calendar@3.9.0, react-calendar@^3.7.0:
   version "3.9.0"
-  resolved "https://registry.npmjs.org/react-calendar/-/react-calendar-3.9.0.tgz"
+  resolved "https://registry.yarnpkg.com/react-calendar/-/react-calendar-3.9.0.tgz#4dfe342ef61574c0e819e49847981076c7af58ea"
   integrity sha512-g6RJCEaPovHTiV2bMhBUfm0a1YoMj4bOUpL8hQSLmR1Glhc7lgRLtZBd4mcC4jkoGsb+hv9uA/QH4pZcm5l9lQ==
   dependencies:
     "@wojtekmaj/date-utils" "^1.0.2"
@@ -4671,9 +4671,9 @@ react-calendar@^3.7.0, react-calendar@^3.9.0:
     merge-class-names "^1.1.1"
     prop-types "^15.6.0"
 
-react-clock@^3.1.0:
+react-clock@3.1.0, react-clock@^3.1.0:
   version "3.1.0"
-  resolved "https://registry.npmjs.org/react-clock/-/react-clock-3.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/react-clock/-/react-clock-3.1.0.tgz#6fd9579e63597b85e50c22eb893eeb565d650d0e"
   integrity sha512-KLV3pDBcETc7lHPPqK6EpRaPS8NA3STAes+zIdfr7IY67vYgYc3brOAnGC9IcgA4X4xNPnLZwwaLJXmHrQ/MnQ==
   dependencies:
     "@wojtekmaj/date-utils" "^1.0.0"
@@ -4696,9 +4696,9 @@ react-date-picker@^9.0.0:
     react-fit "^1.4.0"
     update-input-width "^1.2.2"
 
-react-datetime-picker@^4.0.1:
+react-datetime-picker@4.0.1:
   version "4.0.1"
-  resolved "https://registry.npmjs.org/react-datetime-picker/-/react-datetime-picker-4.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/react-datetime-picker/-/react-datetime-picker-4.0.1.tgz#bb8153a291580f862748826b6dff30d9e28c3aff"
   integrity sha512-Z32kLGNsjB93GxS5GivCSbCJ8+B65c/XBztXVk+AjNzw36KFZu5SawyOMe8eSt7ijHj91IfjEREsce1cuuR9lQ==
   dependencies:
     "@wojtekmaj/date-utils" "^1.0.3"
