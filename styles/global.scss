@@ -186,15 +186,13 @@ h3 {
 ul li,
 ol li {
   @apply leading-5;
-  @apply py-2;
-}
-
-ul {
+  @apply py-1;
   @apply list-disc;
+  @apply ml-6;
 }
 
-ol {
-  @apply list-decimal;
+ol li {
+  @apply list-decimal #{!important};
 }
 
 a {
