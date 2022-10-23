@@ -263,7 +263,7 @@ const download = () => {
             // eslint-disable-next-line react/no-danger
             <div
               dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-              className="border-t-2 mt-2 p-1 max-h-[50vh] xl:max-h-[100%] overflow-auto break-words"
+              className="border-t-2 mt-2 p-1 max-h-[50vh] overflow-auto break-words"
             />
           )}
         </div>
