@@ -44,8 +44,8 @@
     "react-dropzone": "14.2.3",
     "react-google-recaptcha-v3": "1.10.0",
     "react-infinite-scroller": "1.2.6",
-    "sharp": "0.31.1",
-    "tailwindcss": "3.2.1",
+    "sharp": "0.31.2",
+    "tailwindcss": "3.2.2",
     "tippy.js": "6.3.7"
   },
   "devDependencies": {
