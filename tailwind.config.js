@@ -1,3 +1,5 @@
+const daisyui = require("daisyui");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -24,6 +26,9 @@ module.exports = {
       smh: { raw: "(max-height: 640px)" },
     },
   },
-  plugins: [],
+  plugins: [daisyui],
   important: true,
+  daisyui: {
+    themes: ["winter"],
+  },
 };

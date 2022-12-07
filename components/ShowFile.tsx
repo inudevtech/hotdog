@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { Component } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleExclamation,
@@ -8,109 +8,86 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import EditModal from "./EditModal";
 import { AccountContext } from "../pages/_app";
-import { AccountType } from "../util/global";
 
-interface showFileProps {
-  file: File;
-  recaptchaToken: string;
-}
+const ShowFile = (props: { file: File }) => {
+  const [progress, setProgress] = useState<number>(0);
+  const [id, setId] = useState<string>("");
+  const [editOpen, setEditOpen] = useState<boolean>(false);
+  const { file } = props;
+  const { AccountState } = useContext(AccountContext);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [showItem, setShowItem] = useState<ReactElement | null>(null);
 
-interface showFileStateProps {
-  progress: number;
-  id: string;
-  editOpen: boolean;
-}
-
-class index extends Component<showFileProps, showFileStateProps> {
-  // eslint-disable-next-line react/static-property-placement
-  context!: AccountType;
-
-  constructor(props: showFileProps | Readonly<showFileProps>) {
-    super(props);
-    this.state = {
-      progress: 0,
-      id: "",
-      editOpen: false,
-    };
-
-    this.setShowFlag = this.setShowFlag.bind(this);
-  }
-
-  async componentDidMount() {
-    const { file, recaptchaToken } = this.props;
-
-    if (file.size > 1000 * 1000 * 1000 * 5) {
-      this.setState({ progress: -2 });
-    } else {
-      const self = this;
-
-      let accessToken;
-      if (this.context == null) {
-        accessToken = null;
+  useEffect(() => {
+    (async () => {
+      if (file.size > 1000 * 1000 * 1000 * 5) {
+        setProgress(-2);
       } else {
-        const { AccountState } = this.context;
-        accessToken = await AccountState?.getIdToken();
-      }
+        let accessToken;
+        if (AccountState == null) {
+          accessToken = null;
+        } else {
+          accessToken = await AccountState?.getIdToken();
+        }
 
-      const params = {
-        filename: file.name,
-        token: accessToken,
-        recaptcha: recaptchaToken,
-        contentLength: file.size,
-      };
+        const token = await executeRecaptcha!("upload");
 
-      axios
-        .post("/api/upload", null, { params })
-        .then((res) => {
-          const config: AxiosRequestConfig = {
-            onUploadProgress: (progressEvent) => {
-              self.setState({
-                progress: (progressEvent.loaded * 100) / progressEvent.total!,
+        const params = {
+          filename: file.name,
+          token: accessToken,
+          recaptcha: token,
+          contentLength: file.size,
+        };
+
+        axios
+          .post("/api/upload", null, { params })
+          .then((res) => {
+            const config: AxiosRequestConfig = {
+              onUploadProgress: (progressEvent) => {
+                setProgress(
+                  (progressEvent.loaded * 100) / progressEvent.total!
+                );
+              },
+              headers: {
+                "Content-Type": "application/octet-stream",
+                "x-goog-acl": "private",
+                "x-goog-content-length-range": `${file.size},${file.size}`,
+              },
+            };
+            if (res.data.customTime) {
+              config.headers!["x-goog-custom-time"] = res.data.customTime;
+            }
+
+            axios
+              .put(res.data.url, file, config)
+              .then(() => {
+                setId(res.data.id);
+              })
+              .catch(() => {
+                setProgress(-1);
               });
-            },
-            headers: {
-              "Content-Type": "application/octet-stream",
-              "x-goog-acl": "private",
-              "x-goog-content-length-range": `${file.size},${file.size}`,
-            },
-          };
-          if (res.data.customTime) {
-            config.headers!["x-goog-custom-time"] = res.data.customTime;
-          }
+          })
+          .catch(() => {
+            setProgress(-1);
+          });
+      }
+    })();
+  }, []);
 
-          axios
-            .put(res.data.url, file, config)
-            .then(() => {
-              this.setState({ id: res.data.id });
-            })
-            .catch(() => {
-              this.setState({ progress: -1 });
-            });
-        })
-        .catch(() => {
-          this.setState({ progress: -1 });
-        });
-    }
-  }
+  const setShowFlag = (flag: boolean) => {
+    setEditOpen(flag);
+  };
 
-  setShowFlag(flag: boolean) {
-    this.setState({ editOpen: flag });
-  }
-
-  async copyLink() {
-    const { id } = this.state;
+  const copyLink = async () => {
     await navigator.clipboard.writeText(`https://hotdog.inu-dev.tech/d/${id}`);
-  }
+  };
 
-  render() {
-    const { file } = this.props;
-    const { progress, editOpen, id } = this.state;
-
-    let showItem;
+  useEffect(() => {
     if (progress === -2) {
-      showItem = (
+      setShowItem(
         <Tippy content="ファイルが大きすぎます！">
           <div className="w-full p-[2px] border border-red-300 rounded overflow-hidden whitespace-nowrap bg-red-200">
             <FontAwesomeIcon icon={faCircleExclamation} className="mx-2" />
@@ -120,7 +97,7 @@ class index extends Component<showFileProps, showFileStateProps> {
         </Tippy>
       );
     } else if (progress === -1) {
-      showItem = (
+      setShowItem(
         <Tippy content="何らかのエラーが発生しました">
           <div className="w-full p-[2px] border border-red-300 rounded overflow-hidden whitespace-nowrap bg-red-200">
             <FontAwesomeIcon icon={faCircleExclamation} className="mx-2" />
@@ -129,7 +106,7 @@ class index extends Component<showFileProps, showFileStateProps> {
         </Tippy>
       );
     } else if (progress !== 100) {
-      showItem = (
+      setShowItem(
         <>
           <div
             className="w-full p-[2px] border border-slate-300 rounded overflow-hidden whitespace-nowrap"
@@ -143,7 +120,7 @@ class index extends Component<showFileProps, showFileStateProps> {
         </>
       );
     } else {
-      showItem = (
+      setShowItem(
         <>
           <span className="overflow-hidden whitespace-nowrap w-full">
             {file.name}
@@ -158,7 +135,7 @@ class index extends Component<showFileProps, showFileStateProps> {
                   type="button"
                   className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-green-500"
                   id="url-button"
-                  onClick={this.copyLink.bind(this)}
+                  onClick={copyLink}
                 >
                   <FontAwesomeIcon icon={faLink} />
                 </button>
@@ -169,7 +146,7 @@ class index extends Component<showFileProps, showFileStateProps> {
                 type="button"
                 className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-green-500"
                 id="url-button"
-                onClick={() => this.setShowFlag(true)}
+                onClick={() => setShowFlag(true)}
               >
                 <FontAwesomeIcon icon={faPen} />
               </button>
@@ -178,17 +155,14 @@ class index extends Component<showFileProps, showFileStateProps> {
         </>
       );
     }
+  }, [progress]);
 
-    return (
-      <>
-        <div className="flex items-center justify-between gap-2">
-          {showItem}
-        </div>
-        <EditModal showFlag={editOpen} setFlag={this.setShowFlag} id={id} />
-      </>
-    );
-  }
-}
-index.contextType = AccountContext;
+  return (
+    <>
+      <div className="flex items-center justify-between gap-2">{showItem}</div>
+      <EditModal showFlag={editOpen} setFlag={setShowFlag} id={id} />
+    </>
+  );
+};
 
-export default index;
+export default ShowFile;
