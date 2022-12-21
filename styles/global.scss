@@ -194,8 +194,3 @@ ol li {
 ol li {
   @apply list-decimal #{!important};
 }
-
-a {
-  @apply underline;
-  @apply underline-offset-2;
-}

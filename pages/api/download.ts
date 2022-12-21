@@ -28,7 +28,7 @@ export default async function handler(
   // End of recaptcha verification
 
   const [rows] = await connection.query(
-    "SELECT dir,fileName, password FROM fileData WHERE id = ?",
+    "SELECT dir,fileName, password FROM fileData WHERE id = ? AND tmp = false",
     [id]
   );
   if ((rows as unknown[]).length === 0) {
@@ -49,7 +49,7 @@ export default async function handler(
     res.status(403).end();
     return;
   }
-  
+
   if (password) {
     if (!(await bcrypt.compare(pass as string, password as string))) {
       res.status(403).end();

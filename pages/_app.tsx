@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { MDXProvider } from "@mdx-js/react";
 import { onAuthStateChanged } from "../util/firebase/auth";
-import { AccountType, UploadFileType } from "../util/global";
+import { AccountType, UploadFileType } from "../@types";
 import { GA_ID, pageview } from "../util/gtag";
 import Header from "../components/Header";
 import { H1, H2, Li, P } from "../util/markdownNode";

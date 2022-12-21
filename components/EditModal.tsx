@@ -1,7 +1,15 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Editor } from "@tinymce/tinymce-react";
-import { FormEvent, useContext, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  SetStateAction,
+} from "react";
 import axios, { AxiosError } from "axios";
 // @ts-ignore
 import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
@@ -13,13 +21,14 @@ import { AccountContext } from "../pages/_app";
 import Modal from "./Modal";
 
 interface ModalProps {
-  showFlag: boolean;
-  setFlag: any;
   id: string;
+  isElement?: boolean | null;
+  showFlag?: boolean | null;
+  setFlag?: Dispatch<SetStateAction<boolean>>;
 }
 
 const Edit = (props: ModalProps) => {
-  const { showFlag, setFlag, id } = props;
+  const { showFlag, setFlag, isElement, id } = props;
   const editorRef = useRef<Editor>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const { AccountState } = useContext(AccountContext);
@@ -84,18 +93,23 @@ const Edit = (props: ModalProps) => {
 
   useMemo(() => {
     if (showFlag && AccountState) {
-      axios.get("/api/description", { params: { id } }).then((res) => {
-        let { description } = res.data;
-        if (description === null) {
-          description = "";
-        }
-        setDefaultContent(description);
-        setPrivateFile(res.data.private);
-        setPassword(res.data.password === 1 ? null : "");
-        setUploadDate(res.data.uploadDate);
-        editorRef.current?.editor?.setContent(description);
-        titleRef.current!.value = res.data.displayName;
-      });
+      axios
+        .get("/api/description", { params: { id } })
+        .then((res) => {
+          let { description } = res.data;
+          if (description === null) {
+            description = "";
+          }
+          setDefaultContent(description);
+          setPrivateFile(res.data.private);
+          setPassword(res.data.password === 1 ? null : "");
+          setUploadDate(res.data.uploadDate);
+          editorRef.current?.editor?.setContent(description);
+          titleRef.current!.value = res.data.displayName;
+        })
+        .catch((e: AxiosError) => {
+          setError(e.response?.status!);
+        });
     }
   }, [showFlag]);
 
@@ -118,16 +132,8 @@ const Edit = (props: ModalProps) => {
     setPassword(e.currentTarget.value);
   };
 
-  return (
-    <Modal
-      className={`w-full p-5 ${
-        AccountState == null
-          ? "md:w-1/3 sm:w-1/2"
-          : "xl:w-2/3 xl:max-w-[1024px] lg:w-3/4"
-      }`}
-      isOpen={showFlag}
-      setOpen={setFlag}
-    >
+  const content = (
+    <>
       <div
         className={`flex gap-2 flex-col ${
           AccountState == null ? "" : "md:flex-row"
@@ -269,8 +275,30 @@ const Edit = (props: ModalProps) => {
         {dirty ? "保存" : "保存済み"}
       </button>
       <p className="text-red-500">{errorMsg}</p>
+    </>
+  );
+
+  return isElement ? (
+    content
+  ) : (
+    <Modal
+      className={`w-full p-5 ${
+        AccountState == null
+          ? "md:w-1/3 sm:w-1/2"
+          : "xl:w-2/3 xl:max-w-[1024px] lg:w-3/4"
+      }`}
+      isOpen={showFlag!}
+      setOpen={setFlag!}
+    >
+      {content}
     </Modal>
   );
+};
+
+Edit.defaultProps = {
+  isElement: false,
+  showFlag: true,
+  setFlag: null,
 };
 
 export default Edit;

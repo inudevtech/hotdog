@@ -18,7 +18,7 @@ const index = () => {
       setUploadFile([...uploadFile, ...files]);
     }
 
-    router.push("/upload");
+    router.push("/upload/");
   };
 
   const onDrop = (files: File[]) => {
@@ -32,7 +32,7 @@ const index = () => {
   };
 
   return (
-    <Dropzone onDrop={onDrop}>
+    <Dropzone onDrop={onDrop} noClick>
       {({ getRootProps, isDragActive }) => (
         <>
           <div className="w-full pt-[60px] relative" {...getRootProps()}>

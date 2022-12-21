@@ -6,6 +6,9 @@ ARG NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY
 ARG NEXT_PUBLIC_TINY_APIKEY
 ARG NEXT_PUBLIC_GA_TRACKING_ID
 ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ARG NPMRC
+
+RUN ["/bin/bash", "-c", "echo ${NPMRC} >> ~/.npmrc"]
 
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /tini
