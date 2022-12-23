@@ -30,7 +30,7 @@ export default async function handler(
   }
 
   const [rows] = await connection.query(
-    "SELECT dir, fileName FROM fileData WHERE id = ?",
+    "SELECT dir, fileName FROM fileData WHERE id = ? AND tmp = false",
     [id]
   );
 

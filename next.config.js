@@ -10,13 +10,22 @@ const nextConfig = {
     config.experiments = { ...config.experiments, ...{ topLevelAwait: true } };
     // this will just update topLevelAwait property of config.experiments
     // config.experiments.topLevelAwait = true
+
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ["@svgr/webpack"],
+    });
+
     return config;
   },
-  images: { domains: ["storage.googleapis.com"] },
-  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+  images: {
+    domains: ["storage.googleapis.com"],
+  },
 };
 
-const withMDX = require('@next/mdx')({
+const withMDX = require("@next/mdx")({
   extension: /\.mdx?$/,
   options: {
     remarkPlugins: [],
@@ -24,6 +33,6 @@ const withMDX = require('@next/mdx')({
     // `MDXProvider`を使う場合はコメントを外すこと
     // providerImportSource: "@mdx-js/react",
   },
-})
+});
 
 module.exports = withMDX(nextConfig);

@@ -25,9 +25,9 @@ export const P = (props: { children?: ReactNode }) => {
 export const Li = (props: { children?: ReactNode }) => {
   const { children } = props;
   return (
-    <li className="px-6 py-1">
+    <div className="px-6 py-1">
       <FontAwesomeIcon icon={faCircleChevronRight} /> {children}
-    </li>
+    </div>
   );
 };
 

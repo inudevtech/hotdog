@@ -91,7 +91,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-10">
+      <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-30">
         <div className="flex flex-row items-center gap-4 py-1">
           <Menu
             customBurgerIcon={<FontAwesomeIcon icon={faBars} />}

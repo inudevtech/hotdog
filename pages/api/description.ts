@@ -42,7 +42,7 @@ export default async function handler(
         sql =
           "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, uploadDate = ? WHERE id = ? AND uid = ?";
         values.splice(3, 1);
-      } else if (req.body.password !== ""){
+      } else if (req.body.password !== "") {
         values[3] = await bcrypt.hash(req.body.password, 10);
       }
 
@@ -56,7 +56,7 @@ export default async function handler(
         });
     } else if (req.method === "GET") {
       const [rows] = await connection.query(
-        "SELECT displayName, description, private, password, uploadDate FROM fileData WHERE id = ?",
+        "SELECT displayName, description, private, password, uploadDate FROM fileData WHERE id = ? AND tmp = false",
         [id]
       );
       if ((rows as unknown[]).length === 0) {

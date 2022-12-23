@@ -41,7 +41,7 @@ export default async function handler(
     }
 
     const [rows] = await connection.query(
-      "SELECT uid, dir, fileName, displayName, description, uploadDate, fileName, icon, favorite, download, password FROM fileData WHERE id = ?",
+      "SELECT uid, dir, fileName, displayName, description, uploadDate, fileName, icon, favorite, download, password FROM fileData WHERE id = ? AND tmp = false",
       [id]
     );
 
@@ -122,7 +122,7 @@ export default async function handler(
     let uid;
     if (isuid === "false") {
       const [rows] = await connection.query(
-        "SELECT uid FROM fileData WHERE id = ?",
+        "SELECT uid FROM fileData WHERE id = ? AND tmp = false",
         [id]
       );
       if ((rows as unknown[]).length === 0) {
@@ -143,7 +143,7 @@ export default async function handler(
       return;
     }
     const [fileRows] = await connection.query(
-      `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? ${
+      `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? AND tmp = false ${
         isuid === "false" ? "AND private = false AND uploadDate < NOW()" : ""
       } ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
       [uid, id, Number(index)]
