@@ -90,7 +90,11 @@ const SimpleTransition: FC<Props> = ({
   }, [isTransitioning]);
 
   return (
-    <div className="fixed flex justify-center items-center w-screen h-screen top-0 left-0">
+    <div
+      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 ${
+        !isTransitioning ? "hidden" : ""
+      }`}
+    >
       <div className="relative">
         <svg className="circle absolute z-20 fill-lime-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
           <circle cx="50" cy="50" r="50" strokeWidth="5" />

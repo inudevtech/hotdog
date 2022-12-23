@@ -39,7 +39,7 @@ const Complete = () => {
 
   return (
     <>
-      <div className="pt-[120px] sm:pt-[100px] px-2 flex flex-col items-center gap-3 w-full relative z-10 backdrop-blur container m-auto">
+      <div className="pt-[120px] sm:pt-[100px] px-2 flex flex-col items-center gap-3 w-full relative z-10 backdrop-blur container mx-auto">
         <h1 className="text-[7vw] leading-none sm:text-5xl my-2 font-bold">
           アップロードが完了しました
         </h1>

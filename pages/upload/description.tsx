@@ -38,8 +38,8 @@ const Description = () => {
   return (
     isOk && (
       <>
-        <div className="pt-[120px] sm:pt-[100px] px-2 container m-auto mb-[150px]">
-          <h1>ファイル情報の変更</h1>
+        <div className="pt-[120px] sm:pt-[100px] px-2 container mx-auto mb-[150px]">
+          <h1 className="text-2xl font-bold">ファイル情報の変更</h1>
           <EditModal
             isElement
             id={id as string}
