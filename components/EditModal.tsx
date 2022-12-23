@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   SetStateAction,
+  useEffect,
 } from "react";
 import axios, { AxiosError } from "axios";
 // @ts-ignore
@@ -25,10 +26,12 @@ interface ModalProps {
   isElement?: boolean | null;
   showFlag?: boolean | null;
   setFlag?: Dispatch<SetStateAction<boolean>>;
+  saveFlag?: boolean | null;
+  setSaveFlag?: Dispatch<SetStateAction<boolean>> | null;
 }
 
 const Edit = (props: ModalProps) => {
-  const { showFlag, setFlag, isElement, id } = props;
+  const { showFlag, setFlag, isElement, id, saveFlag, setSaveFlag } = props;
   const editorRef = useRef<Editor>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const { AccountState } = useContext(AccountContext);
@@ -90,6 +93,13 @@ const Edit = (props: ModalProps) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (saveFlag) {
+      save();
+      setSaveFlag!(false);
+    }
+  },[saveFlag]);
 
   useMemo(() => {
     if (showFlag && AccountState) {
@@ -204,8 +214,6 @@ const Edit = (props: ModalProps) => {
             AccountState ? "md:max-w-[250px]" : ""
           }`}
         >
-          <p>共有URL</p>
-          <p className="border rounded border-slate-500 select-all p-1 overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/d/${id}`}</p>
           <div hidden={!AccountState}>
             <label
               htmlFor="privateSwitch"
@@ -263,17 +271,19 @@ const Edit = (props: ModalProps) => {
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={save}
-        className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
-        disabled={!dirty}
-      >
-        {loading ? (
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
-        ) : null}
-        {dirty ? "保存" : "保存済み"}
-      </button>
+      {!isElement && (
+        <button
+          type="button"
+          onClick={save}
+          className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
+          disabled={!dirty}
+        >
+          {loading ? (
+            <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
+          ) : null}
+          {dirty ? "保存" : "保存済み"}
+        </button>
+      )}
       <p className="text-red-500">{errorMsg}</p>
     </>
   );
@@ -299,6 +309,8 @@ Edit.defaultProps = {
   isElement: false,
   showFlag: true,
   setFlag: null,
+  saveFlag: null,
+  setSaveFlag: null,
 };
 
 export default Edit;

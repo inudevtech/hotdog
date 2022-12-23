@@ -365,7 +365,7 @@ const Upload = () => {
             hidden={uploadProgress === -2}
           >
             <div className="flex flex-col items-center justify-center h-full gap-2">
-              {uploadProgress === -1 ? (
+              {uploadProgress === -1 || uploadProgress === -3 ? (
                 <>
                   <h1>処理中</h1>
                   <progress className="progress w-56" />

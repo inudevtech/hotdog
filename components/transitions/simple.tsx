@@ -25,13 +25,14 @@ const SimpleTransition: FC<Props> = ({
   useEffect(() => {
     gsap.set(".circle", { scale: "0" });
     if (!isTransitioning) return;
+    const scale = Math.max(window.innerWidth, window.innerHeight);
     gsap
       .timeline()
       .fromTo(
         ".circle",
         { scale: "0" },
         {
-          scale: "1",
+          scale: scale / 50,
           duration: 0.5,
           ease: Power1.easeInOut,
           stagger: {
@@ -89,47 +90,29 @@ const SimpleTransition: FC<Props> = ({
   }, [isTransitioning]);
 
   return (
-    <>
-      <svg className="circle fixed top-[min(-50vh,-50vw)] left-[min(-50vh,-50vw)] z-20 fill-lime-400 w-[max(200vh,200vw)] h-[max(200vh,200vw)]">
-        <circle
-          cx="max(100vh,100vw)"
-          cy="max(100vh,100vw)"
-          r="max(100vh,100vw)"
-          strokeWidth="5"
-        />
-      </svg>
-      <svg className="circle fixed top-[min(-50vh,-50vw)] left-[min(-50vh,-50vw)] z-20 fill-yellow-400 w-[max(200vh,200vw)] h-[max(200vh,200vw)]">
-        <circle
-          cx="max(100vh,100vw)"
-          cy="max(100vh,100vw)"
-          r="max(100vh,100vw)"
-          strokeWidth="5"
-        />
-      </svg>
-      <svg className="circle fixed top-[min(-50vh,-50vw)] left-[min(-50vh,-50vw)] z-20 fill-amber-400 w-[max(200vh,200vw)] h-[max(200vh,200vw)]">
-        <circle
-          cx="max(100vh,100vw)"
-          cy="max(100vh,100vw)"
-          r="max(100vh,100vw)"
-          strokeWidth="5"
-        />
-      </svg>
-      <svg className="circle fixed top-[min(-50vh,-50vw)] left-[min(-50vh,-50vw)] z-20 fill-orange-400 w-[max(200vh,200vw)] h-[max(200vh,200vw)]">
-        <circle
-          cx="max(100vh,100vw)"
-          cy="max(100vh,100vw)"
-          r="max(100vh,100vw)"
-          strokeWidth="5"
-        />
-      </svg>
-      <div
-        className="fixed w-[300px] h-[300px] left-[calc(50vw_-_150px)] z-30"
-        style={{ bottom: "-300px" }}
-        ref={hotdogRef}
-      >
-        <Hotdog />
+    <div className="fixed flex justify-center items-center w-screen h-screen top-0 left-0">
+      <div className="relative">
+        <svg className="circle absolute z-20 fill-lime-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+          <circle cx="50" cy="50" r="50" strokeWidth="5" />
+        </svg>
+        <svg className="circle absolute z-20 fill-yellow-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+          <circle cx="50" cy="50" r="50" strokeWidth="5" />
+        </svg>
+        <svg className="circle absolute z-20 fill-amber-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+          <circle cx="50" cy="50" r="50" strokeWidth="5" />
+        </svg>
+        <svg className="circle absolute z-20 fill-orange-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+          <circle cx="50" cy="50" r="50" strokeWidth="5" />
+        </svg>
+        <div
+          className="fixed w-[300px] h-[300px] left-[calc(50vw_-_150px)] z-30"
+          style={{ bottom: "-300px" }}
+          ref={hotdogRef}
+        >
+          <Hotdog />
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

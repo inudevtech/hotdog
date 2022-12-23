@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { CustomEase } from "gsap/dist/CustomEase";
 import Car from "../../public/animations/car.svg";
+import Tippy from "@tippyjs/react";
 
 const Complete = () => {
   const router = useRouter();
@@ -29,20 +30,46 @@ const Complete = () => {
       );
   });
 
+  const share = () => {
+    window.navigator.share({
+      title: "ホットドッグでファイルを共有しました！",
+      url: `https://hotdog.inu-dev.tech/d/${id}`,
+    });
+  };
+
   return (
     <>
-      <div className="pt-[120px] sm:pt-[100px] px-2 flex flex-col items-center gap-3 w-full relative z-10 backdrop-blur">
+      <div className="pt-[120px] sm:pt-[100px] px-2 flex flex-col items-center gap-3 w-full relative z-10 backdrop-blur container m-auto">
         <h1 className="text-[7vw] leading-none sm:text-5xl my-2 font-bold">
           アップロードが完了しました
         </h1>
         <p>https://hotdog.inu-dev.tech/d/{id}</p>
-        <div className="flex flex-col md:flex-row gap-2 w-full md:w-[80%] max-w-[1024px]">
-          <button className="btn btn-primary grow" type="button">
-            ダウンロードリンクを共有
-          </button>
-          <button className="btn btn-outline grow" type="button">
-            ダウンロードリンクをコピー
-          </button>
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-[80%]">
+          {window.navigator.share !== undefined && (
+            <button
+              className="btn btn-primary grow"
+              type="button"
+              onClick={share}
+            >
+              ダウンロードリンクを共有
+            </button>
+          )}
+          <Tippy
+            content="リンクをクリップボードにコピーしました!"
+            trigger="click"
+          >
+            <button
+              className="btn btn-outline grow"
+              type="button"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `https://hotdog.inu-dev.tech/d/${id}`
+                )
+              }
+            >
+              ダウンロードリンクをコピー
+            </button>
+          </Tippy>
         </div>
       </div>
       <div
