@@ -56,7 +56,7 @@ const Header = () => {
       <button
         type="button"
         onClick={() => router.push("https://account.inu-dev.tech/")}
-        className="transition border p-1.5 border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 text-center bg-sky-400 flex items-center gap-2"
+        className="btn btn-primary gap-2"
       >
         アカウント情報の変更
         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -64,7 +64,7 @@ const Header = () => {
       <button
         type="button"
         onClick={() => logout(true)}
-        className="transition border p-1.5 border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+        className="btn btn-primary"
       >
         ログアウト
       </button>
@@ -165,14 +165,14 @@ const Header = () => {
             <button
               type="button"
               onClick={() => setLoginOpen(true)}
-              className="transition p-2 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
+              className="btn btn-primary"
             >
               ログイン
             </button>
             <button
               type="button"
               onClick={() => setSignUpOpen(true)}
-              className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="btn btn-outline"
             >
               アカウントを作成
             </button>

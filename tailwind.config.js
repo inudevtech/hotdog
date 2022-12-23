@@ -1,4 +1,5 @@
 const daisyui = require("daisyui");
+const typography =  require('@tailwindcss/typography');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -26,7 +27,7 @@ module.exports = {
       smh: { raw: "(max-height: 640px)" },
     },
   },
-  plugins: [daisyui],
+  plugins: [daisyui,typography],
   important: true,
   daisyui: {
     themes: ["winter"],

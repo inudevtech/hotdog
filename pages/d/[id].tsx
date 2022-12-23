@@ -330,7 +330,7 @@ const download = () => {
             )}
             <button
               type="button"
-              className="transition p-1 my-2 md:min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="md:min-w-[300px] w-full btn btn-primary"
               onClick={downloadFile}
             >
               {loading ? (
@@ -400,7 +400,7 @@ const download = () => {
           />
           <button
             type="submit"
-            className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+            className="btn btn-primary btn-block"
           >
             {loading ? (
               <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
