@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { CustomEase } from "gsap/dist/CustomEase";
-import Car from "../../public/animations/car.svg";
 import Tippy from "@tippyjs/react";
+import Car from "../../public/animations/car.svg";
 
 const Complete = () => {
   const router = useRouter();

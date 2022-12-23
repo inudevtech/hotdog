@@ -64,7 +64,7 @@ jobs:
             NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
             NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
             NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-            NPMRC=${{ secrets.NPMRC }}
+            NPMRC_TOKEN=${{ secrets.NPMRC_TOKEN }}
           push: true
           tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -80,7 +80,7 @@ jobs:
             NEXT_PUBLIC_TINY_APIKEY=${{ secrets.TINY_APIKEY }}
             NEXT_PUBLIC_GA_TRACKING_ID=${{ secrets.GA_TRACKING_ID }}
             NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-            NPMRC=${{ secrets.NPMRC }}
+            NPMRC_TOKEN=${{ secrets.NPMRC_TOKEN }}
           push: false
           tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
