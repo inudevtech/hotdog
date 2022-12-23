@@ -97,7 +97,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                 id="page-warp"
                 className={`min-h-screen ${
                   router.pathname.startsWith("/static/")
-                    ? "pt-[120px] p-3 sm:pt-[80px]"
+                    ? "pt-[120px] p-3 sm:pt-[100px]"
                     : ""
                 }`}
               >

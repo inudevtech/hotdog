@@ -36,8 +36,8 @@ const signUpModal: FC<{ showFlag: boolean; setFlag: any }> = ({
 
   return (
     <div>
-      <Modal isOpen={showFlag} setOpen={setFlag}>
-        <form className="m-5 mt-0 flex flex-col gap-2" onSubmit={submit}>
+      <Modal isOpen={showFlag} setOpen={setFlag} className="sm:max-w-sm">
+        <form className="mt-0 flex flex-col gap-2" onSubmit={submit}>
           <Image
             src="/logo.png"
             alt="ロゴ"

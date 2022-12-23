@@ -260,10 +260,10 @@ const download = () => {
             </p>
           ) : null}
           {output.innerHTML === "<div>null</div>" ? null : (
-            // eslint-disable-next-line react/no-danger
             <div
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-              className="border-t-2 mt-2 p-1 max-h-[50vh] overflow-auto break-words"
+              className="border-t-2 mt-2 p-1 max-h-[50vh] overflow-auto break-words prose"
             />
           )}
         </div>
@@ -330,7 +330,7 @@ const download = () => {
             )}
             <button
               type="button"
-              className="md:min-w-[300px] w-full btn btn-primary"
+              className="btn btn-primary btn-block"
               onClick={downloadFile}
             >
               {loading ? (
@@ -387,7 +387,11 @@ const download = () => {
         setFlag={setEditOpen}
         id={router.query.id as string}
       />
-      <Modal isOpen={passwordOpen} setOpen={setPasswordOpen} className="p-5">
+      <Modal
+        isOpen={passwordOpen}
+        setOpen={setPasswordOpen}
+        className="md:max-w-md"
+      >
         <form className="flex flex-col gap-2" onSubmit={passwordDownload}>
           <h2>ダウンロードパスワードの入力</h2>
           <p>
@@ -398,10 +402,7 @@ const download = () => {
             placeholder="パスワード"
             className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
           />
-          <button
-            type="submit"
-            className="btn btn-primary btn-block"
-          >
+          <button type="submit" className="btn btn-primary btn-block">
             {loading ? (
               <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
             ) : null}

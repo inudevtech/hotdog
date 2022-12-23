@@ -21,8 +21,8 @@ const resetPasswordModal: FC<{ setFlag: any; showFlag: boolean }> = ({
     }
   };
   return (
-    <Modal isOpen={showFlag} setOpen={setFlag} className="p-5">
-      <form className="flex flex-col gap-2" onSubmit={submit}>
+    <Modal isOpen={showFlag} setOpen={setFlag} className="max-w-xs">
+      <form className="flex flex-col gap-2 prose" onSubmit={submit}>
         <h2>パスワードの再設定</h2>
         <p>
           入力したメールアドレスにパスワード再設定用のリンクを添付したメールを送信します。

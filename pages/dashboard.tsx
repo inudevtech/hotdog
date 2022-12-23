@@ -29,7 +29,7 @@ const dashboard = () => {
       }`}
     >
       {AccountState == null ? (
-        <h1 className="text-3xl flex flex-col md:flex-row gap-4 items-center">
+        <h1 className="text-3xl flex flex-col md:flex-row gap-4 items-center justify-center">
           <FontAwesomeIcon
             icon={faCircleExclamation}
             className="text-red-500"

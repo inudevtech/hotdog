@@ -143,7 +143,7 @@ const Edit = (props: ModalProps) => {
   };
 
   const content = (
-    <>
+    <div className="flex gap-2 flex-col">
       <div
         className={`flex gap-2 flex-col ${
           AccountState == null ? "" : "md:flex-row"
@@ -284,7 +284,7 @@ const Edit = (props: ModalProps) => {
         </button>
       )}
       <p className="text-red-500">{errorMsg}</p>
-    </>
+    </div>
   );
 
   return isElement ? (

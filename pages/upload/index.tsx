@@ -357,7 +357,7 @@ const Upload = () => {
               </div>
             </div>
           </div>
-          <Modal isOpen={isOpenErrDialog} setOpen={setIsOpenErrDialog}>
+          <Modal isOpen={isOpenErrDialog} setOpen={setIsOpenErrDialog} className="sm:max-w-sm">
             <p className="p-5 whitespace-pre-wrap">{errorText}</p>
           </Modal>
           <div
