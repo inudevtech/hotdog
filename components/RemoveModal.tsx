@@ -34,7 +34,7 @@ const removeModal: FC<{
           </p>
           <button
             type="button"
-            className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+            className="btn btn-primary min-w-[300px] w-full"
             onClick={() => router.push("/")}
           >
             ホームに戻る
@@ -50,20 +50,17 @@ const removeModal: FC<{
           <div className="flex md:gap-2 flex-col md:flex-row">
             <button
               type="button"
-              className="transition p-1 my-2 w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-red-600 block text-center bg-red-400"
+              className="btn btn-error gap-2 btn-block"
               onClick={remove}
             >
               {loading ? (
-                <FontAwesomeIcon
-                  icon={faSpinner}
-                  className="animate-spin px-2"
-                />
+                <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
               ) : null}
               削除
             </button>
             <button
               type="button"
-              className="transition p-1 my-2 w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="btn btn-primary btn-block"
               onClick={() => flag[1](false)}
             >
               キャンセル

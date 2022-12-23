@@ -141,12 +141,12 @@ const Edit = (props: ModalProps) => {
               <p className="m-2 text-xl">タイトル</p>
               <input
                 type="text"
-                className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2 w-full"
                 ref={titleRef}
                 onChange={() => {
                   setDirty(true);
                   setError(false);
                 }}
+                className="input input-bordered w-full"
               />
               <p className="m-2 text-xl">ファイルの説明</p>
               {defaultContent !== null && (
@@ -208,11 +208,10 @@ const Edit = (props: ModalProps) => {
               <input
                 type="checkbox"
                 id="privateSwitch"
-                className="sr-only peer"
+                className="checkbox"
                 onChange={togglePrivate}
                 checked={privateFile}
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full focus:border-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
               <span>非公開ファイル</span>
             </label>
             <p className="text-sm">
@@ -227,7 +226,7 @@ const Edit = (props: ModalProps) => {
             <input
               type="password"
               placeholder="パスワード"
-              className="border border-slate-500 p-1 rounded transition focus:border-slate-800 focus:border-2 w-full"
+              className="input input-bordered w-full"
               onChange={inputPassword}
               maxLength={72}
               value={password === null ? "passwordpassword" : password}
@@ -260,7 +259,7 @@ const Edit = (props: ModalProps) => {
       <button
         type="button"
         onClick={save}
-        className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
+        className="btn btn-primary btn-block"
         disabled={!dirty}
       >
         {loading ? (

@@ -55,16 +55,6 @@ blockquote {
   -webkit-text-stroke: 0.05em rgb(0, 0, 0);
 }
 
-h1 {
-  @apply text-3xl;
-}
-h2 {
-  @apply text-2xl;
-}
-h3 {
-  @apply text-lg;
-}
-
 .monospace {
   font-family: "Share Tech Mono", monospace;
   font-display: swap;
@@ -181,21 +171,4 @@ h3 {
   @apply cursor-pointer;
   @apply hover:shadow-xl;
   @apply transition-all;
-}
-
-ul li,
-ol li {
-  @apply leading-5;
-  @apply py-1;
-  @apply list-disc;
-  @apply ml-6;
-}
-
-ol li {
-  @apply list-decimal #{!important};
-}
-
-a {
-  @apply underline;
-  @apply underline-offset-2;
 }

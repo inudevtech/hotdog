@@ -12,21 +12,19 @@ type Props = {
 
 const modal: FC<Props> = ({ children, className, isOpen, setOpen }) => (
   <div>
-    {isOpen && (
-      <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-20">
-        <div
-          className={`bg-white rounded-xl max-h-screen overflow-auto relative shadow-xl animate__animated animate__slideInUp ${className}`}
-        >
-          <FontAwesomeIcon
-            icon={faXmark}
-            onClick={() => setOpen(false)}
-            className="absolute top-0 right-0 p-2 cursor-pointer"
-            size="lg"
-          />
-          {children}
+    <div className="modal">
+      <div className="modal-box relative">
+        <FontAwesomeIcon
+          icon={faXmark}
+          onClick={() => setOpen(false)}
+          className="btn btn-sm btn-circle absolute right-2 top-2"
+          size="lg"
+        />
+        <div className={className}> 
+        {children}
         </div>
       </div>
-    )}
+    </div>
   </div>
 );
 
