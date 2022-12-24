@@ -35,7 +35,7 @@ export const addRelations = (
   setFileList: Dispatch<SetStateAction<ReactElement[]>>,
   isuid?: boolean
 ) => {
-  if (!u?.isAnonymous) {
+  if (!u?.isAnonymous || !u?.isDeletedUser) {
     axios
       .get("/api/get", { params: { id, index: page * 3, isuid: !!isuid } })
       .then((r) => {
