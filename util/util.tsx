@@ -29,10 +29,10 @@ export const getStringBytes = (string: string): number =>
 export const addRelations = (
   page: number,
   u: GetUserProps | null,
-  id: string,
   setHasMore: Dispatch<SetStateAction<boolean>>,
   fileList: ReactElement[],
   setFileList: Dispatch<SetStateAction<ReactElement[]>>,
+  id?: string,
   isuid?: boolean
 ) => {
   if (!u?.isAnonymous || !u?.isDeletedUser) {

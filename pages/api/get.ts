@@ -21,11 +21,8 @@ export default async function handler(
 
   const connection = await getConnectionPool().getConnection();
 
+  // indexがない場合はそのファイルの情報を返す
   if (index === undefined) {
-    await connection.query(
-      "CREATE TABLE IF NOT EXISTS `user` (uid VARCHAR(36) NOT NULL PRIMARY KEY, official BOOLEAN NOT NULL DEFAULT false)"
-    );
-
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
     // tokenがあったときは確認してuidを取得

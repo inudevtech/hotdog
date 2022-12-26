@@ -111,10 +111,10 @@ const download = () => {
               addRelations(
                 0,
                 u,
-                router.query.id as string,
                 setHasMore,
                 fileList,
-                setFileList
+                setFileList,
+                router.query.id as string
               );
             }
           })
@@ -427,10 +427,10 @@ const download = () => {
               addRelations(
                 page,
                 user,
-                router.query.id as string,
                 setHasMore,
                 fileList,
-                setFileList
+                setFileList,
+                router.query.id as string
               )
             } // 項目を読み込む際に処理するコールバック関数
             hasMore={hasMore} // 読み込みを行うかどうかの判定

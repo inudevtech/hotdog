@@ -91,21 +91,21 @@ const SimpleTransition: FC<Props> = ({
 
   return (
     <div
-      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 ${
+      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 z-30 ${
         !isTransitioning ? "hidden" : ""
       }`}
     >
       <div className="relative">
-        <svg className="circle absolute z-20 fill-lime-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+        <svg className="circle absolute fill-lime-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
           <circle cx="50" cy="50" r="50" strokeWidth="5" />
         </svg>
-        <svg className="circle absolute z-20 fill-yellow-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+        <svg className="circle absolute fill-yellow-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
           <circle cx="50" cy="50" r="50" strokeWidth="5" />
         </svg>
-        <svg className="circle absolute z-20 fill-amber-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+        <svg className="circle absolute fill-amber-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
           <circle cx="50" cy="50" r="50" strokeWidth="5" />
         </svg>
-        <svg className="circle absolute z-20 fill-orange-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
+        <svg className="circle absolute fill-orange-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">
           <circle cx="50" cy="50" r="50" strokeWidth="5" />
         </svg>
         <div

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Editor } from "@tinymce/tinymce-react";
 import {
   Dispatch,
@@ -10,6 +10,7 @@ import {
   useState,
   SetStateAction,
   useEffect,
+  ChangeEvent,
 } from "react";
 import axios, { AxiosError } from "axios";
 // @ts-ignore
@@ -17,9 +18,11 @@ import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import "react-datetime-picker/dist/DateTimePicker.css";
+import Tippy from "@tippyjs/react";
 import { getStringBytes } from "../util/util";
 import { AccountContext } from "../pages/_app";
 import Modal from "./Modal";
+import "tippy.js/dist/tippy.css";
 
 interface ModalProps {
   id: string;
@@ -33,7 +36,8 @@ interface ModalProps {
 const Edit = (props: ModalProps) => {
   const { showFlag, setFlag, isElement, id, saveFlag, setSaveFlag } = props;
   const editorRef = useRef<Editor>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState<string>("");
+  const [tagText, setTagText] = useState<string>("");
   const { AccountState } = useContext(AccountContext);
   const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,12 +46,12 @@ const Edit = (props: ModalProps) => {
   const [privateFile, setPrivateFile] = useState<boolean>(false);
   const [password, setPassword] = useState<string | null>("");
   const [uploadDate, setUploadDate] = useState<Date | string>(new Date());
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagError, setTagError] = useState<string>("");
 
   const save = async () => {
-    if (editorRef.current && titleRef.current) {
+    if (editorRef.current) {
       const content = editorRef.current.editor?.getContent();
-
-      const title = titleRef.current.value;
 
       if (getStringBytes(content!) > 65535) {
         setError(0);
@@ -78,6 +82,7 @@ const Edit = (props: ModalProps) => {
               privateFile,
               password,
               uploadDate,
+              tags,
             },
             { params }
           )
@@ -115,7 +120,7 @@ const Edit = (props: ModalProps) => {
           setPassword(res.data.password === 1 ? null : "");
           setUploadDate(res.data.uploadDate);
           editorRef.current?.editor?.setContent(description);
-          titleRef.current!.value = res.data.displayName;
+          setTitle(res.data.displayName);
         })
         .catch((e: AxiosError) => {
           setError(e.response?.status!);
@@ -142,6 +147,30 @@ const Edit = (props: ModalProps) => {
     setPassword(e.currentTarget.value);
   };
 
+  const onChangeTagValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setDirty(true);
+    setError(false);
+    setTagError(false);
+    const { value } = e.target;
+    if (value.indexOf(" ") === -1) {
+      setTagText(value);
+    } else if (
+      tags.indexOf(value.replace(" ", "")) === -1 &&
+      value.length > 1 &&
+      tags.length < 5
+    ) {
+      setTags([...tags, value.replace(" ", "")]);
+      setTagText("");
+    } else {
+      setTagText(value.replace(" ", ""));
+      if (tags.length >= 5) {
+        setTagError("タグは5つまでです。");
+      } else if (tags.indexOf(value.replace(" ", "")) !== -1) {
+        setTagError("同じタグは登録できません。");
+      }
+    }
+  };
+
   const content = (
     <div className="flex gap-2 flex-col">
       <div
@@ -153,18 +182,56 @@ const Edit = (props: ModalProps) => {
           {AccountState == null ? (
             <p>タイトルや説明など、詳細設定はログインすると記入できます。</p>
           ) : (
-            <>
-              <p className="m-2 text-xl">タイトル</p>
+            <div className="flex gap-2 flex-col">
+              <p className="text-2xl">タイトル</p>
               <input
                 type="text"
-                ref={titleRef}
-                onChange={() => {
+                value={title}
+                onChange={(e) => {
                   setDirty(true);
                   setError(false);
+                  setTitle(e.target.value);
                 }}
                 className="input input-bordered w-full"
               />
-              <p className="m-2 text-xl">ファイルの説明</p>
+              <div>
+                <p className="text-xl">タグ</p>
+                <p className="text-sm">最大５個まで</p>
+                <div className="flex gap-2 items-center flex-wrap	">
+                  {tags.map((tag) => (
+                    <div
+                      className="badge badge-outline flex items-center gap-1"
+                      key={tag}
+                    >
+                      <FontAwesomeIcon
+                        icon={faXmark}
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setDirty(true);
+                          setError(false);
+                          setTags(tags.filter((t) => t !== tag));
+                        }}
+                      />
+                      {tag}
+                    </div>
+                  ))}
+                  <Tippy
+                    content={tagError}
+                    visible={!!tagError}
+                    onClickOutside={() => setTagError("")}
+                    placement="top-start"
+                  >
+                    <input
+                      type="text"
+                      id="tag"
+                      onChange={onChangeTagValue}
+                      value={tagText}
+                      className="input input-bordered grow input-sm"
+                    />
+                  </Tippy>
+                </div>
+              </div>
+              <p className="text-2xl">ファイルの説明</p>
               {defaultContent !== null && (
                 <Editor
                   ref={editorRef}
@@ -205,7 +272,7 @@ const Edit = (props: ModalProps) => {
                   }}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
         <div className="border-r border-t border-slate-200 border-2" />

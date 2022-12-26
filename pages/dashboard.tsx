@@ -14,10 +14,10 @@ const dashboard = () => {
     addRelations(
       0,
       { isAnonymous: false, isDeletedUser: false },
-      AccountState?.uid!,
       setHasMore,
       fileList,
       setFileList,
+      AccountState?.uid!,
       true
     );
   }, []);
@@ -43,10 +43,10 @@ const dashboard = () => {
               addRelations(
                 page,
                 { isAnonymous: false, isDeletedUser: false },
-                AccountState?.uid,
                 setHasMore,
                 fileList,
                 setFileList,
+                AccountState?.uid!,
                 true
               )
             } // 項目を読み込む際に処理するコールバック関数

@@ -84,9 +84,6 @@ export default async function handler(
     return;
   }
 
-  await connection.execute(
-    "CREATE TABLE IF NOT EXISTS `fileData` (id CHAR(32) NOT NULL PRIMARY KEY, dir CHAR(32) NOT NULL, fileName VARCHAR(256) NOT NULL, uid VARCHAR(36), displayName VARCHAR(256), description TEXT(65535), expiration DATETIME, uploadDate DATETIME NOT NULL, icon BOOLEAN NOT NULL, favorite INT UNSIGNED DEFAULT 0, download INT UNSIGNED DEFAULT 0, private BOOLEAN NOT NULL DEFAULT false, password CHAR(60), tmp BOOLEAN NOT NULL DEFAULT false)"
-  );
   const directoryName = generateRandomString(32);
   const promises = [];
 

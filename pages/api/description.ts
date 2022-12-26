@@ -27,6 +27,22 @@ export default async function handler(
         return;
       }
 
+      // タグ情報の更新
+      req.body.tags.forEach(async (tag: string) => {
+        await connection.query("INSERT IGNORE INTO `tags` (tag) VALUES (?)", [
+          tag,
+        ]);
+        const [rows] = await connection.query(
+          "SELECT id FROM `tags` WHERE tag = ?",
+          [tag]
+        );
+        const tagId = (rows as { id: number }[])[0].id;
+        await connection.query(
+          "INSERT INTO `filetags` (id, tag) VALUES (?, ?)",
+          [id, tagId]
+        );
+      });
+
       let sql =
         "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, password = ?, uploadDate = ? WHERE id = ? AND uid = ?";
       const values = [
@@ -47,7 +63,7 @@ export default async function handler(
       }
 
       connection
-        .execute(sql, values)
+        .query(sql, values)
         .then(() => {
           res.status(200).end();
         })

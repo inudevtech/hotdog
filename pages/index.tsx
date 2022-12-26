@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, ReactElement, useContext, useState } from "react";
 import Dropzone from "react-dropzone";
 import { useRouter } from "next/router";
 import { UploadFileContext } from "./_app";
@@ -10,6 +10,8 @@ const index = () => {
   const { uploadFile, setUploadFile } = useContext(UploadFileContext);
   const [excess, setExcess] = useState<boolean>(false);
   const router = useRouter();
+  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [fileList, setFileList] = useState<ReactElement[]>([]);
 
   const addFiles = (files: FileList | File[]) => {
     if (uploadFile.length + files.length > 10) {
@@ -32,6 +34,7 @@ const index = () => {
   };
 
   return (
+    // TODO: ファイルをDropしたときに視覚的にわかりやすい画面を出す
     <Dropzone onDrop={onDrop} noClick>
       {({ getRootProps }) => (
         <div
@@ -62,6 +65,7 @@ const index = () => {
               </div>
             </div>
           </div>
+
         </div>
       )}
     </Dropzone>
