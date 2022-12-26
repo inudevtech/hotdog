@@ -49,6 +49,7 @@ const download = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [title, setTitle] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
   const [isExists, setIsExists] = useState<boolean | null | undefined>(null);
   const [description, setDescription] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserProps | null>(null);
@@ -95,6 +96,7 @@ const download = () => {
               setLikeCount(res.data.favorite);
               setDownloadCount(res.data.download);
               setIsProtected(res.data.isProtected);
+              setTags(res.data.tags);
               let u: GetUserProps | null;
               if (res.data.user.isDeletedUser) {
                 u = {
@@ -245,6 +247,13 @@ const download = () => {
               </pre>
             </>
           )}
+          <div className="flex gap-1">
+            {tags.map((tag) => (
+              <div className="badge badge-outline" key={tag}>
+                {tag}
+              </div>
+            ))}
+          </div>
           {isIcon ? (
             <p className="bg-blue-300/[.6] rounded border border-blue-400 p-2 my-2">
               <FontAwesomeIcon icon={faCircleInfo} className="px-2" />

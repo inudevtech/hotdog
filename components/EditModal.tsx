@@ -150,7 +150,7 @@ const Edit = (props: ModalProps) => {
   const onChangeTagValue = (e: ChangeEvent<HTMLInputElement>) => {
     setDirty(true);
     setError(false);
-    setTagError(false);
+    setTagError("");
     const { value } = e.target;
     if (value.indexOf(" ") === -1) {
       setTagText(value);

@@ -37,6 +37,17 @@ export default async function handler(
       return;
     }
 
+    // タグの取得
+    const [tags] = await connection.query(
+      "SELECT tag FROM filetags WHERE id = ?",
+      [id]
+    );
+    const tagList = Promise.all(
+      (tags as { tag: string }[]).map(({ tag }) =>
+        connection.query("SELECT tag FROM tags WHERE id = ?", [tag])
+      )
+    );
+
     const [rows] = await connection.query(
       "SELECT uid, dir, fileName, displayName, description, uploadDate, fileName, icon, favorite, download, password FROM fileData WHERE id = ? AND tmp = false",
       [id]
@@ -113,6 +124,7 @@ export default async function handler(
       exists: true,
       isProtected,
       ...fileData,
+      tags: (await tagList).map((r) => (r[0] as { tag: string }[])[0].tag),
       user: returnUserData,
     });
   } else {
