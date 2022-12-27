@@ -10,7 +10,6 @@ const FileItem = () => {
   const scrollRef = useRef<InfiniteScroll>(null);
 
   useEffect(() => {
-    console.log(fileList.length);
     // @ts-ignore
     scrollRef.current!.pageLoaded = 0;
     addRelations(
