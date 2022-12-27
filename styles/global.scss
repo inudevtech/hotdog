@@ -155,20 +155,3 @@ blockquote {
 .animate__animated.animate__slideInUp {
   --animate-duration: 400ms;
 }
-
-.login-button {
-  @apply border;
-  @apply border-sky-100;
-  @apply hover:border-sky-600;
-  @apply bg-sky-400;
-  @apply rounded-lg;
-  @apply py-2;
-  @apply flex;
-  @apply items-center;
-  @apply justify-center;
-  @apply gap-3;
-  @apply font-semibold;
-  @apply cursor-pointer;
-  @apply hover:shadow-xl;
-  @apply transition-all;
-}
