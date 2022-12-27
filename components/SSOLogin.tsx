@@ -3,6 +3,7 @@ import {
   faGoogle,
   //   faTwitter,
   faGithub,
+  faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { Dispatch, FC, SetStateAction } from "react";
 import { login } from "../util/firebase/auth";
@@ -27,16 +28,14 @@ const loginComponent: FC<{ setErrMsg: Dispatch<SetStateAction<string>> }> = ({
       <FontAwesomeIcon icon={faGoogle} size="xl" />
       <p>Login with Google</p>
     </div>
-    {
-      // TODO: Twitterを本番環境に対応させる
-      /* <div
-      className="login-button"
+    <div
+      className="btn btn-primary gap-2"
       onClick={async () => {
         login(2)
           .then(() => window.location.reload())
           .catch(() =>
             setErrMsg(
-              "ログインできませんでした。\nしばらくしてから再度お試しください。"
+              "ログインできませんでした。\n既に使用されているメールアドレスで登録をしようとしている可能性があります。"
             )
           );
       }}
@@ -44,8 +43,7 @@ const loginComponent: FC<{ setErrMsg: Dispatch<SetStateAction<string>> }> = ({
     >
       <FontAwesomeIcon icon={faTwitter} size="xl" />
       <p>Login with Twitter</p>
-    </div> */
-    }
+    </div>
     <div
       className="btn btn-primary gap-2"
       onClick={async () => {
