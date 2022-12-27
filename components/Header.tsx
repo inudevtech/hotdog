@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   faArrowUpRightFromSquare,
@@ -11,6 +10,7 @@ import Tippy from "@tippyjs/react";
 import { useRouter } from "next/router";
 // @ts-ignore
 import Menu from "react-burger-menu/lib/menus/scaleDown";
+import Hotdog from "../public/hotdog.svg";
 import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";
 import LoginModal from "./LoginModal";
@@ -74,17 +74,14 @@ const Header = () => {
   const link = (
     <Link href="/">
       <div
-        className="text-2xl flex gap-1 items-center cursor-pointer"
+        className="text-2xl flex gap-1 items-center cursor-pointer w-56"
         onClick={() => setIsOpen(false)}
         aria-hidden
       >
-        <Image
-          src="/hotdog-emoji.svg"
-          width="25"
-          height="25"
-          alt="Hotdog Emoji"
-        />
-        <span className="item">ホットドッグ</span>
+        <div className="w-12">
+          <Hotdog />
+        </div>
+        <span className="item font-bold">ホットドッグ</span>
       </div>
     </Link>
   );
