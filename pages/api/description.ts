@@ -11,7 +11,7 @@ export default async function handler(
     return;
   }
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   const { token, id } = req.query;
   if (id !== undefined) {

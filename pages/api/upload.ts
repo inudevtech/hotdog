@@ -28,7 +28,7 @@ export default async function handler(
     return;
   }
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   // Run the middleware
   await runMiddleware(req, res, cors);

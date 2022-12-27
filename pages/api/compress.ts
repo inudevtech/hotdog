@@ -17,7 +17,7 @@ export default async function handler(
     return;
   }
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   const { id } = req.query;
   let [rows] = await connection.query(

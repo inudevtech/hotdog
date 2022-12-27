@@ -17,9 +17,9 @@ export default async function handler(
     res.status(405).end();
   }
 
-  const { id, index, isuid, token } = req.query;
+  const { id, index, isuid, token, match } = req.query;
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   // indexがない場合はそのファイルの情報を返す
   if (index === undefined) {
@@ -129,7 +129,12 @@ export default async function handler(
     });
   } else {
     let uid;
-    if (isuid === "false") {
+    let matchSql = "";
+    if (match !== undefined && match.length > 0) {
+      matchSql = `AND ( displayName LIKE '%${match}%' OR fileName LIKE '%${match}%' )`;
+    }
+
+    if (isuid === "false" && id !== undefined) {
       const [rows] = await connection.query(
         "SELECT uid FROM fileData WHERE id = ? AND tmp = false",
         [id]
@@ -148,13 +153,19 @@ export default async function handler(
     } else if (id !== undefined) {
       uid = id;
     } else {
-      res.status(400).end();
+      const [fileRows] = await connection.query(
+        `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE tmp = false AND private = false AND uploadDate < NOW() ${matchSql} ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
+        [Number(index)]
+      );
+      res.status(200).json(fileRows);
       return;
     }
+
+    // TODO: ファイルidが偶然ユーザーidのときってこれバグらない？？？？？
     const [fileRows] = await connection.query(
       `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? AND tmp = false ${
         isuid === "false" ? "AND private = false AND uploadDate < NOW()" : ""
-      } ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
+      } ${matchSql} ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
       [uid, id, Number(index)]
     );
     res.status(200).json(fileRows);

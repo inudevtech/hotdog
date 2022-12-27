@@ -16,7 +16,7 @@ export default async function handler(
     res.status(405).end();
   }
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   const { id, recaptcha, pass } = req.query;
 
