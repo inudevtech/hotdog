@@ -1,3 +1,5 @@
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { addRelations } from "../util/util";
@@ -28,7 +30,10 @@ const FileItem = () => {
   return (
     <>
       <div className="flex flex-row gap-2 items-center">
-        検索
+        <span>
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
+          検索
+        </span>
         <input
           type="input"
           className="input input-bordered w-64"
