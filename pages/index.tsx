@@ -1,17 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { FormEvent, ReactElement, useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import Dropzone from "react-dropzone";
 import { useRouter } from "next/router";
 import { UploadFileContext } from "./_app";
 import Hotdog from "../public/hotdog.svg";
+import FileItem from "../components/FileItem";
 
-const index = () => {
+const Index = () => {
   const { uploadFile, setUploadFile } = useContext(UploadFileContext);
   const [excess, setExcess] = useState<boolean>(false);
   const router = useRouter();
-  const [hasMore, setHasMore] = useState<boolean>(false);
-  const [fileList, setFileList] = useState<ReactElement[]>([]);
 
   const addFiles = (files: FileList | File[]) => {
     if (uploadFile.length + files.length > 10) {
@@ -38,12 +37,15 @@ const index = () => {
     <Dropzone onDrop={onDrop} noClick>
       {({ getRootProps }) => (
         <div
-          className="w-full pt-[60px] relative min-h-screen flex flex-col gap-5"
+          className="w-full pt-[120px] p-3 sm:pt-[100px] min-h-screen container mx-auto py-3 flex flex-col gap-2 items-center"
           {...getRootProps()}
         >
-          <div className="pt-[100px] sm:pt-[50px] container mx-auto py-3 flex flex-col gap-2">
+          <div className="py-20 px-5 card bg-base-200 rounded-box hover:shadow-xl transition">
             <p className="text-center text-4xl hidden md:block font-bold">
               ファイルをドラッグ&ドロップ
+            </p>
+            <p className="text-center text-xl mb-3 block md:hidden font-bold">
+              自分のファイルをアップロード
             </p>
             <p className="text-center text-2xl hidden md:block">or</p>
             <label
@@ -58,18 +60,18 @@ const index = () => {
             <p className="text-lg text-red-500" hidden={!excess}>
               一度に送信できるファイルは10件までです！
             </p>
-
-            <div className="border-b-2 border-black relative mt-[30px]">
-              <div className="border-2 border-black absolute top-[-25px] left-[calc(50%_-_25px)] w-[50px] h-[50px] rounded-full bg-white">
-                <Hotdog />
-              </div>
+          </div>
+          <div className="border-b-2 border-blue-400 relative my-[30px] w-64">
+            <div className="border-2 border-blue-300 absolute top-[-25px] left-[calc(50%_-_25px)] w-[50px] h-[50px] rounded-full bg-white">
+              <Hotdog />
             </div>
           </div>
-
+          <p className="text-4xl font-bold">ファイルを探す</p>
+          <FileItem />
         </div>
       )}
     </Dropzone>
   );
 };
 
-export default index;
+export default Index;

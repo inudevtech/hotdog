@@ -157,16 +157,19 @@ const Edit = (props: ModalProps) => {
     } else if (
       tags.indexOf(value.replace(" ", "")) === -1 &&
       value.length > 1 &&
-      tags.length < 5
+      tags.length < 5 &&
+      value.length <= 16
     ) {
       setTags([...tags, value.replace(" ", "")]);
       setTagText("");
     } else {
       setTagText(value.replace(" ", ""));
       if (tags.length >= 5) {
-        setTagError("タグは5つまでです。");
+        setTagError("設定できるタグは5つまでです");
       } else if (tags.indexOf(value.replace(" ", "")) !== -1) {
-        setTagError("同じタグは登録できません。");
+        setTagError("同じタグは登録できません");
+      } else if (value.length > 16) {
+        setTagError("タグは16文字以内にしてください");
       }
     }
   };

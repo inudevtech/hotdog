@@ -30,20 +30,30 @@ export const addRelations = (
   page: number,
   u: GetUserProps | null,
   setHasMore: Dispatch<SetStateAction<boolean>>,
-  fileList: ReactElement[],
+  files: ReactElement[],
   setFileList: Dispatch<SetStateAction<ReactElement[]>>,
   id?: string,
-  isuid?: boolean
+  isuid?: boolean,
+  match?: string,
+  defaultFileList?: ReactElement[]
 ) => {
   if (!u?.isAnonymous || !u?.isDeletedUser) {
     axios
-      .get("/api/get", { params: { id, index: page * 3, isuid: !!isuid } })
+      .get("/api/get", {
+        params: { id, index: page * 3, isuid: !!isuid, match },
+      })
       .then((r) => {
         if (r.data.length === 3) {
           setHasMore(true);
         } else if (r.data.length === 0) {
           setHasMore(false);
-          return;
+        }
+
+        let fileList;
+        if (defaultFileList) {
+          fileList = defaultFileList;
+        } else {
+          fileList = files;
         }
 
         setFileList([
