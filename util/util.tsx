@@ -37,7 +37,7 @@ export const addRelations = (
   match?: string,
   defaultFileList?: ReactElement[]
 ) => {
-  if (!u?.isAnonymous || !u?.isDeletedUser) {
+  if (!u?.isAnonymous && !u?.isDeletedUser) {
     axios
       .get("/api/get", {
         params: { id, index: page * 3, isuid: !!isuid, match },
