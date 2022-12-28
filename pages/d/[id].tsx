@@ -44,7 +44,7 @@ import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-cpp";
 import "prismjs/themes/prism-tomorrow.css";
 
-const download = () => {
+const Download = () => {
   const router = useRouter();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [title, setTitle] = useState<string | null>(null);
@@ -459,4 +459,4 @@ const download = () => {
   );
 };
 
-export default download;
+export default Download;

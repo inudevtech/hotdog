@@ -13,16 +13,16 @@ import {
   ChangeEvent,
 } from "react";
 import axios, { AxiosError } from "axios";
-// @ts-ignore
-import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import "react-datetime-picker/dist/DateTimePicker.css";
 import Tippy from "@tippyjs/react";
+// @ts-ignore
+import { ja } from "moment/locale/ja";
+import Datetime from "react-datetime";
+import moment, { Moment } from "moment";
 import { getStringBytes } from "../util/util";
 import { AccountContext } from "../pages/_app";
 import Modal from "./Modal";
 import "tippy.js/dist/tippy.css";
+import "react-datetime/css/react-datetime.css";
 
 interface ModalProps {
   id: string;
@@ -45,7 +45,7 @@ const Edit = (props: ModalProps) => {
   const [defaultContent, setDefaultContent] = useState<string | null>(null);
   const [privateFile, setPrivateFile] = useState<boolean>(false);
   const [password, setPassword] = useState<string | null>("");
-  const [uploadDate, setUploadDate] = useState<Date | string>(new Date());
+  const [uploadDate, setUploadDate] = useState<Moment | string>(moment());
   const [tags, setTags] = useState<string[]>([]);
   const [tagError, setTagError] = useState<string>("");
 
@@ -324,8 +324,9 @@ const Edit = (props: ModalProps) => {
             <p className="text-sm">
               設定した時間にファイルが公開されます。設定しない場合は即時公開されます。
             </p>
-            <DateTimePicker
-              onChange={(value: string) => {
+            <Datetime
+              locale={ja}
+              onChange={(value) => {
                 setUploadDate(value);
                 setDirty(true);
               }}
@@ -334,8 +335,7 @@ const Edit = (props: ModalProps) => {
                   ? new Date(uploadDate)
                   : uploadDate
               }
-              required
-              minDate={new Date()}
+              isValidDate={(current) => current.isAfter(moment())}
             />
           </div>
         </div>
