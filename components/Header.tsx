@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tippy from "@tippyjs/react";
 import { useRouter } from "next/router";
 // @ts-ignore
-import Menu from "react-burger-menu/lib/menus/scaleDown";
+import Menu from "react-burger-menu/lib/menus/push";
 import Hotdog from "../public/hotdog.svg";
 import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";

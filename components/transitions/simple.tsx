@@ -28,6 +28,7 @@ const SimpleTransition: FC<Props> = ({
     const scale = Math.max(window.innerWidth, window.innerHeight);
     gsap
       .timeline()
+      .set(hotdogRef.current, { display: "block" })
       .fromTo(
         ".circle",
         { scale: "0" },
@@ -81,17 +82,17 @@ const SimpleTransition: FC<Props> = ({
             ease: SlowMo.ease.config(0.7, 0.7, false),
           },
         },
-        "<"
+        "-=0.5"
       )
+      .set(hotdogRef.current, { display: "none" })
       .then(() => setIsTransitioning(false));
 
     setIsOpen(!isOpen);
-    // console.log("a");
   }, [isTransitioning]);
 
   return (
     <div
-      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 z-30 ${
+      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 z-30 pointer-events-none ${
         !isTransitioning ? "hidden" : ""
       }`}
     >

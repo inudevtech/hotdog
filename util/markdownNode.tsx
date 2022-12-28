@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 export const H1 = (props: { children?: ReactNode }) => {
   const { children } = props;
   return (
-    <h1 className="text-blue-600 text-3xl font-bold border-l-4 border-slate-400 pl-1 m-2 ml-0">
+    <h1 className="text-blue-600 text-5xl font-bold mb-10 m-5 after:w-16 after:h-4 after:border-b-4 after:border-slate-500 after:block">
       {children}
     </h1>
   );
@@ -13,13 +13,18 @@ export const H1 = (props: { children?: ReactNode }) => {
 
 export const H2 = (props: { children?: ReactNode }) => {
   const { children } = props;
-  return <h2 className="text-2xl">{children}</h2>;
+  return <h2 className="text-3xl font-bold m-2 ml-0">{children}</h2>;
+};
+
+export const H3 = (props: { children?: ReactNode }) => {
+  const { children } = props;
+  return <h2 className="text-xl">{children}</h2>;
 };
 
 export const P = (props: { children?: ReactNode }) => {
   const { children } = props;
 
-  return <p className="p-3">{children}</p>;
+  return <p>{children}</p>;
 };
 
 export const Li = (props: { children?: ReactNode }) => {
@@ -36,6 +41,10 @@ H1.defaultProps = {
 };
 
 H2.defaultProps = {
+  children: null,
+};
+
+H3.defaultProps = {
   children: null,
 };
 

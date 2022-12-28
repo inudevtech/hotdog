@@ -5,8 +5,6 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { createContext, useEffect, useMemo, useState } from "react";
 import { User } from "@firebase/auth";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { MDXProvider } from "@mdx-js/react";
@@ -14,7 +12,8 @@ import { onAuthStateChanged } from "../util/firebase/auth";
 import { AccountType, UploadFileType } from "../@types";
 import { GA_ID, pageview } from "../util/gtag";
 import Header from "../components/Header";
-import { H1, H2, Li, P } from "../util/markdownNode";
+import { H1, H2, H3, Li, P } from "../util/markdownNode";
+import SimpleTransition from "../components/transitions/simple";
 
 config.autoAddCss = false;
 
@@ -24,20 +23,20 @@ const UploadFileContext = createContext<UploadFileType>({} as UploadFileType);
 const components = {
   h1: H1,
   h2: H2,
+  h3: H3,
   p: P,
   li: Li,
 };
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [AccountState, setAccountState] = useState<User | null>(null);
-  const [Loading, setLoading] = useState<boolean>(true);
   const [uploadFile, setUploadFile] = useState<File[]>([]);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
     onAuthStateChanged((user) => {
       setAccountState(user);
-      setLoading(false);
     });
   }, []);
   const accountContextValue = useMemo(
@@ -72,45 +71,22 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <Head>
             <title>🌭ホットドッグ</title>
           </Head>
-          {Loading ? (
-            <div className="flex justify-center items-center h-screen flex-col loading">
-              <h3 className="m-2 text-2xl monospace">
-                <FontAwesomeIcon
-                  icon={faSpinner}
-                  className="animate-spin px-2"
-                />
-                Loading...
-              </h3>
-              <blockquote className="max-w-lg">
-                ホットドッグ（英語: hot
-                dog）は、ソーセージを細長いバンで挟んだ食品である。
-                <br />
-                なお、英語の&quot;hot
-                dog&quot;（熱い犬）は、ソーセージ単体と、ソーセージを細長いバンで挟んだ食品との両方の意味を持つ。
-                <cite>https://ja.wikipedia.org/wiki/ホットドッグ</cite>
-              </blockquote>
-            </div>
-          ) : (
-            <>
-              <Header />
-              <div
-                id="page-warp"
-                className={`min-h-screen ${
-                  router.pathname.startsWith("/static/")
-                    ? "pt-[120px] p-3 sm:pt-[100px]"
-                    : ""
-                }`}
-              >
-                {router.pathname.startsWith("/static/") ? (
-                  <MDXProvider components={components}>
-                    <Component {...pageProps} />
-                  </MDXProvider>
-                ) : (
+          <SimpleTransition
+            isTransitioning={isTransitioning}
+            setIsTransitioning={setIsTransitioning}
+          />
+          <Header />
+          <div id="page-warp" className="min-h-screen">
+            {router.pathname.startsWith("/static/") ? (
+              <div className="mt-[120px] sm:mt-[100px] p-5 max-w-[1024px] m-auto shadow-xl rounded-lg border">
+                <MDXProvider components={components}>
                   <Component {...pageProps} />
-                )}
+                </MDXProvider>
               </div>
-            </>
-          )}
+            ) : (
+              <Component {...pageProps} />
+            )}
+          </div>
         </UploadFileContext.Provider>
       </AccountContext.Provider>
     </GoogleReCaptchaProvider>
