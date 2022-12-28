@@ -1,27 +1,11 @@
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ReactElement, useContext, useEffect, useState } from "react";
-import InfiniteScroll from "react-infinite-scroller";
+import { useContext } from "react";
 import FileItem from "../components/FileItem";
-import { addRelations } from "../util/util";
 import { AccountContext } from "./_app";
 
 const Dashboard = () => {
   const { AccountState } = useContext(AccountContext);
-  const [hasMore, setHasMore] = useState<boolean>(false);
-  const [fileList, setFileList] = useState<ReactElement[]>([]);
-
-  useEffect(() => {
-    addRelations(
-      0,
-      { isAnonymous: false, isDeletedUser: false },
-      setHasMore,
-      fileList,
-      setFileList,
-      AccountState?.uid!,
-      true
-    );
-  }, []);
 
   return (
     <div
@@ -38,10 +22,7 @@ const Dashboard = () => {
           ダッシュボードを利用するにはログインをしてください。
         </h1>
       ) : (
-        <>
-          <FileItem />
-          {fileList.length === 0 && <div>ここには何もありません😢</div>}
-        </>
+        <FileItem uid={AccountState.uid} />
       )}
     </div>
   );

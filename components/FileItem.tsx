@@ -4,12 +4,12 @@ import { ReactElement, useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { addRelations } from "../util/util";
 
-const FileItem = () => {
-  // eslint-disable-next-line no-undef
+const FileItem = (props: { uid?: string }) => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [fileList, setFileList] = useState<ReactElement[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const scrollRef = useRef<InfiniteScroll>(null);
+  const { uid } = props;
 
   useEffect(() => {
     // @ts-ignore
@@ -20,8 +20,8 @@ const FileItem = () => {
       setHasMore,
       fileList,
       setFileList,
-      undefined,
-      undefined,
+      uid,
+      uid ? true : undefined,
       searchText,
       []
     );
@@ -49,8 +49,8 @@ const FileItem = () => {
             setHasMore,
             fileList,
             setFileList,
-            undefined,
-            undefined,
+            uid,
+            uid ? true : undefined,
             searchText
           )
         } // 項目を読み込む際に処理するコールバック関数
@@ -70,5 +70,8 @@ const FileItem = () => {
     </>
   );
 };
+FileItem.defaultProps = {
+    uid: undefined,
+}
 
 export default FileItem;
