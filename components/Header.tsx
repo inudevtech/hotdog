@@ -10,7 +10,7 @@ import Tippy from "@tippyjs/react";
 import { useRouter } from "next/router";
 // @ts-ignore
 import Menu from "react-burger-menu/lib/menus/push";
-import Hotdog from "../public/hotdog.svg";
+import Image from "next/image";
 import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";
 import LoginModal from "./LoginModal";
@@ -73,16 +73,14 @@ const Header = () => {
 
   const link = (
     <Link href="/">
-      <div
-        className="text-2xl flex gap-1 items-center cursor-pointer w-56"
+      <Image
+        src="/icon.png"
+        className="cursor-pointer"
+        alt="ロゴ"
+        width={200}
+        height={10}
         onClick={() => setIsOpen(false)}
-        aria-hidden
-      >
-        <div className="w-12">
-          <Hotdog />
-        </div>
-        <span className="item font-bold">ホットドッグ</span>
-      </div>
+      />
     </Link>
   );
 

@@ -21,6 +21,7 @@ const SimpleTransition: FC<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const hotdogRef = useRef<HTMLDivElement>(null);
+  const transitionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.set(".circle", { scale: "0" });
@@ -29,6 +30,7 @@ const SimpleTransition: FC<Props> = ({
     gsap
       .timeline()
       .set(hotdogRef.current, { display: "block" })
+      .set(transitionRef.current, { backgroundColor: "#fff" })
       .fromTo(
         ".circle",
         { scale: "0" },
@@ -70,6 +72,7 @@ const SimpleTransition: FC<Props> = ({
         "<0.2"
       )
       .set(hotdogRef.current, { rotate: 0 })
+      .set(transitionRef.current, { backgroundColor: "#0000" })
       .to(
         ".circle",
         {
@@ -92,9 +95,10 @@ const SimpleTransition: FC<Props> = ({
 
   return (
     <div
-      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 z-30 pointer-events-none ${
+      className={`fixed flex justify-center items-center w-screen h-screen top-0 left-0 z-50 pointer-events-none ${
         !isTransitioning ? "hidden" : ""
       }`}
+      ref={transitionRef}
     >
       <div className="relative">
         <svg className="circle absolute fill-lime-400 w-[100px] h-[100px] top-[-50px] left-[-50px]">

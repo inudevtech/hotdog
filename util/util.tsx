@@ -13,6 +13,7 @@ import "prismjs/components/prism-c";
 import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-cpp";
 import "prismjs/themes/prism-tomorrow.css";
+import Link from "next/dist/client/link";
 
 export interface GetUserProps {
   isDeletedUser: boolean;
@@ -110,12 +111,12 @@ export const addRelations = (
                       className="h-[200px] overflow-hidden mt-2 p-1 break-words"
                     />
                     <div className="gradient absolute w-full mt-2 p-1 top-0 h-[200px]" />
-                    <a
+                    <Link
                       href={`/d/${file.id}`}
                       className="btn btn-primary btn-block"
                     >
                       詳細を見る
-                    </a>
+                    </Link>
                   </div>
                 </div>
               );
