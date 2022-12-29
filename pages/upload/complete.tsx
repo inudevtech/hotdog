@@ -1,6 +1,6 @@
 /// <reference path="../../@types/index.d.ts" />
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { CustomEase } from "gsap/dist/CustomEase";
 import Tippy from "@tippyjs/react";
@@ -10,9 +10,12 @@ const Complete = () => {
   const router = useRouter();
   const { id } = router.query;
   const carRef = useRef<HTMLDivElement>(null);
-  if (id === undefined) router.replace("/upload/");
+  const [canShare, setCanShare] = useState<boolean>(false);
 
   useEffect(() => {
+    if (id === undefined) router.replace("/upload/");
+    setCanShare(!!navigator.canShare);
+    console.log(navigator.share);
     gsap
       .timeline()
       .from(carRef.current, { right: "100vw", duration: 1 })
@@ -28,10 +31,10 @@ const Complete = () => {
         },
         "<"
       );
-  });
+  }, []);
 
   const share = () => {
-    window.navigator.share({
+    navigator.share({
       title: "ホットドッグでファイルを共有しました！",
       url: `https://hotdog.inu-dev.tech/d/${id}`,
     });
@@ -45,7 +48,7 @@ const Complete = () => {
         </h1>
         <p>https://hotdog.inu-dev.tech/d/{id}</p>
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-[80%]">
-          {window.navigator.share !== undefined && (
+          {canShare && (
             <button
               className="btn btn-primary grow"
               type="button"
