@@ -27,6 +27,20 @@ export default class MyDocument extends Document {
               />
             </>
           )}
+          <meta
+            name="description"
+            content="ファイルのアップロードサイト、ホットドッグ"
+          />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="og:title" content="ホットドッグ" />
+          <meta
+            property="og:description"
+            content="ファイルのアップロードサイト、ホットドッグ"
+          />
+          <meta
+            property="og:image"
+            content="https://hotdog.inu-dev.tech/icon.png"
+          />
         </Head>
         <body>
           <Main />
