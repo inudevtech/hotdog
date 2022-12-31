@@ -1,27 +1,43 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Editor } from "@tinymce/tinymce-react";
-import { FormEvent, useContext, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  SetStateAction,
+  useEffect,
+  ChangeEvent,
+} from "react";
 import axios, { AxiosError } from "axios";
+import Tippy from "@tippyjs/react";
 // @ts-ignore
-import DateTimePicker from "react-datetime-picker/dist/entry.nostyle";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import "react-datetime-picker/dist/DateTimePicker.css";
+import { ja } from "moment/locale/ja";
+import Datetime from "react-datetime";
+import moment, { Moment } from "moment";
 import { getStringBytes } from "../util/util";
 import { AccountContext } from "../pages/_app";
 import Modal from "./Modal";
+import "tippy.js/dist/tippy.css";
+import "react-datetime/css/react-datetime.css";
 
 interface ModalProps {
-  showFlag: boolean;
-  setFlag: any;
   id: string;
+  isElement?: boolean | null;
+  showFlag?: boolean | null;
+  setFlag?: Dispatch<SetStateAction<boolean>>;
+  saveFlag?: boolean | null;
+  setSaveFlag?: Dispatch<SetStateAction<boolean>> | null;
 }
 
 const Edit = (props: ModalProps) => {
-  const { showFlag, setFlag, id } = props;
+  const { showFlag, setFlag, isElement, id, saveFlag, setSaveFlag } = props;
   const editorRef = useRef<Editor>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState<string>("");
+  const [tagText, setTagText] = useState<string>("");
   const { AccountState } = useContext(AccountContext);
   const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,13 +45,13 @@ const Edit = (props: ModalProps) => {
   const [defaultContent, setDefaultContent] = useState<string | null>(null);
   const [privateFile, setPrivateFile] = useState<boolean>(false);
   const [password, setPassword] = useState<string | null>("");
-  const [uploadDate, setUploadDate] = useState<Date | string>(new Date());
+  const [uploadDate, setUploadDate] = useState<Moment | string>(moment());
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagError, setTagError] = useState<string>("");
 
   const save = async () => {
-    if (editorRef.current && titleRef.current) {
+    if (editorRef.current) {
       const content = editorRef.current.editor?.getContent();
-
-      const title = titleRef.current.value;
 
       if (getStringBytes(content!) > 65535) {
         setError(0);
@@ -66,6 +82,7 @@ const Edit = (props: ModalProps) => {
               privateFile,
               password,
               uploadDate,
+              tags,
             },
             { params }
           )
@@ -82,20 +99,32 @@ const Edit = (props: ModalProps) => {
     }
   };
 
+  useEffect(() => {
+    if (saveFlag) {
+      save();
+      setSaveFlag!(false);
+    }
+  }, [saveFlag]);
+
   useMemo(() => {
     if (showFlag && AccountState) {
-      axios.get("/api/description", { params: { id } }).then((res) => {
-        let { description } = res.data;
-        if (description === null) {
-          description = "";
-        }
-        setDefaultContent(description);
-        setPrivateFile(res.data.private);
-        setPassword(res.data.password === 1 ? null : "");
-        setUploadDate(res.data.uploadDate);
-        editorRef.current?.editor?.setContent(description);
-        titleRef.current!.value = res.data.displayName;
-      });
+      axios
+        .get("/api/description", { params: { id } })
+        .then((res) => {
+          let { description } = res.data;
+          if (description === null) {
+            description = "";
+          }
+          setDefaultContent(description);
+          setPrivateFile(res.data.private);
+          setPassword(res.data.password === 1 ? null : "");
+          setUploadDate(res.data.uploadDate);
+          editorRef.current?.editor?.setContent(description);
+          setTitle(res.data.displayName);
+        })
+        .catch((e: AxiosError) => {
+          setError(e.response?.status!);
+        });
     }
   }, [showFlag]);
 
@@ -118,16 +147,35 @@ const Edit = (props: ModalProps) => {
     setPassword(e.currentTarget.value);
   };
 
-  return (
-    <Modal
-      className={`w-full p-5 ${
-        AccountState == null
-          ? "md:w-1/3 sm:w-1/2"
-          : "xl:w-2/3 xl:max-w-[1024px] lg:w-3/4"
-      }`}
-      isOpen={showFlag}
-      setOpen={setFlag}
-    >
+  const onChangeTagValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setDirty(true);
+    setError(false);
+    setTagError("");
+    const { value } = e.target;
+    if (value.indexOf(" ") === -1) {
+      setTagText(value);
+    } else if (
+      tags.indexOf(value.replace(" ", "")) === -1 &&
+      value.length > 1 &&
+      tags.length < 5 &&
+      value.length <= 16
+    ) {
+      setTags([...tags, value.replace(" ", "")]);
+      setTagText("");
+    } else {
+      setTagText(value.replace(" ", ""));
+      if (tags.length >= 5) {
+        setTagError("設定できるタグは5つまでです");
+      } else if (tags.indexOf(value.replace(" ", "")) !== -1) {
+        setTagError("同じタグは登録できません");
+      } else if (value.length > 16) {
+        setTagError("タグは16文字以内にしてください");
+      }
+    }
+  };
+
+  const content = (
+    <div className="flex gap-2 flex-col">
       <div
         className={`flex gap-2 flex-col ${
           AccountState == null ? "" : "md:flex-row"
@@ -137,18 +185,56 @@ const Edit = (props: ModalProps) => {
           {AccountState == null ? (
             <p>タイトルや説明など、詳細設定はログインすると記入できます。</p>
           ) : (
-            <>
-              <p className="m-2 text-xl">タイトル</p>
+            <div className="flex gap-2 flex-col">
+              <p className="text-2xl">タイトル</p>
               <input
                 type="text"
-                className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2 w-full"
-                ref={titleRef}
-                onChange={() => {
+                value={title}
+                onChange={(e) => {
                   setDirty(true);
                   setError(false);
+                  setTitle(e.target.value);
                 }}
+                className="input input-bordered w-full"
               />
-              <p className="m-2 text-xl">ファイルの説明</p>
+              <div>
+                <p className="text-xl">タグ</p>
+                <p className="text-sm">最大５個まで</p>
+                <div className="flex gap-2 items-center flex-wrap	">
+                  {tags.map((tag) => (
+                    <div
+                      className="badge badge-outline flex items-center gap-1"
+                      key={tag}
+                    >
+                      <FontAwesomeIcon
+                        icon={faXmark}
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setDirty(true);
+                          setError(false);
+                          setTags(tags.filter((t) => t !== tag));
+                        }}
+                      />
+                      {tag}
+                    </div>
+                  ))}
+                  <Tippy
+                    content={tagError}
+                    visible={!!tagError}
+                    onClickOutside={() => setTagError("")}
+                    placement="top-start"
+                  >
+                    <input
+                      type="text"
+                      id="tag"
+                      onChange={onChangeTagValue}
+                      value={tagText}
+                      className="input input-bordered grow input-sm"
+                    />
+                  </Tippy>
+                </div>
+              </div>
+              <p className="text-2xl">ファイルの説明</p>
               {defaultContent !== null && (
                 <Editor
                   ref={editorRef}
@@ -189,7 +275,7 @@ const Edit = (props: ModalProps) => {
                   }}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
         <div className="border-r border-t border-slate-200 border-2" />
@@ -198,8 +284,6 @@ const Edit = (props: ModalProps) => {
             AccountState ? "md:max-w-[250px]" : ""
           }`}
         >
-          <p>共有URL</p>
-          <p className="border rounded border-slate-500 select-all p-1 overflow-hidden whitespace-nowrap">{`https://hotdog.inu-dev.tech/d/${id}`}</p>
           <div hidden={!AccountState}>
             <label
               htmlFor="privateSwitch"
@@ -208,11 +292,10 @@ const Edit = (props: ModalProps) => {
               <input
                 type="checkbox"
                 id="privateSwitch"
-                className="sr-only peer"
+                className="checkbox"
                 onChange={togglePrivate}
                 checked={privateFile}
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full focus:border-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
               <span>非公開ファイル</span>
             </label>
             <p className="text-sm">
@@ -227,7 +310,7 @@ const Edit = (props: ModalProps) => {
             <input
               type="password"
               placeholder="パスワード"
-              className="border border-slate-500 p-1 rounded transition focus:border-slate-800 focus:border-2 w-full"
+              className="input input-bordered w-full"
               onChange={inputPassword}
               maxLength={72}
               value={password === null ? "passwordpassword" : password}
@@ -241,8 +324,9 @@ const Edit = (props: ModalProps) => {
             <p className="text-sm">
               設定した時間にファイルが公開されます。設定しない場合は即時公開されます。
             </p>
-            <DateTimePicker
-              onChange={(value: string) => {
+            <Datetime
+              locale={ja}
+              onChange={(value) => {
                 setUploadDate(value);
                 setDirty(true);
               }}
@@ -251,26 +335,51 @@ const Edit = (props: ModalProps) => {
                   ? new Date(uploadDate)
                   : uploadDate
               }
-              required
-              minDate={new Date()}
+              isValidDate={(current) => current.isAfter(moment())}
             />
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={save}
-        className="transition p-2 m-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400 disabled:bg-slate-400 disabled:border-slate-500 disabled:text-slate-600"
-        disabled={!dirty}
-      >
-        {loading ? (
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
-        ) : null}
-        {dirty ? "保存" : "保存済み"}
-      </button>
+      {!isElement && (
+        <button
+          type="button"
+          onClick={save}
+          className="btn btn-primary btn-block"
+          disabled={!dirty}
+        >
+          {loading ? (
+            <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
+          ) : null}
+          {dirty ? "保存" : "保存済み"}
+        </button>
+      )}
       <p className="text-red-500">{errorMsg}</p>
+    </div>
+  );
+
+  return isElement ? (
+    content
+  ) : (
+    <Modal
+      className={`w-full p-5 ${
+        AccountState == null
+          ? "md:w-1/3 sm:w-1/2"
+          : "xl:w-2/3 xl:max-w-[1024px] lg:w-3/4"
+      }`}
+      isOpen={showFlag!}
+      setOpen={setFlag!}
+    >
+      {content}
     </Modal>
   );
+};
+
+Edit.defaultProps = {
+  isElement: false,
+  showFlag: true,
+  setFlag: null,
+  saveFlag: null,
+  setSaveFlag: null,
 };
 
 export default Edit;

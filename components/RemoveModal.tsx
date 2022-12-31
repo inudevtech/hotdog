@@ -25,7 +25,7 @@ const removeModal: FC<{
   };
 
   return (
-    <Modal isOpen={flag[0]} setOpen={flag[1]} className="p-5">
+    <Modal isOpen={flag[0]} setOpen={flag[1]} className="md:max-w-xl">
       {isRemoved ? (
         <>
           <h1 className="text-3xl p-2">削除が完了しました。</h1>
@@ -34,7 +34,7 @@ const removeModal: FC<{
           </p>
           <button
             type="button"
-            className="transition p-1 my-2 min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+            className="btn btn-primary min-w-[300px] w-full"
             onClick={() => router.push("/")}
           >
             ホームに戻る
@@ -47,23 +47,20 @@ const removeModal: FC<{
           <p className="text-sm">
             システムの仕様上削除までに時間がかかる場合があります。
           </p>
-          <div className="flex md:gap-2 flex-col md:flex-row">
+          <div className="flex gap-2 flex-col md:flex-row">
             <button
               type="button"
-              className="transition p-1 my-2 w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-red-600 block text-center bg-red-400"
+              className="btn btn-error gap-2 grow"
               onClick={remove}
             >
               {loading ? (
-                <FontAwesomeIcon
-                  icon={faSpinner}
-                  className="animate-spin px-2"
-                />
+                <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
               ) : null}
               削除
             </button>
             <button
               type="button"
-              className="transition p-1 my-2 w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="btn btn-primary grow"
               onClick={() => flag[1](false)}
             >
               キャンセル

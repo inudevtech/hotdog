@@ -11,7 +11,7 @@ export default async function handler(
     return;
   }
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   const { token, id } = req.query;
   if (id !== undefined) {
@@ -26,6 +26,22 @@ export default async function handler(
         res.status(400).end();
         return;
       }
+
+      // タグ情報の更新
+      req.body.tags.forEach(async (tag: string) => {
+        await connection.query("INSERT IGNORE INTO `tags` (tag) VALUES (?)", [
+          tag,
+        ]);
+        const [rows] = await connection.query(
+          "SELECT id FROM `tags` WHERE tag = ?",
+          [tag]
+        );
+        const tagId = (rows as { id: number }[])[0].id;
+        await connection.query(
+          "INSERT INTO `filetags` (id, tag) VALUES (?, ?)",
+          [id, tagId]
+        );
+      });
 
       let sql =
         "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, password = ?, uploadDate = ? WHERE id = ? AND uid = ?";
@@ -42,12 +58,12 @@ export default async function handler(
         sql =
           "UPDATE `fileData` SET displayName = ?, description = ?, private = ?, uploadDate = ? WHERE id = ? AND uid = ?";
         values.splice(3, 1);
-      } else if (req.body.password !== ""){
+      } else if (req.body.password !== "") {
         values[3] = await bcrypt.hash(req.body.password, 10);
       }
 
       connection
-        .execute(sql, values)
+        .query(sql, values)
         .then(() => {
           res.status(200).end();
         })
@@ -56,7 +72,7 @@ export default async function handler(
         });
     } else if (req.method === "GET") {
       const [rows] = await connection.query(
-        "SELECT displayName, description, private, password, uploadDate FROM fileData WHERE id = ?",
+        "SELECT displayName, description, private, password, uploadDate FROM fileData WHERE id = ? AND tmp = false",
         [id]
       );
       if ((rows as unknown[]).length === 0) {

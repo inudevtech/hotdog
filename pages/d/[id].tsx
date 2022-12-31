@@ -44,11 +44,12 @@ import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-cpp";
 import "prismjs/themes/prism-tomorrow.css";
 
-const download = () => {
+const Download = () => {
   const router = useRouter();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [title, setTitle] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
   const [isExists, setIsExists] = useState<boolean | null | undefined>(null);
   const [description, setDescription] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserProps | null>(null);
@@ -95,6 +96,7 @@ const download = () => {
               setLikeCount(res.data.favorite);
               setDownloadCount(res.data.download);
               setIsProtected(res.data.isProtected);
+              setTags(res.data.tags);
               let u: GetUserProps | null;
               if (res.data.user.isDeletedUser) {
                 u = {
@@ -111,10 +113,10 @@ const download = () => {
               addRelations(
                 0,
                 u,
-                router.query.id as string,
                 setHasMore,
                 fileList,
-                setFileList
+                setFileList,
+                router.query.id as string
               );
             }
           })
@@ -245,6 +247,13 @@ const download = () => {
               </pre>
             </>
           )}
+          <div className="flex gap-1">
+            {tags.map((tag) => (
+              <div className="badge badge-outline" key={tag}>
+                {tag}
+              </div>
+            ))}
+          </div>
           {isIcon ? (
             <p className="bg-blue-300/[.6] rounded border border-blue-400 p-2 my-2">
               <FontAwesomeIcon icon={faCircleInfo} className="px-2" />
@@ -260,10 +269,10 @@ const download = () => {
             </p>
           ) : null}
           {output.innerHTML === "<div>null</div>" ? null : (
-            // eslint-disable-next-line react/no-danger
             <div
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-              className="border-t-2 mt-2 p-1 max-h-[50vh] overflow-auto break-words"
+              className="border-t-2 mt-2 p-1 max-h-[50vh] overflow-auto break-words prose"
             />
           )}
         </div>
@@ -330,7 +339,7 @@ const download = () => {
             )}
             <button
               type="button"
-              className="transition p-1 my-2 md:min-w-[300px] w-full lg:min-w-0 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="btn btn-primary btn-block"
               onClick={downloadFile}
             >
               {loading ? (
@@ -387,7 +396,11 @@ const download = () => {
         setFlag={setEditOpen}
         id={router.query.id as string}
       />
-      <Modal isOpen={passwordOpen} setOpen={setPasswordOpen} className="p-5">
+      <Modal
+        isOpen={passwordOpen}
+        setOpen={setPasswordOpen}
+        className="md:max-w-md"
+      >
         <form className="flex flex-col gap-2" onSubmit={passwordDownload}>
           <h2>ダウンロードパスワードの入力</h2>
           <p>
@@ -398,10 +411,7 @@ const download = () => {
             placeholder="パスワード"
             className="border border-slate-300 p-1 rounded transition focus:border-slate-500 focus:border-2"
           />
-          <button
-            type="submit"
-            className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
-          >
+          <button type="submit" className="btn btn-primary btn-block">
             {loading ? (
               <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
             ) : null}
@@ -426,10 +436,10 @@ const download = () => {
               addRelations(
                 page,
                 user,
-                router.query.id as string,
                 setHasMore,
                 fileList,
-                setFileList
+                setFileList,
+                router.query.id as string
               )
             } // 項目を読み込む際に処理するコールバック関数
             hasMore={hasMore} // 読み込みを行うかどうかの判定
@@ -449,4 +459,4 @@ const download = () => {
   );
 };
 
-export default download;
+export default Download;

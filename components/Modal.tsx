@@ -12,21 +12,21 @@ type Props = {
 
 const modal: FC<Props> = ({ children, className, isOpen, setOpen }) => (
   <div>
-    {isOpen && (
-      <div className="fixed top-0 left-0 w-full h-full bg-stone-500/50 flex items-center justify-center z-20">
-        <div
-          className={`bg-white rounded-xl max-h-screen overflow-auto relative shadow-xl animate__animated animate__slideInUp ${className}`}
-        >
-          <FontAwesomeIcon
-            icon={faXmark}
-            onClick={() => setOpen(false)}
-            className="absolute top-0 right-0 p-2 cursor-pointer"
-            size="lg"
-          />
-          {children}
-        </div>
+    <input type="checkbox" className="modal-toggle" checked={isOpen} readOnly />
+    <div className="modal modal-bottom sm:modal-middle">
+      <div
+        className={`modal-box relative ${
+          className?.includes(" max-w") ? "" : "max-w-full"
+        } ${className}`}
+      >
+        <FontAwesomeIcon
+          icon={faXmark}
+          onClick={() => setOpen(false)}
+          className="btn btn-xs btn-circle absolute right-2 top-2"
+        />
+        <div>{children}</div>
       </div>
-    )}
+    </div>
   </div>
 );
 

@@ -17,15 +17,12 @@ export default async function handler(
     res.status(405).end();
   }
 
-  const { id, index, isuid, token } = req.query;
+  const { id, index, isuid, token, match } = req.query;
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
+  // indexがない場合はそのファイルの情報を返す
   if (index === undefined) {
-    await connection.query(
-      "CREATE TABLE IF NOT EXISTS `user` (uid VARCHAR(36) NOT NULL PRIMARY KEY, official BOOLEAN NOT NULL DEFAULT false)"
-    );
-
     await connection.query("DELETE FROM fileData WHERE expiration < NOW()");
 
     // tokenがあったときは確認してuidを取得
@@ -40,8 +37,19 @@ export default async function handler(
       return;
     }
 
+    // タグの取得
+    const [tags] = await connection.query(
+      "SELECT tag FROM filetags WHERE id = ?",
+      [id]
+    );
+    const tagList = Promise.all(
+      (tags as { tag: string }[]).map(({ tag }) =>
+        connection.query("SELECT tag FROM tags WHERE id = ?", [tag])
+      )
+    );
+
     const [rows] = await connection.query(
-      "SELECT uid, dir, fileName, displayName, description, uploadDate, fileName, icon, favorite, download, password FROM fileData WHERE id = ?",
+      "SELECT uid, dir, fileName, displayName, description, uploadDate, fileName, icon, favorite, download, password FROM fileData WHERE id = ? AND tmp = false",
       [id]
     );
 
@@ -116,13 +124,19 @@ export default async function handler(
       exists: true,
       isProtected,
       ...fileData,
+      tags: (await tagList).map((r) => (r[0] as { tag: string }[])[0].tag),
       user: returnUserData,
     });
   } else {
     let uid;
-    if (isuid === "false") {
+    let matchSql = "";
+    if (match !== undefined && match.length > 0) {
+      matchSql = `AND ( displayName LIKE '%${match}%' OR fileName LIKE '%${match}%' )`;
+    }
+
+    if (isuid === "false" && id !== undefined) {
       const [rows] = await connection.query(
-        "SELECT uid FROM fileData WHERE id = ?",
+        "SELECT uid FROM fileData WHERE id = ? AND tmp = false",
         [id]
       );
       if ((rows as unknown[]).length === 0) {
@@ -139,13 +153,19 @@ export default async function handler(
     } else if (id !== undefined) {
       uid = id;
     } else {
-      res.status(400).end();
+      const [fileRows] = await connection.query(
+        `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE tmp = false AND private = false AND uploadDate < NOW() ${matchSql} ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
+        [Number(index)]
+      );
+      res.status(200).json(fileRows);
       return;
     }
+
+    // TODO: ファイルidが偶然ユーザーidのときってこれバグらない？？？？？
     const [fileRows] = await connection.query(
-      `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? ${
+      `SELECT id, displayName, fileName, description, uploadDate, icon FROM fileData WHERE uid = ? AND id != ? AND tmp = false ${
         isuid === "false" ? "AND private = false AND uploadDate < NOW()" : ""
-      } ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
+      } ${matchSql} ORDER BY uploadDate DESC LIMIT 3 OFFSET ?`,
       [uid, id, Number(index)]
     );
     res.status(200).json(fileRows);

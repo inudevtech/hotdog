@@ -3,6 +3,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
 import mysql from "mysql2/promise";
 
+let connectionPool: mysql.Pool;
+
 export const serverUtil = async (token: string, res: NextApiResponse) => {
   const params = {
     secret: process.env.GOOGLE_RECAPTCHA_KEY!,
@@ -49,13 +51,16 @@ export function runMiddleware(
   });
 }
 
-export const getConnectionPool = () =>
-  mysql.createPool({
-    host: process.env.MYSQL_HOST,
-    database: process.env.MYSQL_DATABASE,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-  });
+export const getConnectionPool = () => {
+  if (!connectionPool) {
+    connectionPool = mysql.createPool({
+      host: process.env.MYSQL_HOST,
+      database: process.env.MYSQL_DATABASE,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      waitForConnections: true,
+      queueLimit: 0,
+    });
+  }
+  return connectionPool;
+};

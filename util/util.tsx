@@ -1,7 +1,7 @@
 import axios from "axios";
 import Prism from "prismjs";
 import { Dispatch, ReactElement, SetStateAction } from "react";
-import 'prismjs/components/prism-markup-templating';
+import "prismjs/components/prism-markup-templating";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-markup";
@@ -13,6 +13,7 @@ import "prismjs/components/prism-c";
 import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-cpp";
 import "prismjs/themes/prism-tomorrow.css";
+import Link from "next/dist/client/link";
 
 export interface GetUserProps {
   isDeletedUser: boolean;
@@ -29,21 +30,31 @@ export const getStringBytes = (string: string): number =>
 export const addRelations = (
   page: number,
   u: GetUserProps | null,
-  id: string,
   setHasMore: Dispatch<SetStateAction<boolean>>,
-  fileList: ReactElement[],
+  files: ReactElement[],
   setFileList: Dispatch<SetStateAction<ReactElement[]>>,
-  isuid?: boolean
+  id?: string,
+  isuid?: boolean,
+  match?: string,
+  defaultFileList?: ReactElement[]
 ) => {
-  if (!u?.isAnonymous) {
+  if (!u?.isAnonymous && !u?.isDeletedUser) {
     axios
-      .get("/api/get", { params: { id, index: page * 3, isuid: !!isuid } })
+      .get("/api/get", {
+        params: { id, index: page * 3, isuid: !!isuid, match },
+      })
       .then((r) => {
         if (r.data.length === 3) {
           setHasMore(true);
         } else if (r.data.length === 0) {
           setHasMore(false);
-          return;
+        }
+
+        let fileList;
+        if (defaultFileList) {
+          fileList = defaultFileList;
+        } else {
+          fileList = files;
         }
 
         setFileList([
@@ -100,12 +111,12 @@ export const addRelations = (
                       className="h-[200px] overflow-hidden mt-2 p-1 break-words"
                     />
                     <div className="gradient absolute w-full mt-2 p-1 top-0 h-[200px]" />
-                    <a
+                    <Link
                       href={`/d/${file.id}`}
-                      className="no-underline transition p-1 px-5 absolute top-[150px] w-[90%] right-[5%] border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+                      className="btn btn-primary btn-block"
                     >
                       詳細を見る
-                    </a>
+                    </Link>
                   </div>
                 </div>
               );

@@ -4,43 +4,6 @@
 @import url("https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
 
-blockquote {
-  position: relative;
-  border-top: 1px solid #1d3026;
-  border-bottom: 1px solid #1d3026;
-  padding: 10px;
-
-  &:before {
-    position: absolute;
-    background-color: #ffffff;
-    content: "🌭";
-    line-height: 1;
-    text-align: center;
-    top: -10px;
-    left: -10px;
-    font-size: 20px;
-  }
-
-  &:after {
-    position: absolute;
-    right: -10px;
-    bottom: -10px;
-    background-color: #ffffff;
-    content: "🌭";
-    line-height: 1;
-    text-align: center;
-    font-size: 20px;
-  }
-
-  cite {
-    display: block;
-    padding-right: 30px;
-    font-size: 0.8rem;
-    text-align: right;
-    color: #aaa;
-  }
-}
-
 .gradient {
   background: linear-gradient(rgba(255, 255, 255, 0), #ffffff);
 }
@@ -53,16 +16,6 @@ blockquote {
 .item {
   color: transparent;
   -webkit-text-stroke: 0.05em rgb(0, 0, 0);
-}
-
-h1 {
-  @apply text-3xl;
-}
-h2 {
-  @apply text-2xl;
-}
-h3 {
-  @apply text-lg;
 }
 
 .monospace {
@@ -121,8 +74,6 @@ h3 {
 サイドバーのラッパースタイル - アニメーションが壊れる可能性があるため触るときは注意
 */
 .bm-menu-wrap {
-  position: fixed;
-  height: 100%;
   top: 0;
   left: 0;
 }
@@ -132,6 +83,7 @@ h3 {
   @apply bg-white;
   padding: 2.5em 1.5em 0;
   font-size: 1.15em;
+  height: 100vh !important;
 }
 
 /* メニューリストのラッパースタイル*/
@@ -148,13 +100,8 @@ h3 {
 /* オーバーレイ(overlay)のスタイリング */
 .bm-overlay {
   @apply bg-slate-800/[.3];
-  position: fixed;
   top: 0;
   left: 0;
-}
-
-#__next {
-  @apply bg-slate-700;
 }
 
 #page-warp,
@@ -164,38 +111,4 @@ h3 {
 
 .animate__animated.animate__slideInUp {
   --animate-duration: 400ms;
-}
-
-.login-button {
-  @apply border;
-  @apply border-sky-100;
-  @apply hover:border-sky-600;
-  @apply bg-sky-400;
-  @apply rounded-lg;
-  @apply py-2;
-  @apply flex;
-  @apply items-center;
-  @apply justify-center;
-  @apply gap-3;
-  @apply font-semibold;
-  @apply cursor-pointer;
-  @apply hover:shadow-xl;
-  @apply transition-all;
-}
-
-ul li,
-ol li {
-  @apply leading-5;
-  @apply py-1;
-  @apply list-disc;
-  @apply ml-6;
-}
-
-ol li {
-  @apply list-decimal #{!important};
-}
-
-a {
-  @apply underline;
-  @apply underline-offset-2;
 }

@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   faArrowUpRightFromSquare,
@@ -10,7 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tippy from "@tippyjs/react";
 import { useRouter } from "next/router";
 // @ts-ignore
-import Menu from "react-burger-menu/lib/menus/scaleDown";
+import Menu from "react-burger-menu/lib/menus/push";
+import Image from "next/image";
 import { logout } from "../util/firebase/auth";
 import { AccountContext } from "../pages/_app";
 import LoginModal from "./LoginModal";
@@ -56,7 +56,7 @@ const Header = () => {
       <button
         type="button"
         onClick={() => router.push("https://account.inu-dev.tech/")}
-        className="transition border p-1.5 border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 text-center bg-sky-400 flex items-center gap-2"
+        className="btn btn-primary gap-2"
       >
         アカウント情報の変更
         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -64,7 +64,7 @@ const Header = () => {
       <button
         type="button"
         onClick={() => logout(true)}
-        className="transition border p-1.5 border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+        className="btn btn-primary"
       >
         ログアウト
       </button>
@@ -73,25 +73,20 @@ const Header = () => {
 
   const link = (
     <Link href="/">
-      <div
-        className="text-2xl flex gap-1 items-center cursor-pointer"
+      <Image
+        src="/icon.png"
+        className="cursor-pointer"
+        alt="ロゴ"
+        width={200}
+        height={10}
         onClick={() => setIsOpen(false)}
-        aria-hidden
-      >
-        <Image
-          src="/hotdog-emoji.svg"
-          width="25"
-          height="25"
-          alt="Hotdog Emoji"
-        />
-        <span className="item">ホットドッグ</span>
-      </div>
+      />
     </Link>
   );
 
   return (
     <>
-      <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-10">
+      <header className="fixed top-0 w-screen flex p-2 justify-between items-center shadow-lg border-slate-200 border flex-wrap bg-white z-30">
         <div className="flex flex-row items-center gap-4 py-1">
           <Menu
             customBurgerIcon={<FontAwesomeIcon icon={faBars} />}
@@ -165,14 +160,14 @@ const Header = () => {
             <button
               type="button"
               onClick={() => setLoginOpen(true)}
-              className="transition p-2 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
+              className="btn btn-primary"
             >
               ログイン
             </button>
             <button
               type="button"
               onClick={() => setSignUpOpen(true)}
-              className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+              className="btn btn-outline"
             >
               アカウントを作成
             </button>

@@ -36,8 +36,8 @@ const signUpModal: FC<{ showFlag: boolean; setFlag: any }> = ({
 
   return (
     <div>
-      <Modal isOpen={showFlag} setOpen={setFlag}>
-        <form className="m-5 mt-0 flex flex-col gap-2" onSubmit={submit}>
+      <Modal isOpen={showFlag} setOpen={setFlag} className="sm:max-w-sm">
+        <form className="mt-0 flex flex-col gap-2" onSubmit={submit}>
           <Image
             src="/logo.png"
             alt="ロゴ"
@@ -71,7 +71,7 @@ const signUpModal: FC<{ showFlag: boolean; setFlag: any }> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="transition p-2 border border-sky-100 rounded-md hover:shadow-lg hover:border-sky-600 block text-center bg-sky-400"
+                className="btn btn-primary btn-block"
               >
                 {loading ? (
                   <FontAwesomeIcon
@@ -90,7 +90,7 @@ const signUpModal: FC<{ showFlag: boolean; setFlag: any }> = ({
           {state === false ? (
             <button
               type="button"
-              className="transition p-1 border border-slate-300 rounded-md hover:shadow-lg hover:border-slate-500 block text-center"
+              className="btn btn-primary btn-block"
               onClick={() => setFlag()}
             >
               画面を閉じる

@@ -17,7 +17,7 @@ export default async function handler(
     return;
   }
 
-  const connection = await getConnectionPool().getConnection();
+  const connection = getConnectionPool();
 
   const { id, token } = req.query;
   try {
@@ -30,7 +30,7 @@ export default async function handler(
   }
 
   const [rows] = await connection.query(
-    "SELECT dir, fileName FROM fileData WHERE id = ?",
+    "SELECT dir, fileName FROM fileData WHERE id = ? AND tmp = false",
     [id]
   );
 
