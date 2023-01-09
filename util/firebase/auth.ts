@@ -1,10 +1,8 @@
 import {
-  browserSessionPersistence,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged as onFirebaseAuthStateChanged,
   sendEmailVerification,
-  setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -34,23 +32,13 @@ export function login(
 ): Promise<UserCredential> {
   return new Promise((resolve, reject) => {
     if (type === 0) {
-      setPersistence(auth, browserSessionPersistence)
-        .then(() =>
-          resolve(signInWithEmailAndPassword(auth, email!, password!))
-        )
-        .catch((e) => reject(e));
+      resolve(signInWithEmailAndPassword(auth, email!, password!));
     } else if (type === 1) {
-      setPersistence(auth, browserSessionPersistence)
-        .then(() => resolve(signInWithPopup(auth, googleProvider)))
-        .catch((e) => reject(e));
+      resolve(signInWithPopup(auth, googleProvider));
     } else if (type === 2) {
-      setPersistence(auth, browserSessionPersistence)
-        .then(() => resolve(signInWithPopup(auth, twitterProvider)))
-        .catch((e) => reject(e));
+      resolve(signInWithPopup(auth, twitterProvider));
     } else if (type === 3) {
-      setPersistence(auth, browserSessionPersistence)
-        .then(() => resolve(signInWithPopup(auth, githubProvider)))
-        .catch((e) => reject(e));
+      resolve(signInWithPopup(auth, githubProvider));
     }
   });
 }
