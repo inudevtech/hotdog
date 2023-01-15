@@ -66,7 +66,6 @@ const Download = () => {
   const [isProtected, setIsProtected] = useState<boolean>(false);
   const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
-  const [favoriting, setFavoriting] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -177,9 +176,9 @@ const Download = () => {
   };
 
   const toggleLike = () => {
-    if (favoriting) return;
+    setLike(!like);
+    setLikeCount((prev) => (like ? prev - 1 : prev + 1));
     executeRecaptcha!("favorite").then(async (token) => {
-      setFavoriting(true);
       const { id } = router.query;
       const type = like ? "0" : "1";
       await axios.post("/api/favorite", null, {
@@ -189,9 +188,6 @@ const Download = () => {
         maxAge: 60 * 60 * 24 * 365 * 100,
         path: `/d/${id}`,
       });
-      setLike(!like);
-      setLikeCount((prev) => (like ? prev - 1 : prev + 1));
-      setFavoriting(false);
     });
   };
 
