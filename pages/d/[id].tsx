@@ -14,6 +14,7 @@ import {
   faExclamationCircle,
   faFontAwesome,
   faHeart,
+  faLink,
   faPen,
   faSpinner,
   faUser,
@@ -43,6 +44,7 @@ import "prismjs/components/prism-c";
 import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-cpp";
 import "prismjs/themes/prism-tomorrow.css";
+import ShareModal from "../../components/ShareModal";
 
 const Download = () => {
   const router = useRouter();
@@ -66,6 +68,7 @@ const Download = () => {
   const [isProtected, setIsProtected] = useState<boolean>(false);
   const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>("");
+  const [openShareModal, setOpenShareModal] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -279,11 +282,11 @@ const Download = () => {
         <div className="justify-between flex flex-col min-w-[250px] flex-grow">
           <div className="hidden lg:block">{userElement}</div>
           <div className="flex gap-2 flex-col">
-            <div className="flex flex-row justify-around items-center">
+            <div className="grid grid-cols-2 gap-2">
               <Tippy
                 content={like ? "いいねありがとうございます！" : "いいねの数"}
               >
-                <div className="flex flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-2 justify-center">
                   <FontAwesomeIcon
                     icon={faHeart}
                     onClick={toggleLike}
@@ -297,7 +300,7 @@ const Download = () => {
                 </div>
               </Tippy>
               <Tippy content="ダウンロード数">
-                <div className="flex flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-2 justify-center">
                   <FontAwesomeIcon
                     icon={faDownload}
                     size="lg"
@@ -306,12 +309,27 @@ const Download = () => {
                   {downloadCount}
                 </div>
               </Tippy>
+              <Tippy content="このファイルを共有">
+                <div className="flex justify-center">
+                  <FontAwesomeIcon
+                    icon={faLink}
+                    onClick={() => setOpenShareModal(true)}
+                    size="lg"
+                    fixedWidth
+                    className="border hover:shadow-lg px-[8px] py-[10px] rounded-full text-slate-300 cursor-pointer hover:text-green-500 transition"
+                  />
+                </div>
+              </Tippy>
               <Tippy content="このファイルを報告">
-                <FontAwesomeIcon
-                  icon={faFontAwesome}
-                  onClick={report}
-                  className="text-slate-300 cursor-pointer hover:text-red-500 transition"
-                />
+                <div className="flex justify-center">
+                  <FontAwesomeIcon
+                    icon={faFontAwesome}
+                    onClick={report}
+                    size="lg"
+                    fixedWidth
+                    className="border hover:shadow-lg px-[8px] py-[10px] rounded-full text-slate-300 cursor-pointer hover:text-red-500 transition"
+                  />
+                </div>
               </Tippy>
             </div>
             {user?.uid === AccountState?.uid && AccountState !== null && (
@@ -455,6 +473,11 @@ const Download = () => {
           </InfiniteScroll>
         </div>
       )}
+      <ShareModal
+        id={router.query.id as string}
+        showFlag={openShareModal}
+        setFlag={setOpenShareModal}
+      />
     </>
   );
 };

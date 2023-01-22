@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { FC, FormEvent, useState } from "react";
+import { Dispatch, FC, FormEvent, SetStateAction, useState } from "react";
 import Image from "next/image";
 import { signUp } from "../util/firebase/auth";
 import Modal from "./Modal";
 import SSOLogin from "./SSOLogin";
 
-const signUpModal: FC<{ showFlag: boolean; setFlag: any }> = ({
+const signUpModal: FC<{ showFlag: boolean; setFlag: Dispatch<SetStateAction<boolean>> }> = ({
   showFlag,
   setFlag,
 }) => {
@@ -91,7 +91,7 @@ const signUpModal: FC<{ showFlag: boolean; setFlag: any }> = ({
             <button
               type="button"
               className="btn btn-primary btn-block"
-              onClick={() => setFlag()}
+              onClick={() => setFlag(false)}
             >
               画面を閉じる
             </button>

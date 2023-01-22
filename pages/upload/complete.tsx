@@ -3,19 +3,17 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { CustomEase } from "gsap/dist/CustomEase";
-import Tippy from "@tippyjs/react";
 import Car from "../../public/animations/car.svg";
+import ShareModal from "../../components/ShareModal";
 
 const Complete = () => {
   const router = useRouter();
   const { id } = router.query;
   const carRef = useRef<HTMLDivElement>(null);
-  const [canShare, setCanShare] = useState<boolean>(false);
+  const [openShareModal, setOpenShareModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (id === undefined) router.replace("/upload/");
-    setCanShare(!!navigator.canShare);
-    console.log(navigator.share);
     gsap
       .timeline()
       .from(carRef.current, { right: "100vw", duration: 1 })
@@ -33,13 +31,6 @@ const Complete = () => {
       );
   }, []);
 
-  const share = () => {
-    navigator.share({
-      title: "ホットドッグでファイルを共有しました！",
-      url: `https://hotdog.inu-dev.tech/d/${id}`,
-    });
-  };
-
   return (
     <>
       <div className="pt-[120px] sm:pt-[100px] px-2 flex flex-col items-center gap-3 w-full relative z-10 backdrop-blur container mx-auto">
@@ -48,31 +39,13 @@ const Complete = () => {
         </h1>
         <p>https://hotdog.inu-dev.tech/d/{id}</p>
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-[80%]">
-          {canShare && (
-            <button
-              className="btn btn-primary grow"
-              type="button"
-              onClick={share}
-            >
-              ダウンロードリンクを共有
-            </button>
-          )}
-          <Tippy
-            content="リンクをクリップボードにコピーしました!"
-            trigger="click"
+          <button
+            className="btn btn-primary grow"
+            type="button"
+            onClick={() => setOpenShareModal(true)}
           >
-            <button
-              className="btn btn-outline grow"
-              type="button"
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  `https://hotdog.inu-dev.tech/d/${id}`
-                )
-              }
-            >
-              ダウンロードリンクをコピー
-            </button>
-          </Tippy>
+            ダウンロードページを共有
+          </button>
         </div>
       </div>
       <div
@@ -82,6 +55,7 @@ const Complete = () => {
       >
         <Car />
       </div>
+      <ShareModal showFlag={openShareModal} setFlag={setOpenShareModal} id={id as string} />
     </>
   );
 };
