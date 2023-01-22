@@ -1,6 +1,5 @@
 import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
-import Cors from "cors";
+import { NextApiResponse } from "next";
 import mysql from "mysql2/promise";
 
 let connectionPool: mysql.Pool;
@@ -28,28 +27,6 @@ export const serverUtil = async (token: string, res: NextApiResponse) => {
     return false;
   }
 };
-
-// Initializing the cors middleware
-// You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
-export const cors = Cors();
-
-// Helper method to wait for a middleware to execute before continuing
-// And to throw an error when an error happens in a middleware
-export function runMiddleware(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  fn: Function
-) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-
-      return resolve(result);
-    });
-  });
-}
 
 export const getConnectionPool = () => {
   if (!connectionPool) {

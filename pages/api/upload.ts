@@ -4,9 +4,7 @@ import { randomBytes } from "crypto";
 import { OutgoingHttpHeaders } from "http";
 import adminAuth from "../../util/firebase/firebase-admin";
 import {
-  cors,
   getConnectionPool,
-  runMiddleware,
   serverUtil,
 } from "../../util/serverUtil";
 
@@ -29,9 +27,6 @@ export default async function handler(
   }
 
   const connection = getConnectionPool();
-
-  // Run the middleware
-  await runMiddleware(req, res, cors);
 
   const { token, recaptcha, icon } = req.query;
 
