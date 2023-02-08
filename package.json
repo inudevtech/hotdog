@@ -33,7 +33,7 @@
     "firebase": "9.15.0",
     "firebase-admin": "11.4.1",
     "formidable": "2.1.1",
-    "gsap": "npm:@gsap/member",
+    "gsap": "^3.11.4",
     "moment": "2.29.4",
     "mysql2": "2.3.3",
     "next": "13.1.1",
