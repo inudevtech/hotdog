@@ -18,8 +18,8 @@
     "@fortawesome/free-solid-svg-icons": "6.3.0",
     "@fortawesome/react-fontawesome": "0.2.0",
     "@google-cloud/storage": "6.9.2",
-    "@mdx-js/loader": "2.2.1",
-    "@mdx-js/react": "2.2.1",
+    "@mdx-js/loader": "2.3.0",
+    "@mdx-js/react": "2.3.0",
     "@next/mdx": "13.1.6",
     "@tailwindcss/typography": "0.5.9",
     "@tinymce/tinymce-react": "4.3.0",
@@ -49,7 +49,7 @@
     "react-google-recaptcha-v3": "1.10.1",
     "react-infinite-scroller": "1.2.6",
     "sharp": "0.31.3",
-    "tailwindcss": "3.2.4",
+    "tailwindcss": "3.2.6",
     "tippy.js": "6.3.7"
   },
   "devDependencies": {
