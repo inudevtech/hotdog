@@ -70,9 +70,25 @@ const Download = () => {
   const [errMsg, setErrMsg] = useState<string>("");
   const [openShareModal, setOpenShareModal] = useState<boolean>(false);
 
+  const { id } = router.query;
+
   useEffect(() => {
+    setTitle(null);
+    setFileName(null);
+    setTags([]);
+    setIsExists(null);
+    setDescription(null);
+    setUser(null);
+    setLoading(false);
+    setHasMore(false);
+    setIsIcon(false);
+    setFileList([]);
+    setLike(false);
+    setLikeCount(0);
+    setDownloadCount(0);
+    setIsProtected(false);
+    setErrMsg("");
     (async () => {
-      const { id } = router.query;
       setLike(parseCookies().like === "1");
 
       let accessToken;
@@ -113,14 +129,7 @@ const Download = () => {
               }
 
               setUser(u);
-              addRelations(
-                0,
-                u,
-                setHasMore,
-                fileList,
-                setFileList,
-                router.query.id as string
-              );
+              addRelations(0, u, setHasMore, [], setFileList, id as string);
             }
           })
           .catch(() => {
@@ -139,7 +148,6 @@ const Download = () => {
     // Recaptcha認証を行う
     if (executeRecaptcha) {
       executeRecaptcha!("download").then((token) => {
-        const { id } = router.query;
         axios
           .get("/api/download", {
             params: { id, recaptcha: token, pass: password },
@@ -182,7 +190,6 @@ const Download = () => {
     setLike(!like);
     setLikeCount((prev) => (like ? prev - 1 : prev + 1));
     executeRecaptcha!("favorite").then(async (token) => {
-      const { id } = router.query;
       const type = like ? "0" : "1";
       await axios.post("/api/favorite", null, {
         params: { id, type, recaptcha: token },
@@ -196,7 +203,7 @@ const Download = () => {
 
   const report = () => {
     router.push(
-      `https://docs.google.com/forms/d/e/1FAIpQLSeeGS0tST9HROEDAJCpMb1DBbKBzQ6xQyJYHOgmqZDmZkKstw/viewform?usp=pp_url&entry.1778469610=利用規約等に違反しているファイルがアップロードされている&entry.1885650888=${router.query.id}`
+      `https://docs.google.com/forms/d/e/1FAIpQLSeeGS0tST9HROEDAJCpMb1DBbKBzQ6xQyJYHOgmqZDmZkKstw/viewform?usp=pp_url&entry.1778469610=利用規約等に違反しているファイルがアップロードされている&entry.1885650888=${id}`
     );
   };
 
@@ -399,7 +406,7 @@ const Download = () => {
     );
   } else {
     showItem = (
-      <p>
+      <p className="text-center text-xl">
         <FontAwesomeIcon icon={faSpinner} className="animate-spin px-2" />
         読み込み中
       </p>
@@ -408,12 +415,8 @@ const Download = () => {
 
   return (
     <>
-      <RemoveModal id={router.query.id as string} flag={flag} />
-      <EditModal
-        showFlag={editOpen}
-        setFlag={setEditOpen}
-        id={router.query.id as string}
-      />
+      <RemoveModal id={id as string} flag={flag} />
+      <EditModal showFlag={editOpen} setFlag={setEditOpen} id={id as string} />
       <Modal
         isOpen={passwordOpen}
         setOpen={setPasswordOpen}
@@ -438,41 +441,40 @@ const Download = () => {
         </form>
         <p className="text-red-500 whitespace-pre-wrap">{errMsg}</p>
       </Modal>
-      <div className="flex lg:justify-center pt-[120px] lg:pt-0 items-center lg:h-screen flex-col">
-        <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl lg:max-w-[60%] max-w-[90%] lg:max-h-[70%] overflow-auto">
-          {showItem}
+      <div className="flex gap-10 md:flex-row flex-col pt-[120px] items-center md:items-start md:justify-center px-5">
+        <div className="md:max-w-[450px] lg:max-w-[700px] w-full lg:max-h-[70vh]">
+          <div className="shadow-xl p-5 flex flex-col border border-slate-300 rounded-xl overflow-auto">
+            {showItem}
+          </div>
         </div>
-      </div>
-      {user?.isAnonymous || !isExists ? null : (
-        <div className="container xl:max-w-5xl mx-auto lg:relative lg:top-[-10vh] mt-3 lg:mt-0">
-          <h2 className="text-2xl text-center m-2">
-            {user?.displayName}
-            さんの他のファイル
-          </h2>
-          <InfiniteScroll
-            loadMore={(page) =>
-              addRelations(
-                page,
-                user,
-                setHasMore,
-                fileList,
-                setFileList,
-                router.query.id as string
-              )
-            } // 項目を読み込む際に処理するコールバック関数
-            hasMore={hasMore} // 読み込みを行うかどうかの判定
-            loader={
-              <div className="text-2xl" key={0}>
-                読み込み中...
+        {user?.isAnonymous || !isExists ? null : (
+          <div className="w-full md:w-auto">
+            <h2 className="text-xl m-2">他のファイル</h2>
+            <InfiniteScroll
+              loadMore={(page) =>
+                addRelations(
+                  page,
+                  user,
+                  setHasMore,
+                  fileList,
+                  setFileList,
+                  id as string
+                )
+              } // 項目を読み込む際に処理するコールバック関数
+              hasMore={hasMore} // 読み込みを行うかどうかの判定
+              loader={
+                <div className="text-2xl" key={0}>
+                  読み込み中...
+                </div>
+              }
+            >
+              <div className="grid grid-cols-1 gap-3 md:w-64 lg:w-72">
+                {fileList}
               </div>
-            }
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-[90%] mx-auto">
-              {fileList}
-            </div>
-          </InfiniteScroll>
-        </div>
-      )}
+            </InfiniteScroll>
+          </div>
+        )}
+      </div>
       <ShareModal
         id={router.query.id as string}
         showFlag={openShareModal}

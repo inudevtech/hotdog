@@ -88,7 +88,7 @@ export const addRelations = (
                 >
                   {file.displayName ? (
                     <>
-                      <h2 className="text-2xl leading-5 truncate">
+                      <h2 className="text-xl leading-5 truncate">
                         {file.displayName}
                       </h2>
                       <pre className="italic text-sm truncate">
@@ -97,7 +97,7 @@ export const addRelations = (
                     </>
                   ) : (
                     <>
-                      <p className="text-2xl leading-5 truncate">
+                      <p className="text-xl leading-5 truncate">
                         {file.fileName}
                       </p>
                       <pre className="italic text-sm">
@@ -108,9 +108,9 @@ export const addRelations = (
                   <div className="border-t-2 mt-2 relative">
                     <div
                       dangerouslySetInnerHTML={{ __html: output.innerHTML }}
-                      className="h-[200px] overflow-hidden mt-2 p-1 break-words"
+                      className="h-[100px] overflow-hidden mt-2 p-1 break-words"
                     />
-                    <div className="gradient absolute w-full mt-2 p-1 top-0 h-[200px]" />
+                    <div className="gradient absolute w-full mt-2 p-1 top-0 h-[100px]" />
                     <Link
                       href={`/d/${file.id}`}
                       className="btn btn-primary btn-block"
