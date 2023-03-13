@@ -29,5 +29,5 @@ RUN /app/node_modules/.bin/next build
 
 EXPOSE 80
 
-ENTRYPOINT [ "/tini", "--", "/nodejs/bin/node" ]
+ENTRYPOINT [ "/tini", "--", "node" ]
 CMD ["/app/node_modules/.bin/next","start","-p","80"]
