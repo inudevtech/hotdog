@@ -18,14 +18,14 @@ COPY --chown=node:node . .
 
 RUN /app/node_modules/.bin/next build
 
-FROM gcr.io/distroless/nodejs:18
-WORKDIR /app
+# FROM gcr.io/distroless/nodejs:18
+# WORKDIR /app
 
-COPY --from=builder /tini /tini
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
+# COPY --from=builder /tini /tini
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/.next ./.next
+# COPY --from=builder /app/public ./public
+# COPY --from=builder /app/next.config.js ./next.config.js
 
 EXPOSE 80
 
