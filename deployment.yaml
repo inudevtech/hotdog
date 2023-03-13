@@ -42,7 +42,7 @@ spec:
       volumes:
         - name: secret
           secret:
-            secretName: hotdog-key
+            secretName: hotdog
             items:
               - key: key.json
                 path: key.json
