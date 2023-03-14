@@ -29,5 +29,5 @@ COPY --from=builder /app/next.config.js ./next.config.js
 
 EXPOSE 80
 
-ENTRYPOINT [ "/tini", "--", "node" ]
+ENTRYPOINT [ "/tini", "--", "/nodejs/bin/node" ]
 CMD ["/app/node_modules/.bin/next","start","-p","80"]
