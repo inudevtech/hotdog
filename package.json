@@ -11,7 +11,7 @@
     "format": "prettier --write --ignore-path .prettierignore ."
   },
   "dependencies": {
-    "@firebase/auth": "0.21.4",
+    "@firebase/auth": "0.21.5",
     "@fortawesome/fontawesome-svg-core": "6.3.0",
     "@fortawesome/free-brands-svg-icons": "6.3.0",
     "@fortawesome/free-regular-svg-icons": "6.3.0",
@@ -30,7 +30,7 @@
     "bcrypt": "5.1.0",
     "daisyui": "^2.42.1",
     "dotenv": "16.0.3",
-    "firebase": "9.17.2",
+    "firebase": "9.18.0",
     "firebase-admin": "11.5.0",
     "formidable": "2.1.1",
     "gsap": "^3.11.4",
